@@ -1,0 +1,29 @@
+from pydantic import BaseModel, Field
+from datetime import datetime
+
+class CommentBase(BaseModel):
+    b_id : int
+    u_id : int
+    content : str
+
+class CommentCreate(BaseModel):
+    b_id : int
+    u_id : int
+    content : str = Field(..., min_length=1, max_length=300)
+
+class CommentUpdate(BaseModel):
+    b_id : int
+    u_id : int
+    content : str = Field(..., min_length=1 ,max_length=300)
+
+
+class CommentRead(BaseModel):
+    c_id : int
+    b_id : int
+    u_id : int
+    content : str
+    created_at : datetime
+    updated_at : datetime | None=None
+    
+    class Config:
+        from_attributes = True
