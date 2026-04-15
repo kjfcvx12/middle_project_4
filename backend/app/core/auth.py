@@ -30,17 +30,17 @@ def set_auth_cookies(response:Response, access_token:str, refresh_token:str)->No
 
 #사용자 쿠키에 액세스 토큰있는지 확인
 #쿠키에서 가져온 액세스 토큰 검증/유효한지 안한지 -> 인증 로직
-async def get_user_id(request:Request)-> int:
+async def auth_get_u_id(request:Request)-> int:
     access_token=request.cookies.get("access_token")
     if not access_token:
         raise HTTPException(status_code=401, detail="Access_token missing")
     
     #토큰에서 사용자 id를 추출함 -> 정상적인 토큰이면 사용자 id 반환
     try:
-        user_id=verify_token(access_token)
-        if user_id is None:
+        u_id=verify_token(access_token)
+        if u_id is None:
             raise HTTPException(status_code=401,detail="no uid")
-        return user_id
+        return u_id
 
     except ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Acccess_token expired")
