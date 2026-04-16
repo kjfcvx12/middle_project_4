@@ -3,7 +3,12 @@ from app.db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, TIMESTAMP, func
 from datetime import datetime
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .notes import Note
+
+
 
 
 
@@ -38,3 +43,7 @@ class User(Base):
     # like_boards : Mapped[list["Like_Board"]] = relationship(back_populates="user")
 
     # gym_staffs : Mapped["Gym_Staff"] = relationship(back_populates="user", cascade="all, delete-orphan", uselist=False)
+
+
+    sent_notes: Mapped[list["Note"]] = relationship("Note", foreign_keys="[Note.send_id]", back_populates="sender")
+    received_notes: Mapped[list["Note"]] = relationship("Note", foreign_keys="[Note.rece_id]", back_populates="receiver")

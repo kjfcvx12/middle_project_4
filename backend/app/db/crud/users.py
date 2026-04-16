@@ -22,7 +22,7 @@ class User_Crud:
 
     @staticmethod
     async def crud_user_get_by_name_phone(db: AsyncSession, u_name: str, phone: str) -> User | None:
-        result = await db.execute(select(User).filter(User.u_name == u_name and User.phone==phone))
+        result = await db.execute(select(User).filter(User.u_name == u_name, User.phone==phone))
         return result.scalars().first()
     
 
