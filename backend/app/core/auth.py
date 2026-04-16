@@ -1,6 +1,12 @@
-from fastapi import Request, Response, HTTPException
+from fastapi import Request, Response, HTTPException, Depends, status
 from jwt import ExpiredSignatureError, InvalidTokenError
 from typing import Optional
+
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+
+from app.db.database import get_db
+from app.db.models.users import User
 
 from app.core.settings import settings
 from app.core.jwt_handle import verify_token
@@ -47,6 +53,46 @@ async def auth_get_u_id(request:Request)-> int:
     
     except InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid Acccess_token")
+
+
+# 관리자 확인
+async def auth_get_admin_id(u_id: int = Depends(auth_get_u_id), db: AsyncSession = Depends(get_db)) -> int:
+  
+    result = await db.execute(select(User.role).filter(User.u_id == u_id))
+    role = result.scalar_one_or_none()
+    
+    if not role:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="사용자가 없습니다.")
+    
+    if role!='admin':
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="관리자 권한이 필요합니다.")
+    
+    return u_id
+
+
+async def auth_get_staff_id(u_id: int = Depends(auth_get_u_id), db: AsyncSession = Depends(get_db)) -> int:
+  
+    result = await db.execute(select(User.role).filter(User.u_id == u_id))
+    role = result.scalar_one_or_none()
+    
+    if not role:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="사용자가 없습니다.")
+
+    if not role in ['trainer', 'manager', 'admin']:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="직원만 접근이 가능합니다.")
+    
+    return u_id
+
+
+
 
 
 #토크이 없거나 유효하지 않아도 오류 안던지고 그냥 None 반환함

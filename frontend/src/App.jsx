@@ -30,8 +30,6 @@ const App = () => {
   return (
     <Router>
       <div>
-        <p>home</p>
-
         <section>
           <Routes>
             <Route path="/" element={<Home />} />

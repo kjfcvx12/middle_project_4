@@ -20,22 +20,22 @@ def verify_password(plain_pw:str, hashed_pw:str)->bool:
 
 #jwt 생성함수  
 #암호화된 jwt문자열 반환
-def create_token(uid:int, expires_delta:timedelta, **kwargs) -> str:
+def create_token(u_id:int, expires_delta:timedelta, **kwargs) -> str:
     to_encode=kwargs.copy()
     expire=datetime.now(timezone.utc) + timedelta(seconds=expires_delta)
-    to_encode.update({"exp":expire, "uid":uid})
+    to_encode.update({"u_id":u_id, "exp":expire})
     encoded_jwt=jwt.encode(to_encode, settings.secret_key, algorithm=settings.jwt_algorithm)
     return encoded_jwt
 
 #create_token함수 호출해서 jwt 생성->uid, exp 포함->kwargs 없으면 playload는 uid, exp만 있음
-def create_access_token(uid:int)->str:
-    return create_token(uid=uid, expires_delta=settings.access_token_expire_seconds)
+def create_access_token(u_id:int, **kwargs)->str:
+    return create_token(u_id=u_id, expires_delta=settings.access_token_expire_seconds, **kwargs)
 
 #리프레시 토큰 관리(재발급/ 로그아웃 시 무효화)
 #jti(jwt id): 서버에서 토큰 재사용 방지 관리 기능
 #uuid : 전세계에서 유일하게 식별할 수 있는 128비트 값 생성
-def create_refresh_token(uid:int) -> str:
-    return create_token(uid=uid, jti=str(uuid.uuid4()), expires_delta=settings.refresh_token_expire_seconds)
+def create_refresh_token(u_id:int) -> str:
+    return create_token(u_id=u_id, jti=str(uuid.uuid4()), expires_delta=settings.refresh_token_expire_seconds)
 
 
 #토근을 디코딩해서 payload를 딕셔너리로 반환
@@ -50,4 +50,4 @@ def decode_token(token:str)->dict:
 #토큰을 디코딩한 수 uid 값을 꺼낸다 -> 사용자 id
 def verify_token(token:str)->int:
     playload=decode_token(token)
-    return playload.get("uid")
+    return playload.get("u_id")

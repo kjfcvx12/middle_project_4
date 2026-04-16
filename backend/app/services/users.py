@@ -8,6 +8,17 @@ from app.core.jwt_handle import get_password_hash, verify_password, create_acces
 
 class User_Service:
 
+    # 전 유저 조회
+    @staticmethod
+    async def services_user_get_all(db:AsyncSession):
+        user=await User_Crud.crud_user_get_all(db)
+
+        if not user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                detail='유저가 없습니다.')
+        
+        return user
+
     # 유저 u_id 조회
     @staticmethod
     async def services_user_get_u_id(db: AsyncSession, u_id: int):
@@ -22,8 +33,19 @@ class User_Service:
 
     # 유저 email 조회
     @staticmethod
-    async def services_user_get_email(db: AsyncSession, email: str):
+    async def services_user_get_email(db: AsyncSession, email:str):
         user = await User_Crud.crud_user_get_by_email(db, email)
+
+        if not user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                detail='해당 email의 사용자가 없습니다')
+        
+        return user.email
+    
+
+    @staticmethod
+    async def services_user_get_name_phone(db: AsyncSession, u_name:str, phone:str):
+        user = await User_Crud.crud_user_get_by_email(db, u_name, phone)
 
         if not user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -43,9 +65,9 @@ class User_Service:
                     status_code=status.HTTP_401_UNAUTHORIZED, 
                     detail="이메일 또는 비밀번호가 일치하지 않습니다.")
             
-            token_data = {"sub": user.email, "user_id": user.u_id, "role": user.role}
-            access_token = create_access_token(uid=user.u_id,**token_data)
-            refresh_token = create_refresh_token(uid=user.u_id)
+            token_data = {"email": user.email}
+            access_token = create_access_token(u_id=user.u_id,**token_data)
+            refresh_token = create_refresh_token(u_id=user.u_id)
             
             update_user=await User_Crud.crud_user_update_token(db, user.u_id, refresh_token)
             

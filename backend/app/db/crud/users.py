@@ -6,10 +6,23 @@ from app.db.scheme.users import User_Create, User_Update
 
 
 class User_Crud:
+
+    # 모든 유저 조회
+    @staticmethod
+    async def crud_user_get_all(db: AsyncSession) -> list[User] | None:
+        result=await db.execute(select(User))
+        return result.scalars().all()
+    
+
     # 유저 이메일 찾기
     @staticmethod
     async def crud_user_get_by_email(db: AsyncSession, email: str) -> User | None:
         result = await db.execute(select(User).filter(User.email == email))
+        return result.scalars().first()
+
+    @staticmethod
+    async def crud_user_get_by_name_phone(db: AsyncSession, u_name: str, phone: str) -> User | None:
+        result = await db.execute(select(User).filter(User.u_name == u_name and User.phone==phone))
         return result.scalars().first()
     
 
