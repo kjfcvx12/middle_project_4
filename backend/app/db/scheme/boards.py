@@ -11,6 +11,7 @@ class BoardCreate(BaseModel):
     content : str = Field(..., min_length=1, max_length=300)
 
 class BoardUpdate(BaseModel):
+    u_id : int
     content : str = Field(..., min_length=1, max_length=300)
 
 class BoardRead(BaseModel):

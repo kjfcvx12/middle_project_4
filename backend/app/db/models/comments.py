@@ -5,7 +5,7 @@ from app.db.database import Base
 
 class Comment(Base):
     __tablename__ = "comments"
-
+    # 기본키 설정
     c_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     
     # 외래키 설정

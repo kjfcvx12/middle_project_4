@@ -5,7 +5,7 @@ from app.db.database import Base
 
 class Board(Base):
     __tablename__ = "boards"
-
+    # 기본키 설정
     b_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     
     # 외래키 설정
