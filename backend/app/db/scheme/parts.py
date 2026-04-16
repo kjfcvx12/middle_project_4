@@ -4,7 +4,6 @@ from datetime import datetime
 
 
 class PartsCreate(BaseModel):
-    p_id:int
     p_name:str
 
 #
