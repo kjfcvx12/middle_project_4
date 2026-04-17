@@ -1,10 +1,9 @@
 from sqlalchemy import Column, Integer, ForeignKey
 from app.db.database import Base
 
-class FavoriteGym(Base):
-    __tablename__ = "favorites_gym"
+class FavoriteRoutine(Base):
+    __tablename__ = "favorites_routine"
 
     id = Column(Integer, primary_key=True)
-    
     u_id = Column(Integer, ForeignKey("users.u_id"))
-    gym_id = Column(Integer, ForeignKey("gyms.gym_id"))
+    r_id = Column(Integer, ForeignKey("routines.r_id"))
