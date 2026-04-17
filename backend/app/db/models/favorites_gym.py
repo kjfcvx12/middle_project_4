@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from app.db.models.users import User
     from app.db.models.gyms import Gym
 
-class FavoriteGym(Base):
+class Favorite_Gym(Base):
     __tablename__ = "favorites_gym"
 
     id: Mapped[int] = mapped_column(primary_key=True)

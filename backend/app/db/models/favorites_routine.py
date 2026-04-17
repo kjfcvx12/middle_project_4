@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from app.db.models.users import User
     from app.db.models.routines import Routine
 
-class FavoriteRoutine(Base):
+class Favorite_Routine(Base):
     __tablename__ = "favorites_routine"
 
     id: Mapped[int] = mapped_column(primary_key=True)
