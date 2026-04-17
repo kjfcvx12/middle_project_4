@@ -57,7 +57,7 @@ async def router_get_user_name_phone(u_name: str, phone: str, db: AsyncSession =
 
 
 # GET admin 특정 id 사용자 조회
-@router.get('/id/{u_id}', response_model=User_Read)
+@router.get('/{u_id}', response_model=User_Read)
 async def router_get_user_id(u_id: int, admin:int=Depends(auth_get_admin_id), db: AsyncSession = Depends(get_db)):
     return await User_Service.services_user_get_u_id(db, u_id)
 

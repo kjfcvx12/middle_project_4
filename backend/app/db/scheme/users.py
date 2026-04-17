@@ -3,16 +3,16 @@ from datetime import datetime,timezone
 from typing import Annotated
 
 
-class User_Base(BaseModel):
-    u_name: str
+class User_Base(BaseModel): 
     email: EmailStr
+    u_name: str
     phone: str
 
 
 class User_Create(BaseModel):
-    u_name: str
     email: EmailStr
     pw: Annotated[str, Field(max_length=72)]
+    u_name: str
     phone: str
     info: str
 

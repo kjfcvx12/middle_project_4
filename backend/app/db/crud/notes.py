@@ -20,6 +20,8 @@ class Note_Crud:
         result=await db.execute(select(Note).filter(Note.rece_id==u_id, Note.rece_del == False))
         return result.scalars().all()
     
+    
+    # 쪽지 상세
     @staticmethod
     async def crud_note_get_by_n_id(db: AsyncSession, n_id:int) -> Note|None:
         result=await db.execute(select(Note).filter(Note.n_id==n_id))
