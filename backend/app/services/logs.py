@@ -1,7 +1,10 @@
-from app.db.crud.logs import create_log, get_logs
+from app.db.crud.logs import *
 
-def create_log_service(db, user, data):
-    return create_log(db, user.u_id, data)
+def service_create_log(db, user, data):
+    return crud_create_log(db, user.u_id, data)
 
-def get_logs_service(db, user):
-    return get_logs(db, user.u_id)
+def service_get_logs(db, user):
+    return crud_get_logs(db, user.u_id)
+
+def service_delete_log(db, user, log_id):
+    return crud_delete_log(db, user.u_id, log_id)

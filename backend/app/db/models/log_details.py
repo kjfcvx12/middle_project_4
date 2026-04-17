@@ -1,23 +1,23 @@
-from sqlalchemy import Column, Integer, ForeignKey, String
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey, String
+from typing import TYPE_CHECKING
 from app.db.database import Base
+
+if TYPE_CHECKING:
+    from app.db.models.logs import Log
 
 class LogDetail(Base):
     __tablename__ = "log_details"
 
-    # PK 설정 
-    log_d_id = Column(Integer, primary_key=True)
+    log_d_id: Mapped[int] = mapped_column(primary_key=True)
 
-    # FK 설정 
-    log_id = Column(Integer, ForeignKey("logs.log_id"))
+    log_id: Mapped[int] = mapped_column(ForeignKey("logs.log_id"))
 
-    # 세트 정보
-    sets = Column(Integer, nullable=False)
-    reps = Column(Integer, nullable=False)
+    sets: Mapped[int] = mapped_column(nullable=False)
+    reps: Mapped[int] = mapped_column(nullable=False)
 
-    # 메모
-    fail_memo = Column(String(100))
-    memo = Column(String(300), nullable=False)
+    fail_memo: Mapped[str | None] = mapped_column(String(100))
+    memo: Mapped[str] = mapped_column(String(300), nullable=False)
 
-    # 역참조
-    log = relationship("Log", back_populates="details")
+    # 관계
+    log: Mapped["Log"] = relationship(back_populates="details")

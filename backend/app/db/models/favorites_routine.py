@@ -1,9 +1,24 @@
-from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey, UniqueConstraint
+from typing import TYPE_CHECKING
 from app.db.database import Base
+
+if TYPE_CHECKING:
+    from app.db.models.users import User
+    from app.db.models.routines import Routine
 
 class FavoriteRoutine(Base):
     __tablename__ = "favorites_routine"
 
-    id = Column(Integer, primary_key=True)
-    u_id = Column(Integer, ForeignKey("users.u_id"))
-    r_id = Column(Integer, ForeignKey("routines.r_id"))
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id"))
+    r_id: Mapped[int] = mapped_column(ForeignKey("routines.r_id"))
+
+    # 관계
+    user: Mapped["User"] = relationship()
+    routine: Mapped["Routine"] = relationship()
+
+    __table_args__ = (
+        UniqueConstraint("u_id", "r_id"),
+    )

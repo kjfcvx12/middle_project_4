@@ -1,24 +1,36 @@
-from sqlalchemy import Column, Integer, ForeignKey, DateTime, Boolean
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey, DateTime, Boolean
 from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship
+from typing import TYPE_CHECKING, List
 from app.db.database import Base
+
+if TYPE_CHECKING:
+    from app.db.models.log_details import LogDetail
+    from app.db.models.users import User
+    from app.db.models.routines import Routine
+    from app.db.models.machines import Machine
 
 class Log(Base):
     __tablename__ = "logs"
 
-    # PK 설정
-    log_id = Column(Integer, primary_key=True)
+    log_id: Mapped[int] = mapped_column(primary_key=True)
 
-    # FK 설정
-    u_id = Column(Integer, ForeignKey("users.u_id"))
-    r_id = Column(Integer, ForeignKey("routines.r_id"))
-    m_id = Column(Integer, ForeignKey("machines.m_id"))
+    u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id"))
+    r_id: Mapped[int] = mapped_column(ForeignKey("routines.r_id"))
+    m_id: Mapped[int] = mapped_column(ForeignKey("machines.m_id"))
 
-    # 운동 날짜
-    log_date = Column(DateTime, server_default=func.now())
+    log_date: Mapped[DateTime] = mapped_column(
+        DateTime, server_default=func.now()
+    )
 
-    # 출석 여부
-    attend = Column(Boolean, default=False)
+    attend: Mapped[bool] = mapped_column(default=False)
 
-    # log_detail 관계
-    details = relationship("LogDetail", back_populates="log", cascade="all, delete")
+    # 관계
+    details: Mapped[List["LogDetail"]] = relationship(
+        back_populates="log",
+        cascade="all, delete"
+    )
+
+    user: Mapped["User"] = relationship()
+    routine: Mapped["Routine"] = relationship()
+    machine: Mapped["Machine"] = relationship()
