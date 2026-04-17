@@ -11,6 +11,7 @@ from models.machines import Machine
 
 
 #새 운동기구 생성
+@staticmethod
 async def crud_machines_create_machine(db, machine_create):
     make_machine=Machine(
         m_name=machine_create.m_name,
@@ -23,6 +24,7 @@ async def crud_machines_create_machine(db, machine_create):
 
 
 # 운동기구 수정
+@staticmethod
 async def crud_machines_update_machine(db, machine, machine_update):
     update_machine=machine_update.dict(exclude_unset=True)
     for key, value in update_machine.items():
@@ -30,11 +32,13 @@ async def crud_machines_update_machine(db, machine, machine_update):
     return machine
 
 #운동기구 삭제
+@staticmethod
 async def crud_machines_delete_machine(db, machine):
     await db.delete(machine)
 
 
 #운동기구 조회 기능
+@staticmethod
 async def crud_machines_get_machine(db, part=None, keyword=None):
     check_machine=select(Machine)
 
