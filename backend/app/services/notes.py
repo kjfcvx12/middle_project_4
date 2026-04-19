@@ -122,7 +122,7 @@ class Note_Service:
 
     # 관리자 전체 유령 쪽지 삭제
     @staticmethod
-    async def services_ghost_note_delete(db: AsyncSession) -> dict:
+    async def services_ghost_note_delete(db: AsyncSession) -> str:
         try: 
             delete_note = await Note_Crud.crud_ghost_note_delete(db)
         
@@ -131,7 +131,7 @@ class Note_Service:
                                     detail='유령쪽지가 존재하지 않습니다.')
 
             await db.commit()
-            return {"message": "유령쪽지 전체 삭제"}
+            return "유령쪽지 전체 삭제"
         
         except HTTPException:
             raise
