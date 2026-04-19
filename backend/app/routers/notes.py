@@ -37,14 +37,14 @@ async def router_note_get_by_n_id(n_id: int, u_id:int=Depends(auth_get_u_id),
 
 
 # 쪽지 생성
-@router.post('/create', response_model=Note_Create)
+@router.post('/create')
 async def router_note_create(note:Note_Create, u_id:int=Depends(auth_get_u_id), 
                              db:AsyncSession=Depends(get_db)):
     return await Note_Service.services_note_create(db, note)
 
 
 # 송신자 삭제 변경
-@router.post("/inbox/{n_id}")
+@router.put("/inbox/{n_id}")
 async def router_note_send_del(note:Note_Send_del, n_id:int, 
                                u_id:int=Depends(auth_get_u_id), 
                                db:AsyncSession=Depends(get_db)):
@@ -52,7 +52,7 @@ async def router_note_send_del(note:Note_Send_del, n_id:int,
 
 
 # 수신자 삭제 변경
-@router.post("/outbox/{n_id}")
+@router.put("/outbox/{n_id}")
 async def router_note_rece_del(note:Note_Send_del, n_id:int, 
                                u_id:int=Depends(auth_get_u_id), 
                                db:AsyncSession=Depends(get_db)):

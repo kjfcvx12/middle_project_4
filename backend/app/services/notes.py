@@ -44,14 +44,20 @@ class Note_Service:
 
     # 쪽지 생성
     @staticmethod
-    async def services_note_create(db:AsyncSession, note:Note_Create):
+    async def services_note_create(db:AsyncSession, note:Note_Create) -> str:
 
         try:
             new_note = await Note_Crud.crud_note_create(db, note)
             
             await db.commit()
             await db.refresh(new_note)
-            return new_note
+
+            if note.rece_id=='admin':
+                msg="문의가 관리자에게 접수되었습니다."
+            else:
+                msg=f"쪽지가 {note.rece_id}님에게 전송되었습니다."
+
+            return msg 
         
         except Exception as e:
             await db.rollback()
