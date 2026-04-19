@@ -39,8 +39,8 @@ async def router_login(user:User_Login, response:Response, db:AsyncSession=Depen
 # POST 로그아웃
 @router.post("/logout")
 async def router_logout(response:Response):
-    response.delete_cookie(key="access_token")
-    response.delete_cookie(key="refresh_token")
+    response.delete_cookie(key="access_token", path="/")
+    response.delete_cookie(key="refresh_token", path="/")
     return {"message": "로그아웃성공"}
 
 
@@ -53,7 +53,7 @@ async def router_get_user_all(admin:int=Depends(auth_get_admin_id), db: AsyncSes
 # GET 잊은 email 조회
 @router.get('/find_email', response_model=str)
 async def router_get_user_name_phone(u_name: str, phone: str, db: AsyncSession = Depends(get_db)):
-    return await User_Service.services_user_get_name_phone(db, u_name, phone)
+    return await User_Service.services_user_get_email_by_name_phone(db, u_name, phone)
 
 
 # GET admin 특정 id 사용자 조회
@@ -74,4 +74,4 @@ async def router_update_u_id(user_update: User_Update,
 @router.delete("/del", status_code=status.HTTP_204_NO_CONTENT)
 async def router_delete_u_id(u_id:int=Depends(auth_get_u_id),
                          db: AsyncSession = Depends(get_db)):
-    await User_Service.services_user_delete(db,u_id)
+    return await User_Service.services_user_delete(db,u_id)

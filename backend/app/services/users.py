@@ -44,14 +44,30 @@ class User_Service:
     
 
     @staticmethod
-    async def services_user_get_name_phone(db: AsyncSession, u_name:str, phone:str):
-        user = await User_Crud.crud_user_get_by_email(db, u_name, phone)
+    async def services_user_get_email_by_name_phone(db: AsyncSession, u_name:str, phone:str):
+        try:
+            user = await User_Crud.crud_user_get_by_email(db, u_name, phone)
 
-        if not user:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='해당 email의 사용자가 없습니다')
+            if not user:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                    detail='해당 email의 사용자가 없습니다')
+            
+
+            u_id, domain = user.email.split("@")
+            
+            if len(u_id) <= 3:
+                masked_id = u_id[0] + "*" * (len(u_id) - 1)
+            else:
+                masked_id = u_id[:3] + "*" * (len(u_id) - 3)
+                
+            return f"{masked_id}@{domain}"
         
-        return user.email
+        except HTTPException:
+            raise
+
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+                                detail=f"서버 오류가 발생했습니다: {e}")
     
 
     # 유저 로그인
@@ -75,6 +91,9 @@ class User_Service:
             await db.refresh(update_user)
             return update_user, access_token, refresh_token
         
+        except HTTPException:
+            raise
+
         except Exception as e:
             await db.rollback()
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
@@ -85,7 +104,6 @@ class User_Service:
     # 유저 생성
     @staticmethod
     async def services_user_create(db:AsyncSession, user:User_Create):
-
         try:
             already_user=await User_Crud.crud_user_get_by_email(db, user.email)
 
@@ -99,6 +117,9 @@ class User_Service:
             await db.refresh(new_user)
             return new_user
         
+        except HTTPException:
+            raise
+
         except Exception as e:
             await db.rollback()
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
@@ -108,28 +129,37 @@ class User_Service:
     # 유저 업데이트
     @staticmethod
     async def services_user_update(db:AsyncSession, u_id:int, user_update:User_Update):
-        update_data=user_update.model_dump(exclude_unset=True)
-        
-        if update_data.get("pw"): 
-            update_data['pw']=get_password_hash(update_data["pw"])
-        
-        updated_model = User_Update(**update_data) 
+        try :
+            update_data=user_update.model_dump(exclude_unset=True)
+            
+            if update_data.get("pw"): 
+                update_data['pw']=get_password_hash(update_data["pw"])
+            
+            updated_model = User_Update(**update_data) 
 
-        update_user=await User_Crud.crud_user_update(db, u_id, updated_model)
-        
-        if not update_user:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-                                detail="수정할 사용자가 없습니다")
-        
-        
-        await db.commit()
-        await db.refresh(update_user)
+            update_user=await User_Crud.crud_user_update(db, u_id, updated_model)
+            
+            if not update_user:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+                                    detail="수정할 사용자가 없습니다")
+            
+            
+            await db.commit()
+            await db.refresh(update_user)
 
-        return update_user
+            return update_user
+        
+        except HTTPException:
+            raise
+
+        except Exception as e:
+            await db.rollback()
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+                                detail=f"사용자 정보 수정 실패 :{e}")
 
 
     @staticmethod
-    async def services_user_delete(db: AsyncSession, u_id: int) -> str:
+    async def services_user_delete(db: AsyncSession, u_id: int) -> dict:
         try: 
             delete_user = await User_Crud.crud_user_delete(db, u_id)
         
@@ -138,10 +168,13 @@ class User_Service:
                                     detail='삭제할 유저가 없습니다')
 
             await db.commit()
-            return {'message : 유저 삭제'}
+            return {'message':'유저 삭제'}
         
+        except HTTPException:
+            raise
+
         except Exception as e:
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
                                 detail=f"사용자 삭제 실패 :{e}")
     
