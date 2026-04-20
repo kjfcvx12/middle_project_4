@@ -54,3 +54,11 @@ def deleteGymMachineService(db: Session, g_id: int, m_id: int):
     db.commit()
 
     return True
+
+# LIST (옵션 - 운동기구 조회용)
+def getGymMachineService(db: Session, g_id: int):
+    return (
+        db.query(Gym_Machine)
+        .filter(Gym_Machine.g_id == g_id)
+        .all()
+    )

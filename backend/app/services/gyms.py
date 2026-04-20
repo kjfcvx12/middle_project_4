@@ -2,6 +2,10 @@ from sqlalchemy.orm import Session
 from app.db.crud import gyms as gym_crud
 from app.db.scheme.gyms import GymCreate, GymUpdate
 from app.db.models.users import User
+from sqlalchemy.orm import Session
+from app.db.models.gyms import Gym
+from app.services import gym_staffs as gym_staff_service
+from app.services import gym_machines as gym_machine_service
 
 def createGymService(db: Session, data: GymCreate):
     return gym_crud.create_gym(db, data)
@@ -21,10 +25,6 @@ def deleteGymService(db: Session, g_id: int):
         return False
     gym_crud.delete_gym(db, gym)
     return True
-
-from sqlalchemy.orm import Session
-from app.db.models.gyms import Gym
-
 
 def listGymService(
     db: Session,
@@ -67,17 +67,8 @@ def listGymService(
 def searchGymService(db: Session, name: str | None, address: str | None):
     return gym_crud.search_gyms(db, name, address)
 
-"""
-# 현재 app.db.models.users 구현 안 되어있어서 오류남
 def getGymTrainerService(db: Session, g_id: int):
-    results = (
-        # 수정 필요
-        db.query(User.u_id, User.u_name)
-        .join(Gym_Staff, Gym_Staff.u_id == User.u_id)
-        .filter(Gym_Staff.g_id == g_id)
-        .filter(User.role == "trainer")
-        .all()
-    )
+    return gym_staff_service.getGymStaffService(db, g_id)
 
-    return results
-"""
+def getGymMachinesService(db: Session, g_id: int):
+    return gym_machine_service.getGymMachineService(db, g_id)

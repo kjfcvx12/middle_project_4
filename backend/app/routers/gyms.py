@@ -129,16 +129,13 @@ def deleteGym(
         "msg": "헬스장 삭제 완료"
     }
 
-"""
 # 헬스장 소속 트레이너 조회
-# 현재 gym_staffs 구현 안 되어있어서 임시로...
 @router.get("/{g_id}/staff")
-def get_gym_staff(
+def getGymStaff(
     g_id: int,
     db: Session = Depends(get_db),
 ):
-    # 수정 필요
-    data = getGymTrainerService(db, g_id)
+    data = gym_service.getGymTrainerService(db, g_id)
 
     return {
         "data": [
@@ -151,14 +148,12 @@ def get_gym_staff(
     }
 
 # 헬스장 운동기구 목록 조회
-# 현재 machine 구현 안 되어 있어서 임시로...
 @router.get("/machines/{g_id}")
-def get_gym_machines(
+def getGymMachines(
     g_id: int,
     db: Session = Depends(get_db),
 ):
-    # 수정 필요
-    data = getGymMachinesService(db, g_id)
+    data = gym_service.getGymMachinesService(db, g_id)
 
     return {
         "data": [
@@ -170,4 +165,3 @@ def get_gym_machines(
             for d in data
         ]
     }
-"""
