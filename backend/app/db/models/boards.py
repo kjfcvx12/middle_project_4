@@ -13,7 +13,7 @@ class Board(Base):
     
     
     # 게시글 내용 및 시간 기록
-    content: Mapped[str] = mapped_column(String(300), nullable=False)
+    b_content: Mapped[str] = mapped_column(String(300), nullable=False)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         TIMESTAMP, 

@@ -10,7 +10,7 @@ class BoardCrud:
     async def crud_boards_create(db:AsyncSession, board_data:BoardCreate):
         new_board = Board(
             u_id = board_data.u_id,
-            content = board_data.content
+            b_content = board_data.b_content
         )
         db.add(new_board)
         await db.commit()
@@ -26,8 +26,8 @@ class BoardCrud:
     #게시물 수정
     @staticmethod
     async def crud_boards_update(db:AsyncSession, db_board:Board, board_data:BoardUpdate):
-        if board_data.content is not None:
-            db_board.content = board_data.content
+        if board_data.b_content is not None:
+            db_board.b_content = board_data.b_content
 
         await db.commit()
         await db.refresh(db_board)

@@ -10,7 +10,7 @@ class CommentService:
     #댓글 추가
     @staticmethod
     async def services_comments_create(db:AsyncSession, comment_data:CommentCreate):
-        if not comment_data.content or not comment_data.content.strip():
+        if not comment_data.c_content or not comment_data.c_content.strip():
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="내용은 비어있을 수 없습니다")
         stmt = select(Comment).where(Comment.u_id == comment_data.u_id)
         result = await db.execute(stmt)

@@ -9,7 +9,7 @@ class CommentCrud:
     @staticmethod
     async def crud_comments_create(db:AsyncSession, comment_data:CommentCreate):
         new_comment = Comment(
-            content = comment_data.content
+            c_content = comment_data.c_content
         )
         db.add(new_comment)
         await db.commit()
@@ -25,8 +25,8 @@ class CommentCrud:
     #댓글 수정
     @staticmethod
     async def crud_comments_update(db:AsyncSession, db_comment:Comment, comment_data:CommentUpdate):
-        if comment_data.content is not None:
-            db_comment.content = comment_data.content
+        if comment_data.c_content is not None:
+            db_comment.c_content = comment_data.c_content
 
         await db.commit()
         await db.refresh(db_comment)

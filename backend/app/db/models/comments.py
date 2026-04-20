@@ -13,7 +13,7 @@ class Comment(Base):
     u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id"))
 
     # 댓글 내용 및 시간 기록
-    content: Mapped[str] = mapped_column(String(300), nullable=False)
+    c_content: Mapped[str] = mapped_column(String(300), nullable=False)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         TIMESTAMP, 

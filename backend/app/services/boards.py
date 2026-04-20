@@ -10,7 +10,7 @@ class BoardService:
     #게시물 추가
     @staticmethod
     async def services_boards_create(db:AsyncSession, board_data:BoardCreate):
-        if not board_data.content or not board_data.content.strip():
+        if not board_data.b_content or not board_data.b_content.strip():
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="내용은 비어있을 수 없습니다")
         stmt = select(Board).where(Board.u_id == board_data.u_id)
         result = await db.execute(stmt)
