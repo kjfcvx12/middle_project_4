@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from datetime import datetime
+from datetime import datetime, timezone
 
 class CommentBase(BaseModel):
     b_id : int
@@ -19,10 +19,10 @@ class CommentUpdate(BaseModel):
 
 class CommentRead(BaseModel):
     c_id : int
-    b_id : int
     u_id : int
+    u_name : str
     c_content : str
-    created_at : datetime
+    created_at : datetime 
     updated_at : datetime | None=None
     
     class Config:

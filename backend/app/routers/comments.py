@@ -7,18 +7,18 @@ from app.services.comments import CommentService
 router = APIRouter(prefix="/comments", tags=["Comment"])
 
 #댓글 추가
-@router.post("/comments", response_model=CommentCreate)
+@router.post("/comments")
 async def routers_comments_create(comment:CommentCreate, db:AsyncSession=Depends(get_db)):
     db_comment = CommentService.services_comments_create(db,comment)
     return db_comment
 
-#댓글 전체조회
-@router.get("/comments", response_model=list[CommentRead])
-async def routers_comments_all_read(db:AsyncSession = Depends(get_db)):
-    return await CommentService.services_comments_all_read(db)
+#해당 게시글 댓글 조회
+@router.get("/boards/{b_id}/comments")
+async def routers_board_comments_read(db:AsyncSession = Depends(get_db)):
+    return await CommentService.services_board_comments_read(db)
 
 #댓글 수정
-@router.put("/comments/{c_id}", response_class=CommentUpdate)
+@router.put("/comments/{c_id}")
 async def routers_comments_update(c_id:int,comment_data:CommentUpdate, db:AsyncSession = Depends(get_db)):
     return await CommentService.services_comments_update(c_id, comment_data, db)
 

@@ -3,22 +3,43 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.database import get_db
 from app.db.scheme.boards import BoardCreate, BoardRead, BoardUpdate
 from app.services.boards import BoardService
+from fastapi import Query
+from typing import Optional
+
 
 router = APIRouter(prefix="/boards", tags=["Board"])
 
 #게시물 추가
-@router.post("/boards", response_model=BoardCreate)
+@router.post("/boards")
 async def routers_boards_create(board:BoardCreate, db:AsyncSession = Depends(get_db)):
     db_board = BoardService.services_boards_create(db,board)
     return db_board
 
-#게시물 전체조회
-@router.get("/boards", response_model=list[BoardRead])
-async def routers_boards_all_read(db:AsyncSession = Depends(get_db)):
-    return await BoardService.services_boards_all_read(db)
+#게시물 조회
+@router.get("/boards")
+async def routers_boards_read(
+    page: int = Query(1, ge=1),
+    size: int = Query(10, ge=1),
+    sort: str = Query("created_at,desc"),
+    keyword: str | None = Query(None),
+    db: AsyncSession = Depends(get_db)
+):
+    return await BoardService.services_boards_read(
+        db=db,
+        page=page,
+        size=size,
+        sort=sort,
+        keyword=keyword
+    )
+
+#게시글 상세조회
+@router.get("/boards/{b_id}")
+async def get_board_read_detail(b_id: int,db: AsyncSession = Depends(get_db)):
+    return await BoardService.services_boards_read_detail(db, b_id)
+
 
 #게시물 수정
-@router.put("/boards/{b_id}", response_model=BoardUpdate)
+@router.put("/boards/{b_id}")
 async def routers_boards_update(b_id:int, board_data:BoardUpdate, db:AsyncSession = Depends(get_db)):
     return await BoardService.services_boards_update(db,board_data, b_id)
 

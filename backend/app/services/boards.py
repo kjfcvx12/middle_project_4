@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException, status
-from app.db.models import Board
+from fastapi import HTTPException
+from app.db.models import Board, User
 from app.db.crud.boards import BoardCrud
 from app.db.scheme.boards import BoardCreate, BoardUpdate
 
@@ -9,21 +9,57 @@ class BoardService:
 
     #게시물 추가
     @staticmethod
-    async def services_boards_create(db:AsyncSession, board_data:BoardCreate):
-        if not board_data.b_content or not board_data.b_content.strip():
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="내용은 비어있을 수 없습니다")
-        stmt = select(Board).where(Board.u_id == board_data.u_id)
-        result = await db.execute(stmt)
-        user = result.scalar_one_or_none()
+    async def services_boards_create(db: AsyncSession, board_data: BoardCreate):
+        try:
+            new_board = await BoardCrud.crud_boards_create(db, board_data)
 
-        if not user:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="존재하지 않는 사용자입니다")
-        return await BoardCrud.crud_boards_create(db, board_data)
+            await db.commit()
+            await db.refresh(new_board)
+
+            return {
+                "msg": "댓글 작성 성공",
+                "data": new_board
+        }
+
+        except Exception:
+            await db.rollback()
+            raise
     
-    #게시물 전체조회
+    #게시물 조회
     @staticmethod
-    async def services_boards_all_read(db:AsyncSession):
-        return await BoardCrud.crud_boards_all_read(db)
+    async def services_boards_read(
+        db: AsyncSession,
+        page: int = 1,
+        size: int = 10,
+        sort: str = "created_at,desc",
+        keyword: str | None = None
+):
+        boards, total_count = await BoardCrud.crud_boards_read(
+            db=db,
+            page=page,
+            size=size,
+            sort=sort,
+            keyword=keyword
+    )
+
+        return {
+            "msg": "조회 성공",
+            "page": page,
+            "size": size,
+            "total_count": total_count,
+            "data": boards
+    }
+    
+    #게시글 상세조회
+    @staticmethod
+    async def services_boards_read_detail(db: AsyncSession, b_id: int):
+        board = await BoardCrud.crud_boards_read_detail(db, b_id)
+
+        if not board:
+            raise HTTPException(status_code=404,detail="게시글을 찾을 수 없습니다")
+
+        return {"msg": "조회 성공","data": board}
+    
     
     #게시물 수정
     @staticmethod
@@ -33,10 +69,10 @@ class BoardService:
         db_board = result.scalar_one_or_none()
 
         if not db_board:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="게시물을 찾을 수 없습니다")
+            raise HTTPException(status_code=404, detail="게시물을 찾을 수 없습니다")
         
         if board_data.content is not None and not board_data.content.strip():
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="내용은 비어있을 수 없습니다")
+            raise HTTPException(status_code=400, detail="내용은 비어있을 수 없습니다")
 
         return await BoardCrud.crud_boards_update(db, db_board, board_data)
 
@@ -48,7 +84,7 @@ class BoardService:
         db_board = result.scalar_one_or_none()
 
         if not db_board:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="게시물을 찾을 수 없습니다")
+            raise HTTPException(status_code=404, detail="게시물을 찾을 수 없습니다")
         
         
         await BoardCrud.crud_boards_delete(db, db_board)
