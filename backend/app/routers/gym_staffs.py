@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.db.database import get_db
 from app.db.scheme.gym_staffs import GymStaffCreate, GymStaffDelete
-from app.services import gymStaffs as service
+from app.services import gym_staffs as service
 
 router = APIRouter(prefix="/gym_staffs", tags=["Gym_Staff"])
 
