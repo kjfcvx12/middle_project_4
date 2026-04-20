@@ -1,11 +1,13 @@
 from app.db.models.favorites_routine import Favorite_Routine
 
+# 조회 (유지)
 def crud_get_favorites_routine(db, user_id):
     return db.query(Favorite_Routine).filter(
         Favorite_Routine.u_id == user_id
     ).all()
 
 
+# 삭제 (선택 유지)
 def crud_delete_favorite_routine(db, user_id, r_id):
     fav = db.query(Favorite_Routine).filter(
         Favorite_Routine.u_id == user_id,
@@ -17,6 +19,7 @@ def crud_delete_favorite_routine(db, user_id, r_id):
         db.commit()
 
 
+#  토글
 def crud_toggle_favorite_routine(db, user_id, r_id):
     fav = db.query(Favorite_Routine).filter(
         Favorite_Routine.u_id == user_id,

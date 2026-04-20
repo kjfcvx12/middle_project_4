@@ -15,9 +15,11 @@ class Favorite_Machine(Base):
     u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id"))
     m_id: Mapped[int] = mapped_column(ForeignKey("machines.m_id"))
 
+    # 관계
     user: Mapped["User"] = relationship()
     machine: Mapped["Machine"] = relationship()
 
+    # 중복 방지
     __table_args__ = (
         UniqueConstraint("u_id", "m_id"),
     )

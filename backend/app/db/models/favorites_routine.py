@@ -19,6 +19,7 @@ class Favorite_Routine(Base):
     user: Mapped["User"] = relationship()
     routine: Mapped["Routine"] = relationship()
 
+    # 중복 방지
     __table_args__ = (
         UniqueConstraint("u_id", "r_id"),
     )
