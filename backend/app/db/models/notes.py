@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from .users import User
 
 class Note(Base):
-    __tablename__ = "note"
+    __tablename__ = "notes"
 
     n_id: Mapped[int] = mapped_column(primary_key=True)
     

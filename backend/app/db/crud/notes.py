@@ -37,7 +37,7 @@ class Note_Crud:
         return db_note
 
 
-    # 송신자 삭제 변경
+    # 본인 보낸쪽지함 삭제 변경
     @staticmethod
     async def crud_note_send_update(db:AsyncSession, n_id:int, u_id:int, note:Note_Send_del) -> str:
         result=await db.execute(select(Note).
@@ -54,7 +54,7 @@ class Note_Crud:
         return "삭제할 쪽지가 없습니다."
     
 
-    # 수신자 삭제 변경
+    # 본인 받은쪽지함 삭제 변경
     @staticmethod
     async def crud_note_rece_update(db:AsyncSession, n_id:int, u_id:int, note:Note_Rece_del) -> str:
         result=await db.execute(select(Note).

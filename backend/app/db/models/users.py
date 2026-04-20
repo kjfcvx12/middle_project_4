@@ -8,6 +8,23 @@ from typing import Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     from .notes import Note
 
+    from .like_gyms import Like_Gym
+    from .favorite_gyms import Favorite_Gym
+
+    from .like_machines import Like_Machine
+    from .favorite_machines import Favorite_Machine
+
+    from .routines import Routine
+    from .like_routines import Like_Routine
+    from .favorite_routines import Favorite_Routine
+
+    from .logs import Log
+
+    from .boards import Board
+    from .like_boards import Like_Board
+
+    from .comments import Comment
+    from .like_comments import Like_Comment
 
 
 
@@ -32,15 +49,19 @@ class User(Base):
 
     # routines : Mapped[list["Routine"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     # logs : Mapped[list["Log"]] = relationship(back_populates="user", cascade="all, delete-orphan")
-    # favorites : Mapped[list["Favorite"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    
+    favorite_gyms : Mapped[list["Favorite_Gym"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    favorite_machines : Mapped[list["Favorite_Machine"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    favorite_routines : Mapped[list["Favorite_Routine"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+
 
     # boards : Mapped[list["Board"]] = relationship(back_populates="user")
     # comments : Mapped[list["Comment"]] = relationship(back_populates="user")
 
-    # like_gyms : Mapped[list["Like_Gym"]] = relationship(back_populates="user")
-    # like_machines : Mapped[list["Like_Machine"]] = relationship(back_populates="user")
-    # like_routines : Mapped[list["Like_Routine"]] = relationship(back_populates="user")
-    # like_boards : Mapped[list["Like_Board"]] = relationship(back_populates="user")
+    like_gyms : Mapped[list["Like_Gym"]] = relationship(back_populates="user")
+    like_machines : Mapped[list["Like_Machine"]] = relationship(back_populates="user")
+    like_routines : Mapped[list["Like_Routine"]] = relationship(back_populates="user")
+    like_boards : Mapped[list["Like_Board"]] = relationship(back_populates="user")
 
     # gym_staffs : Mapped["Gym_Staff"] = relationship(back_populates="user", cascade="all, delete-orphan", uselist=False)
 

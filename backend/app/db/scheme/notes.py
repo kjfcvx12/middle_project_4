@@ -4,14 +4,14 @@ from typing import Annotated
 
 
 class Note_Base(BaseModel):
-    send_id: int
     rece_id: int
     title: str
     content: str
 
 
 class Note_Create(Note_Base):
-    pass
+    send_id:int
+
 
 
 class Note_Send_del(BaseModel):
@@ -31,7 +31,7 @@ class Note_In_DB(Note_Base):
 
 
 class Note_Read(Note_In_DB):
-    pass
+    send_id:int
 
 
 

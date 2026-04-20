@@ -20,6 +20,7 @@ class User_Crud:
         result = await db.execute(select(User).filter(User.email == email))
         return result.scalars().first()
 
+    # 유저 이름&전화로 이메일 찾기
     @staticmethod
     async def crud_user_get_by_name_phone(db: AsyncSession, u_name: str, phone: str) -> User | None:
         result = await db.execute(select(User).filter(User.u_name == u_name, User.phone==phone))
@@ -31,7 +32,14 @@ class User_Crud:
     async def crud_user_get_by_u_id(db:AsyncSession,u_id:int) -> User | None:
         result = await db.execute(select(User).filter(User.u_id == u_id))
         return result.scalars().first()
+    
 
+    # role 찾기
+    @staticmethod
+    async def crud_user_get_by_role(db:AsyncSession, u_id:int) -> User |None:
+        result=await db.execute(select(User.role).filter(User.u_id==u_id))
+        return result.scalar_one_or_none()
+    
     
     # 유저 생성
     @staticmethod

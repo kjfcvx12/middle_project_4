@@ -4,6 +4,8 @@ from fastapi import HTTPException, status
 from app.db.crud.notes import Note_Crud
 from app.db.scheme.notes import Note_Create, Note_Read, Note_Rece_del, Note_Send_del
 
+from app.db.crud.users import User_Crud
+
 class Note_Service:
 
     # 본인 보낸쪽지함 조회
@@ -44,20 +46,24 @@ class Note_Service:
 
     # 쪽지 생성
     @staticmethod
-    async def services_note_create(db:AsyncSession, note:Note_Create) -> str:
+    async def services_note_create(db:AsyncSession, note:Note_Create, u_id:int) -> str:
 
         try:
+            note.send_id = u_id 
+
             new_note = await Note_Crud.crud_note_create(db, note)
-            
+
+            role=await User_Crud.crud_user_get_by_role(db, note.rece_id)
+
             await db.commit()
             await db.refresh(new_note)
 
-            if note.rece_id=='admin':
+            if role=='admin':
                 msg="문의가 관리자에게 접수되었습니다."
             else:
                 msg=f"쪽지가 {note.rece_id}님에게 전송되었습니다."
 
-            return msg 
+            return msg
         
         except Exception as e:
             await db.rollback()
@@ -65,13 +71,13 @@ class Note_Service:
                                 detail=f"쪽지 전송 실패 :{e}")
        
     
-    # 송신자 삭제 변경
+    # 본인 보낸쪽지함 삭제 변경
     @staticmethod
-    async def services_note_del_send(db:AsyncSession, n_id:int, u_id:int, note_del_send:Note_Send_del) -> str:
+    async def services_note_del_send(db:AsyncSession, n_id:int, u_id:int) -> str:
         try:
-            note_del=note_del_send.model_dump(exclude_unset=True)
+            update_data =Note_Send_del(send_del=True)
 
-            note=await Note_Crud.crud_note_send_update(db, n_id, u_id, note_del)
+            note=await Note_Crud.crud_note_send_update(db, n_id, u_id, update_data)
             
             if not note:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
@@ -79,7 +85,6 @@ class Note_Service:
             
             
             await db.commit()
-            await db.refresh(note)
 
             return "보낸 편지함의 쪽지를 삭제하였습니다."
         
@@ -93,13 +98,13 @@ class Note_Service:
     
 
 
-    # 송신자 삭제 변경
+    # 본인 받은쪽지함 삭제 변경
     @staticmethod
-    async def services_note_del_rece(db:AsyncSession, n_id:int, u_id:int, note_del_rece:Note_Rece_del) -> str:
+    async def services_note_del_rece(db:AsyncSession, n_id:int, u_id:int) -> str:
         try:
-            note_del=note_del_rece.model_dump(exclude_unset=True)
+            update_data = Note_Rece_del(rece_del=True)
 
-            note=await Note_Crud.crud_note_rece_update(db, n_id, u_id, note_del)
+            note=await Note_Crud.crud_note_rece_update(db, n_id, u_id, update_data)
 
             if not note:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
@@ -107,7 +112,6 @@ class Note_Service:
             
             
             await db.commit()
-            await db.refresh(note)
 
             return "받은 편지함의 쪽지를 삭제하였습니다."
 

@@ -4,7 +4,7 @@ from fastapi.concurrency import asynccontextmanager
 from dotenv import load_dotenv
 
 from app.db.database import Base, async_engine
-from app.routers import users
+from app.routers import users, notes
 #from app.middleware.token_refresh import RefreshTokenMiddleware
 
 
@@ -28,6 +28,7 @@ async def root():
     return {"message": "home"}
 
 app.include_router(users.router)
+app.include_router(notes.router)
 
 
 #uvicorn main:app --port=8081 --reload

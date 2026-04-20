@@ -4,6 +4,8 @@ from app.db.crud.users import User_Crud
 
 from app.db.scheme.users import User_Create, User_Update, User_Login
 
+from app.db.scheme.favorite_gyms import Favorite_Gym_Read
+
 from app.core.jwt_handle import get_password_hash, verify_password, create_access_token, create_refresh_token
 
 class User_Service:
@@ -178,3 +180,69 @@ class User_Service:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
                                 detail=f"사용자 삭제 실패 :{e}")
     
+
+
+
+
+
+
+
+
+
+    # 유저 운동기록 조회
+    @staticmethod
+    async def services_user_get_logs(db: AsyncSession, u_id: int, page: int):
+        try:
+            # 1. CRUD 호출하여 데이터와 전체 개수 가져오기
+            # offset 계산: (페이지 번호 - 1) * 페이지당 개수
+            #offset = (page - 1) * size
+            logs, offset, total = await Log_Crud.crud_log_get_by_u_id(db, u_id, page)
+
+            # 2. 유저 혹은 기록 존재 여부 체크
+            if not logs and page == 1:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="운동 기록을 찾을 수 없습니다."
+                )
+
+            # 3. 데이터 포맷팅 (성공 응답 구조 생성)
+            return {
+                "total": total,
+                "page": page,
+                "size": size,
+                "data": [
+                    {
+                        "log_id": log.id,
+                        "r_id": log.routine_id,
+                        "r_name": log.routine_name,
+                        "log_date": log.created_at
+                    }
+                    for log in logs
+                ]
+            }
+
+        except HTTPException:
+            raise
+
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"운동 기록 조회 중 서버 오류 발생: {str(e)}"
+            )
+
+
+    # 유저 체육관 즐겨찾기 목록 조회
+    # 유저 운동기구 즐겨찾기 목록 조회
+    # 유저 루틴 즐겨찾기 목록 조회
+    
+
+    # 유저가 좋아요 누른 체육관
+
+
+    # 유저가 좋아요 누른 운동기구
+
+    # 유저가 좋아요 누른 루틴
+
+
+    # 유저가 좋아요 누른 게시물
+
