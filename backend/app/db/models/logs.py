@@ -15,9 +15,10 @@ class Log(Base):
 
     log_id: Mapped[int] = mapped_column(primary_key=True)
 
-    u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id"))
-    r_id: Mapped[int] = mapped_column(ForeignKey("routines.r_id"))
-    m_id: Mapped[int] = mapped_column(ForeignKey("machines.m_id"))
+    # cascade 추가
+    u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id", ondelete="CASCADE"))
+    r_id: Mapped[int] = mapped_column(ForeignKey("routines.r_id", ondelete="CASCADE"))
+    m_id: Mapped[int] = mapped_column(ForeignKey("machines.m_id", ondelete="CASCADE"))
 
     log_date: Mapped[DateTime] = mapped_column(
         DateTime, server_default=func.now()
@@ -25,10 +26,10 @@ class Log(Base):
 
     attend: Mapped[bool] = mapped_column(default=False)
 
-    # 관계
+    # 핵심 수정 (delete → delete-orphan)
     details: Mapped[List["LogDetail"]] = relationship(
         back_populates="log",
-        cascade="all, delete"
+        cascade="all, delete-orphan"
     )
 
     user: Mapped["User"] = relationship()

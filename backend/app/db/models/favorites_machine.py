@@ -12,12 +12,12 @@ class Favorite_Machine(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id"))
-    m_id: Mapped[int] = mapped_column(ForeignKey("machines.m_id"))
+    u_id = mapped_column(ForeignKey("users.u_id", ondelete="CASCADE"))
+    m_id = mapped_column(ForeignKey("machines.m_id", ondelete="CASCADE"))
 
     # 관계
-    user: Mapped["User"] = relationship()
-    machine: Mapped["Machine"] = relationship()
+    user = relationship("User", back_populates="favorite_machines")
+    machine = relationship("Machine", back_populates="favorite_machines")
 
     # 중복 방지
     __table_args__ = (

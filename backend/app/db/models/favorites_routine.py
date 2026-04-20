@@ -12,12 +12,12 @@ class Favorite_Routine(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id"))
-    r_id: Mapped[int] = mapped_column(ForeignKey("routines.r_id"))
+    u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id", ondelete="CASCADE"))
+    r_id: Mapped[int] = mapped_column(ForeignKey("routines.r_id", ondelete="CASCADE"))
 
     # 관계
-    user: Mapped["User"] = relationship()
-    routine: Mapped["Routine"] = relationship()
+    user = relationship("User", back_populates="favorite_routines")
+    routine = relationship("Routine", back_populates="favorite_routines")
 
     # 중복 방지
     __table_args__ = (

@@ -11,7 +11,10 @@ class LogDetail(Base):
 
     log_d_id: Mapped[int] = mapped_column(primary_key=True)
 
-    log_id: Mapped[int] = mapped_column(ForeignKey("logs.log_id"))
+    # cascade 추가
+    log_id: Mapped[int] = mapped_column(
+        ForeignKey("logs.log_id", ondelete="CASCADE")
+    )
 
     sets: Mapped[int] = mapped_column(nullable=False)
     reps: Mapped[int] = mapped_column(nullable=False)
@@ -19,5 +22,4 @@ class LogDetail(Base):
     fail_memo: Mapped[str | None] = mapped_column(String(100))
     memo: Mapped[str] = mapped_column(String(300), nullable=False)
 
-    # 관계
     log: Mapped["Log"] = relationship(back_populates="details")
