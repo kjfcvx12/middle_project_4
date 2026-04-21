@@ -11,10 +11,7 @@ def createGymMachineService(db: Session, g_id: int, m_id: int, qty: int = 1):
     ).first()
 
     if exist:
-        raise HTTPException(
-            status_code=400,
-            detail="이미 등록된 기구입니다"
-        )
+        raise HTTPException(status_code=400)
 
     try:
         obj = Gym_Machine(
@@ -31,7 +28,7 @@ def createGymMachineService(db: Session, g_id: int, m_id: int, qty: int = 1):
 
     except Exception:
         db.rollback()
-        raise HTTPException(status_code=400)
+        raise HTTPException(status_code=500)
 
 
 # UPDATE
@@ -43,10 +40,7 @@ def updateGymMachineService(db: Session, g_id: int, m_id: int, qty: int):
     ).first()
 
     if not obj:
-        raise HTTPException(
-            status_code=404,
-            detail="해당 기구가 존재하지 않습니다"
-        )
+        raise HTTPException(status_code=404)
 
     try:
         obj.qty = qty
@@ -58,7 +52,7 @@ def updateGymMachineService(db: Session, g_id: int, m_id: int, qty: int):
 
     except Exception:
         db.rollback()
-        raise HTTPException(status_code=400)
+        raise HTTPException(status_code=500)
 
 # DELETE
 def deleteGymMachineService(db: Session, g_id: int, m_id: int):
