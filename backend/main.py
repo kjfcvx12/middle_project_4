@@ -7,6 +7,10 @@ from app.db.database import Base, async_engine
 #from app.routers import users
 #from app.middleware.token_refresh import RefreshTokenMiddleware
 
+# routers import 추가
+#from app.routers import gyms
+#from app.routers import gym_staffs
+#from app.routers import gym_machines
 
 load_dotenv(dotenv_path="../../.env")
 
@@ -28,6 +32,8 @@ async def root():
     return {"message": "home"}
 
 #app.include_router(users.router)
-
+#app.include_router(gyms.router)
+#app.include_router(gym_staffs.router)
+#app.include_router(gym_machines.router)
 
 #uvicorn main:app --port=8081 --reload

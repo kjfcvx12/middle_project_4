@@ -8,22 +8,39 @@ from app.services import gym_staffs as gym_staff_service
 from app.services import gym_machines as gym_machine_service
 
 def createGymService(db: Session, data: GymCreate):
-    return gym_crud.create_gym(db, data)
+    gym = gym_crud.create_gym(db, data)
+
+    db.commit()
+    db.refresh(gym)
+
+    return gym
 
 def getGymService(db: Session, g_id: int):
     return gym_crud.get_gym(db, g_id)
 
 def updateGymService(db: Session, g_id: int, data: GymUpdate):
     gym = gym_crud.get_gym(db, g_id)
+
     if not gym:
         return None
-    return gym_crud.update_gym(db, gym, data)
+
+    gym = gym_crud.update_gym(db, gym, data)
+
+    db.commit()
+    db.refresh(gym)
+
+    return gym
 
 def deleteGymService(db: Session, g_id: int):
     gym = gym_crud.get_gym(db, g_id)
+
     if not gym:
         return False
+
     gym_crud.delete_gym(db, gym)
+
+    db.commit()
+
     return True
 
 def listGymService(
@@ -43,7 +60,6 @@ def listGymService(
         query = query.filter(Gym.g_addr.contains(address))
 
     total = query.count()
-
 
     if sort == "g_name,asc":
         query = query.order_by(Gym.g_name.asc())

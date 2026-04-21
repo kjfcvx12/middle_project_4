@@ -2,7 +2,8 @@ from sqlalchemy.orm import Session
 from app.db.models.gym_machines import Gym_Machine
 
 # CREATE
-def createGymMachineService(db: Session, g_id: int, m_id: int, qty: int):
+def createGymMachineService(db: Session, g_id: int, m_id: int, qty: int = 1):
+
     exist = db.query(Gym_Machine).filter(
         Gym_Machine.g_id == g_id,
         Gym_Machine.m_id == m_id
@@ -17,11 +18,15 @@ def createGymMachineService(db: Session, g_id: int, m_id: int, qty: int):
         qty=qty
     )
 
-    db.add(obj)
-    db.commit()
-    db.refresh(obj)
+    try:
+        db.add(obj)
+        db.commit()
+        db.refresh(obj)
+        return obj
 
-    return obj
+    except Exception:
+        db.rollback()
+        return None
 
 # UPDATE
 def updateGymMachineService(db: Session, g_id: int, m_id: int, qty: int):
@@ -42,6 +47,7 @@ def updateGymMachineService(db: Session, g_id: int, m_id: int, qty: int):
 
 # DELETE
 def deleteGymMachineService(db: Session, g_id: int, m_id: int):
+
     obj = db.query(Gym_Machine).filter(
         Gym_Machine.g_id == g_id,
         Gym_Machine.m_id == m_id
@@ -50,13 +56,18 @@ def deleteGymMachineService(db: Session, g_id: int, m_id: int):
     if not obj:
         return None
 
-    db.delete(obj)
-    db.commit()
+    try:
+        db.delete(obj)
+        db.commit()
+        return True
 
-    return True
+    except Exception:
+        db.rollback()
+        return False
 
 # LIST (옵션 - 운동기구 조회용)
 def getGymMachineService(db: Session, g_id: int):
+
     return (
         db.query(Gym_Machine)
         .filter(Gym_Machine.g_id == g_id)
