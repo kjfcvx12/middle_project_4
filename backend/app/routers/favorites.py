@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.services.favorites import *
 from app.core.jwt_handle import get_current_user
 from app.db.database import get_db
-from app.schemas.favorite import (
+from app.db.scheme.favorites import (
     FavoriteGymCreate,
     FavoriteMachineCreate,
     FavoriteRoutineCreate
