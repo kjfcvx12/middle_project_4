@@ -36,13 +36,16 @@ class BoardCrud:
             count_stmt = count_stmt.where(condition)
 
     # 정렬
-        sort_field, sort_order = sort.split(",")
-        sort_column = getattr(Board, sort_field)
+        if sort:
+            sort_field, sort_order = sort.split(",")
+            sort_column = getattr(Board, sort_field)
 
-        if sort_order == "desc":
-            stmt = stmt.order_by(sort_column.desc())
+            stmt = stmt.order_by(
+                sort_column.desc() if sort_order == "desc" else sort_column.asc(),
+                Board.created_at.desc()
+        )
         else:
-            stmt = stmt.order_by(sort_column.asc())
+            stmt = stmt.order_by(Board.created_at.desc())
 
     # 페이징
         offset = (page - 1) * size
