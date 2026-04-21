@@ -1,58 +1,73 @@
 #함수명
-# crud_machines_create_machine
-# crud_machines_get_machine
-# crud_machines_update_machine
-# crud_machines_delete_machine
+# crud_machines_create
+# crud_machines_get
+# crud_machines_update
+# crud_machines_delete
 
 
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from models.machines import Machine
 
 
-#새 운동기구 생성
-@staticmethod
-async def crud_machines_create_machine(db, machine_create):
-    make_machine=Machine(
-        m_name=machine_create.m_name,
-        dsc=machine_create.dsc,
-        m_url=machine_create.m_url,
-        p_id=machine_create.p_id
-    )
-    db.add(make_machine)
-    return make_machine
+class Machines_CRUD:
+
+    #새 운동기구 생성
+    @staticmethod
+    async def crud_machines_create(db, machine_create):
+        machine_query=Machine(
+            m_name=machine_create.m_name,
+            dsc=machine_create.dsc,
+            m_url=machine_create.m_url,
+            p_id=machine_create.p_id
+        )
+        db.add(machine_query)
+        return machine_query
 
 
-# 운동기구 수정
-@staticmethod
-async def crud_machines_update_machine(db, machine, machine_update):
-    update_machine=machine_update.dict(exclude_unset=True)
-    for key, value in update_machine.items():
-        setattr(machine, key, value)
-    return machine
+    # 운동기구 수정
+    @staticmethod
+    async def crud_machines_update(db, machine, machine_update):
+        machine_query=machine_update.dict(exclude_unset=True)
+        for key, value in machine_query.items():
+            setattr(machine, key, value)
+        return machine
 
-#운동기구 삭제
-@staticmethod
-async def crud_machines_delete_machine(db, machine):
-    await db.delete(machine)
+    #운동기구 삭제
+    @staticmethod
+    async def crud_machines_delete(db, machine):
+        await db.delete(machine)
+        return machine
 
 
-#운동기구 조회 기능
-@staticmethod
-async def crud_machines_get_machine(db, part=None, keyword=None):
-    check_machine=select(Machine)
+    #운동기구 조회 기능
+    @staticmethod
+    async def crud_machines_get(db,part=None,keyword=None,page:int=1,size:int=10):
+        machine_query=select(Machine)
 
-    #파트 검색
-    if part:
-        check_machine=check_machine.where(Machine.p_id==part)
+        #파트 검색
+        if part is not None:
+            machine_query=machine_query.where(Machine.p_id==part)
 
-    #이름 검색
-    if keyword:
-        check_machine=check_machine.where(Machine.m_name.like(f"%{keyword}"))
+        #기구 검색
+        if keyword:
+            machine_query=machine_query.where(Machine.m_name.ilike(f"%{keyword}%"))
 
-    result=await db.execute(check_machine)
-    machine_list=result.scalars().all()
+        #정렬(order_by)
+        machine_query=machine_query.order_by(Machine.m_id.desc())
 
-    return machine_list
+        #전체 개수 먼저 구하기
+        total_machine=select(func.count()).select_from(machine_query.subquery())
+        total=(await db.execute(total_machine)).scalar()
 
-    
+        #페이지네이션을 적용
+        machine_query=machine_query.offset((page-1)*size).limit(size)
+
+        result=await db.execute(machine_query)
+        machine_list=result.scalars().all()
+
+
+        #total + 데이터와 같이 반환
+        return total, machine_list
+
+        

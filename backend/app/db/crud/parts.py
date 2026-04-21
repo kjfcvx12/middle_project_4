@@ -1,7 +1,7 @@
 #함수명
-#crud_parts_create_part
-#crud_parts_get_part
-#crud_parts_delete_part
+#crud_parts_create
+#crud_parts_get
+#crud_parts_delete
 
 from sqlalchemy import select
 from models.parts import Part
@@ -10,7 +10,7 @@ from models.machines import Machine
 
 #파트 생성
 @staticmethod
-async def crud_parts_create_part(db, part_create):
+async def crud_parts_create(db, part_create):
     created_part=Part(
         p_name=part_create.p_name
     )
@@ -21,14 +21,14 @@ async def crud_parts_create_part(db, part_create):
 
 #파트 삭제
 @staticmethod
-async def crud_parts_delete_part(db, part):
+async def crud_parts_delete(db, part):
     await db.delete(part)
     return part
 
 
 #파트 전체 조회
 @staticmethod
-async def crud_parts_get_part(db):
+async def crud_parts_get(db):
     check_part=select(Part)
     result=await db.execute(check_part)
     part_list=result.scalars().all()

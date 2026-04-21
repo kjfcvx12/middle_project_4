@@ -12,5 +12,5 @@ class Machine(Base):
     dsc:Mapped[str]=mapped_column(String(200), nullable=False)
     m_url:Mapped[str]=mapped_column(String(255))
     p_id:Mapped[int]=mapped_column(ForeignKey('parts.p_id'), nullable=False)
-
+    
     part:Mapped["Part"]= relationship("Part",back_populates="parts")
