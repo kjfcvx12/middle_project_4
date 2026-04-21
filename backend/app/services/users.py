@@ -4,9 +4,21 @@ from app.db.crud.users import User_Crud
 
 from app.db.scheme.users import User_Create, User_Update, User_Login
 
+from app.db.scheme.logs import Log_Read
+
+from app.db.crud.logs import Log_crud
+
 from app.db.scheme.favorite_gyms import Favorite_Gym_Read
+from app.db.scheme.favorite_machines import Favorite_Machine_Read
+from app.db.scheme.favorite_routines import Favorite_Routine_Read
+
+from app.db.crud.favorite_gyms import Favorite_Gym_Crud
+from app.db.crud.favorite_machines import Favorite_Machine_Crud
+from app.db.crud.favorite_routines import Favorite_Routine_Crud
+
 
 from app.core.jwt_handle import get_password_hash, verify_password, create_access_token, create_refresh_token
+
 
 class User_Service:
 
