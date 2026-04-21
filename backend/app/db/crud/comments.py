@@ -6,7 +6,7 @@ from app.db.scheme.comments import CommentCreate,CommentUpdate
 class CommentCrud:
 
     #댓글 추가
-    @staticmethod
+    @staticmethod 
     async def crud_comments_create(db:AsyncSession, comment_data:CommentCreate, u_id:int):
         new_comment = Comment(
             b_id = comment_data.b_id,

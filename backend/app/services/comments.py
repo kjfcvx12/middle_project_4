@@ -8,12 +8,13 @@ from app.db.scheme.comments import CommentCreate, CommentUpdate
 class CommentService:
     
     #댓글 추가
-    @staticmethod
-    async def services_comments_create(db: AsyncSession, comment_data: CommentCreate, current_user:int):
+    @staticmethod #user push 후 함수에 current_user:int 추가
+    async def services_comments_create(db: AsyncSession, comment_data: CommentCreate):
         try:
             if not comment_data.c_content or not comment_data.c_content.strip():
                 raise HTTPException(status_code=400, detail="댓글 내용은 비어있을 수 없습니다")
-            new_comment = await CommentCrud.crud_comments_create(db, comment_data, current_user)
+            #user push 후 new_comment안에 1삭제 current_user 추가
+            new_comment = await CommentCrud.crud_comments_create(db, comment_data,1)
 
             await db.commit()
             await db.refresh(new_comment)
@@ -23,13 +24,13 @@ class CommentService:
         except HTTPException:
             await db.rollback()
             raise
-        except Exception:
+        except Exception as e:
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="댓글 작성 실패")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"댓글 작성 실패:{e}")
     
     #해당 게시글 댓글 조회
     @staticmethod
-    async def services_board_comments_read(db: AsyncSession, b_id: int, current_user: int):
+    async def services_board_comments_read(db: AsyncSession, b_id: int):
         comments = await CommentCrud.crud_board_comments_read(db, b_id)
         
         comment_list = []
@@ -40,7 +41,7 @@ class CommentService:
                 "u_id": comment.u_id,
                 "c_content": comment.c_content,
                 "created_at": comment.created_at,
-                "is_owner": comment.u_id == current_user
+                # "is_owner": comment.u_id == current_user
             })
 
         return {"msg": "댓글 조회 성공","data": comment_list}

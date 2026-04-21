@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.database import get_db
-from app.db.scheme.boards import BoardCreate, BoardRead, BoardUpdate
+from app.db.scheme.boards import BoardCreate, BoardUpdate
 from app.services.boards import BoardService
 from fastapi import Query
 from typing import Optional
@@ -13,7 +13,7 @@ router = APIRouter(prefix="/boards", tags=["Board"])
 @router.post("/boards")
 async def routers_boards_create(board:BoardCreate, db:AsyncSession = Depends(get_db)):
     db_board = BoardService.services_boards_create(db,board)
-    return db_board
+    return await db_board
 
 #게시물 조회
 @router.get("/boards")
@@ -41,7 +41,7 @@ async def get_board_read_detail(b_id: int,db: AsyncSession = Depends(get_db)):
 #게시물 수정
 @router.put("/boards/{b_id}")
 async def routers_boards_update(b_id:int, board_data:BoardUpdate, db:AsyncSession = Depends(get_db)):
-    return await BoardService.services_boards_update(db,board_data, b_id)
+    return await BoardService.services_boards_update(db, b_id, board_data)
 
 #게시물 삭제
 @router.delete("/boards/{b_id}")

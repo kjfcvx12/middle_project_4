@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
-from app.db.models import Board, User
+from app.db.models import Board
 from app.db.crud.boards import BoardCrud
 from app.db.scheme.boards import BoardCreate, BoardUpdate
 
@@ -17,7 +17,7 @@ class BoardService:
             await db.refresh(new_board)
 
             return {
-                "msg": "댓글 작성 성공",
+                "msg": "게시글 작성 성공",
                 "data": new_board
         }
 
@@ -71,7 +71,7 @@ class BoardService:
         if not db_board:
             raise HTTPException(status_code=404, detail="게시물을 찾을 수 없습니다")
         
-        if board_data.content is not None and not board_data.content.strip():
+        if board_data.b_content is not None and not board_data.b_content.strip():
             raise HTTPException(status_code=400, detail="내용은 비어있을 수 없습니다")
 
         return await BoardCrud.crud_boards_update(db, db_board, board_data)
