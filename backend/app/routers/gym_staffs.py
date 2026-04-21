@@ -12,14 +12,9 @@ router = APIRouter(prefix="/gym_staffs", tags=["Gym_Staff"])
 def createGymStaff(
     data: GymStaffCreate,
     db: Session = Depends(get_db),
-    # user=Depends(get_manager_user) (권한 : 매니저)
+    # user=Depends(get_manager_user)
 ):
-    result = service.createGymStaffService(db, data.g_id, data.u_id)
-
-    if result is None:
-        raise HTTPException(
-            status_code=400
-        )
+    service.createGymStaffService(db, data.g_id, data.u_id)
 
     return {
         "msg": "트레이너 등록 완료"
@@ -30,14 +25,9 @@ def createGymStaff(
 def deleteGymStaff(
     data: GymStaffDelete,
     db: Session = Depends(get_db),
-    # user=Depends(get_manager_user) (권한 : 매니저)
+    # user=Depends(get_manager_user)
 ):
-    result = service.deleteGymStaffService(db, data.g_id, data.u_id)
-
-    if result is None:
-        raise HTTPException(
-            status_code=404
-        )
+    service.deleteGymStaffService(db, data.g_id, data.u_id)
 
     return {
         "msg": "트레이너 등록 취소"

@@ -6,42 +6,56 @@ from sqlalchemy.orm import Session
 from app.db.models.gyms import Gym
 from app.services import gym_staffs as gym_staff_service
 from app.services import gym_machines as gym_machine_service
+from fastapi import HTTPException
 
 def createGymService(db: Session, data: GymCreate):
-    gym = gym_crud.create_gym(db, data)
+    try:
+        gym = gym_crud.create_gym(db, data)
+        db.commit()
+        db.refresh(gym)
+        return gym
 
-    db.commit()
-    db.refresh(gym)
-
-    return gym
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=400)
 
 def getGymService(db: Session, g_id: int):
-    return gym_crud.get_gym(db, g_id)
+    gym = gym_crud.get_gym(db, g_id)
+
+    if not gym:
+        raise HTTPException(status_code=404)
+
+    return gym
 
 def updateGymService(db: Session, g_id: int, data: GymUpdate):
     gym = gym_crud.get_gym(db, g_id)
 
     if not gym:
-        return None
+        raise HTTPException(status_code=404, detail="헬스장 없음")
 
-    gym = gym_crud.update_gym(db, gym, data)
+    try:
+        gym = gym_crud.update_gym(db, gym, data)
+        db.commit()
+        db.refresh(gym)
+        return gym
 
-    db.commit()
-    db.refresh(gym)
-
-    return gym
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=400)
 
 def deleteGymService(db: Session, g_id: int):
     gym = gym_crud.get_gym(db, g_id)
 
     if not gym:
-        return False
+        raise HTTPException(status_code=404)
 
-    gym_crud.delete_gym(db, gym)
+    try:
+        gym_crud.delete_gym(db, gym)
+        db.commit()
 
-    db.commit()
-
-    return True
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500)
 
 def listGymService(
     db: Session,

@@ -16,16 +16,9 @@ router = APIRouter(prefix="/gym_machines", tags=["Gym_Machine"])
 def createGymMachine(
     data: GymMachineCreate,
     db: Session = Depends(get_db),
-    # user=Depends(get_manager_user) (권한 : 매니저/관리자)
+    # user=Depends(get_manager_user)
 ):
-    result = service.createGymMachineService(
-        db, data.g_id, data.m_id, data.qty
-    )
-
-    if result is None:
-        raise HTTPException(
-            status_code=400
-        )
+    service.createGymMachineService(db, data.g_id, data.m_id, data.qty)
 
     return {
         "msg": "기구 등록 완료"
@@ -36,16 +29,9 @@ def createGymMachine(
 def updateGymMachine(
     data: GymMachineUpdate,
     db: Session = Depends(get_db),
-    # user=Depends(get_manager_user) (권한 : 매니저/관리자)
+    # user=Depends(get_manager_user)
 ):
-    result = service.updateGymMachineService(
-        db, data.g_id, data.m_id, data.qty
-    )
-
-    if result is None:
-        raise HTTPException(
-            status_code=400
-        )
+    service.updateGymMachineService(db, data.g_id, data.m_id, data.qty)
 
     return {
         "msg": "수량 수정 완료"
@@ -56,16 +42,9 @@ def updateGymMachine(
 def deleteGymMachine(
     data: GymMachineDelete,
     db: Session = Depends(get_db),
-    # user=Depends(get_manager_user) (권한 : 매니저/관리자)
+    # user=Depends(get_manager_user)
 ):
-    result = service.deleteGymMachineService(
-        db, data.g_id, data.m_id
-    )
-
-    if result is None:
-        raise HTTPException(
-            status_code=404
-        )
+    service.deleteGymMachineService(db, data.g_id, data.m_id)
 
     return {
         "msg": "기구 제거 완료"
