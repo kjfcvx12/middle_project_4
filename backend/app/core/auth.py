@@ -89,7 +89,7 @@ async def auth_get_staff_id(u_id: int = Depends(auth_get_u_id), db: AsyncSession
             status_code=status.HTTP_403_FORBIDDEN, 
             detail="직원만 접근이 가능합니다.")
     
-    return u_id
+    return role
 
 
 

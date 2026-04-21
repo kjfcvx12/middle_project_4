@@ -14,5 +14,5 @@ class Like_Comment_In_DB(Like_Comment_Base):
     class Config:
         from_attributes = True
 
-class Like_Comment_Read(Like_Comment_Base):
+class Like_Comment_Read(Like_Comment_In_DB):
     pass

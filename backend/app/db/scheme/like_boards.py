@@ -14,5 +14,5 @@ class Like_Board_In_DB(Like_Board_Base):
     class Config:
         from_attributes = True
 
-class Like_Board_Read(Like_Board_Base):
+class Like_Board_Read(Like_Board_In_DB):
     pass

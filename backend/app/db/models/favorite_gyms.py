@@ -16,10 +16,10 @@ class Favorite_Gym(Base):
     gym_id: Mapped[int] = mapped_column(ForeignKey("gyms.gym_id"))
 
     # 관계
-    user: Mapped["User"] = relationship()
-    gym: Mapped["Gym"] = relationship()
+    user: Mapped["User"] = relationship(back_populates="favorites_gyms")
+    gym: Mapped["Gym"] = relationship(back_populates="favorites_gyms")
 
     # 중복 방지
     __table_args__ = (
-        UniqueConstraint("u_id", "gym_id"),
+        UniqueConstraint("u_id", "g_id"),
     )

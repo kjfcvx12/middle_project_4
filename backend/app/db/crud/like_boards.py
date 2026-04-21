@@ -1,7 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select, func
+from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy import func
 from app.db.models.like_boards import Like_Board
 from app.db.scheme.like_boards import Like_Board_Create
+
+from app.db.scheme.board import Board
 
 
 class Like_Board_Crud:
@@ -33,3 +37,31 @@ class Like_Board_Crud:
         
         return db_data.scalar()
 
+
+    # 유저 좋아요 게시글 페이지 조회
+    @staticmethod
+    async def crud_like_boards_page_by_u_id(db:AsyncSession, u_id:int, page: int = 1)->list[Like_Board]:
+        size=10
+        skip = (page - 1) * size
+        
+        query=(select(Like_Board)
+               .options(joinedload(Like_Board.board))
+               .where(Like_Board.u_id==u_id)
+               .order_by(Like_Board.l_b_id.desc())
+               .offset(skip)
+               .limit(size))
+        
+        result=await db.execute(query)
+
+        return result.scalars().unique().all()
+    
+
+    # 유저 좋아요 게시글 전체 개수
+    @staticmethod
+    async def crud_like_boards_all_by_u_id(db:AsyncSession, u_id:int)->int:
+        query=(select(func.count(Like_Board.l_b_id))
+               .where(Like_Board.u_id==u_id))
+        
+        result=await db.execute(query)
+
+        return result.scalar()

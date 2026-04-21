@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload, joinedload
 from app.db.models.favorite_machines import Favorite_Machine
 from app.db.scheme.favorite_machines import Favorite_Machine_Create, Favorite_Machine_Read
 
@@ -27,8 +28,11 @@ class Favorite_Machine_Crud:
 
     # 유저 운동기구 즐겨찾기 목록 조회
     @staticmethod
-    async def crud_favorite_gyms_by_u_id(db:AsyncSession, u_id:int) -> list[Favorite_Machine_Read]:
-        db_data=await db.execute(select(Favorite_Machine).
-                                 filter(Favorite_Machine.u_id==u_id))
+    async def crud_favorite_machines_by_u_id(db:AsyncSession, u_id:int) -> list[Favorite_Machine_Read]:
+        db_data=await db.execute(select(Favorite_Machine)
+                                 .options(joinedload(Favorite_Machine.machine))
+                                 .where(Favorite_Machine.u_id==u_id)
+                                 .order_by(Favorite_Machine.f_m_id.desc()))
+        
         
         return db_data.scalars().all()

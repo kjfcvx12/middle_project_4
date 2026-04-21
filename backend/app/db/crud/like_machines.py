@@ -1,5 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select, func
+from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy import func
 from app.db.models.like_machines import Like_Machine
 from app.db.scheme.like_machines import Like_Machine_Create
 
@@ -33,3 +35,31 @@ class Like_Machine_Crud:
         
         return db_data.scalar()
 
+
+    # 유저 좋아요 운동기구 page 조회
+    @staticmethod
+    async def crud_like_machines_page_by_u_id(db:AsyncSession, u_id:int, page: int = 1)->list[Like_Machine]:
+        size=10
+        skip = (page - 1) * size
+        
+        query=(select(Like_Machine)
+               .options(joinedload(Like_Machine.machine))
+               .where(Like_Machine.u_id==u_id)
+               .order_by(Like_Machine.l_m_id.desc())
+               .offset(skip)
+               .limit(size))
+        
+        result=await db.execute(query)
+
+        return result.scalars().unique().all()
+    
+
+    # 유저 좋아요 운동기구 전체 개수
+    @staticmethod
+    async def crud_like_machines_all_by_u_id(db:AsyncSession, u_id:int)->int:
+        query=(select(func.count(Like_Machine.l_m_id))
+               .where(Like_Machine.u_id==u_id))
+        
+        result=await db.execute(query)
+
+        return result.scalar()

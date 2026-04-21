@@ -14,5 +14,5 @@ class Like_Machine_In_DB(Like_Machine_Base):
     class Config:
         from_attributes = True
 
-class Like_Machine_Read(Like_Machine_Base):
+class Like_Machine_Read(Like_Machine_In_DB):
     pass

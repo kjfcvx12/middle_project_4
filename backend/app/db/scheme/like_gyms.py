@@ -14,5 +14,5 @@ class Like_Gym_In_DB(Like_Gym_Base):
     class Config:
         from_attributes = True
 
-class Like_Gym_Read(Like_Gym_Base):
+class Like_Gym_Read(Like_Gym_In_DB):
     pass

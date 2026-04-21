@@ -18,5 +18,5 @@ class Like_Machine(Base):
     m_id: Mapped[int] = mapped_column(ForeignKey("machines.m_id"), nullable=False)
 
     user: Mapped["User"] = relationship(back_populates="like_machines")
-    Machine: Mapped["Machine"] = relationship(back_populates="like_machines")
+    machine: Mapped["Machine"] = relationship(back_populates="like_machines")
 
