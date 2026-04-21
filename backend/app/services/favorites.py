@@ -1,3 +1,6 @@
+from fastapi import HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.db.crud.favorites_gym import *
 from app.db.crud.favorites_machine import *
 from app.db.crud.favorites_routine import *
@@ -5,107 +8,188 @@ from app.db.crud.favorites_routine import *
 
 # -------- gym --------
 
-# 즐겨찾기 조회
-def service_get_favorites_gym(db, user_id):
-    return crud_get_favorites_gym(db, user_id)
+async def service_get_favorites_gym(db: AsyncSession, user, u_id: int):
+    if user.u_id != u_id:
+        raise HTTPException(status_code=403, detail="권한 없음")
+
+    data = await crud_get_favorites_gym(db, u_id)
+
+    if not data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="즐겨찾기한 헬스장이 없습니다."
+        )
+
+    return data
 
 
-# 즐겨찾기 삭제
-def service_delete_favorite_gym(db, user, gym_id):
-    result = crud_delete_favorite_gym(db, user.u_id, gym_id)
-
+async def service_toggle_favorite_gym(db: AsyncSession, user, gym_id: int):
     try:
-        db.commit()   # 실제 DB 반영
-    except:
-        db.rollback() # 실패 시 되돌림
+        result = await crud_toggle_favorite_gym(db, user.u_id, gym_id)
+
+        await db.commit()
+
+        if result == "added":
+            return {"msg": "즐겨찾기 등록"}
+        return {"msg": "즐겨찾기 취소"}
+
+    except HTTPException:
         raise
 
-    if result:
-        return {"msg": "즐겨찾기 취소"}
-    return {"msg": "존재하지 않음"}
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"즐겨찾기 처리 실패: {e}"
+        )
 
 
-# 즐겨찾기 토글
-def service_toggle_favorite_gym(db, user, gym_id):
-    result = crud_toggle_favorite_gym(db, user.u_id, gym_id)
-
+async def service_delete_favorite_gym(db: AsyncSession, user, gym_id: int):
     try:
-        db.commit()
-    except:
-        db.rollback()
+        result = await crud_delete_favorite_gym(db, user.u_id, gym_id)
+
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="삭제할 즐겨찾기가 없습니다."
+            )
+
+        await db.commit()
+
+        return {"msg": "즐겨찾기 취소"}
+
+    except HTTPException:
         raise
 
-    if result == "added":
-        return {"msg": "즐겨찾기 등록"}
-    else:
-        return {"msg": "즐겨찾기 취소"}
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"삭제 실패: {e}"
+        )
 
 
 # -------- machine --------
 
-def service_get_favorites_machine(db, user_id):
-    return crud_get_favorites_machine(db, user_id)
+async def service_get_favorites_machine(db: AsyncSession, user, u_id: int):
+    if user.u_id != u_id:
+        raise HTTPException(status_code=403, detail="권한 없음")
+
+    data = await crud_get_favorites_machine(db, u_id)
+
+    if not data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="즐겨찾기한 머신이 없습니다."
+        )
+
+    return data
 
 
-def service_delete_favorite_machine(db, user, m_id):
-    result = crud_delete_favorite_machine(db, user.u_id, m_id)
-
+async def service_toggle_favorite_machine(db: AsyncSession, user, m_id: int):
     try:
-        db.commit()
-    except:
-        db.rollback()
+        result = await crud_toggle_favorite_machine(db, user.u_id, m_id)
+
+        await db.commit()
+
+        if result == "added":
+            return {"msg": "즐겨찾기 등록"}
+        return {"msg": "즐겨찾기 취소"}
+
+    except HTTPException:
         raise
 
-    if result:
-        return {"msg": "즐겨찾기 취소"}
-    return {"msg": "존재하지 않음"}
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"처리 실패: {e}"
+        )
 
 
-def service_toggle_favorite_machine(db, user, m_id):
-    result = crud_toggle_favorite_machine(db, user.u_id, m_id)
-
+async def service_delete_favorite_machine(db: AsyncSession, user, m_id: int):
     try:
-        db.commit()
-    except:
-        db.rollback()
+        result = await crud_delete_favorite_machine(db, user.u_id, m_id)
+
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="삭제할 즐겨찾기가 없습니다."
+            )
+
+        await db.commit()
+
+        return {"msg": "즐겨찾기 취소"}
+
+    except HTTPException:
         raise
 
-    if result == "added":
-        return {"msg": "즐겨찾기 등록"}
-    else:
-        return {"msg": "즐겨찾기 취소"}
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"삭제 실패: {e}"
+        )
 
 
 # -------- routine --------
 
-def service_get_favorites_routine(db, user_id):
-    return crud_get_favorites_routine(db, user_id)
+async def service_get_favorites_routine(db: AsyncSession, user, u_id: int):
+    if user.u_id != u_id:
+        raise HTTPException(status_code=403, detail="권한 없음")
+
+    data = await crud_get_favorites_routine(db, u_id)
+
+    if not data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="즐겨찾기한 루틴이 없습니다."
+        )
+
+    return data
 
 
-def service_delete_favorite_routine(db, user, r_id):
-    result = crud_delete_favorite_routine(db, user.u_id, r_id)
-
+async def service_toggle_favorite_routine(db: AsyncSession, user, r_id: int):
     try:
-        db.commit()
-    except:
-        db.rollback()
+        result = await crud_toggle_favorite_routine(db, user.u_id, r_id)
+
+        await db.commit()
+
+        if result == "added":
+            return {"msg": "즐겨찾기 등록"}
+        return {"msg": "즐겨찾기 취소"}
+
+    except HTTPException:
         raise
 
-    if result:
-        return {"msg": "즐겨찾기 취소"}
-    return {"msg": "존재하지 않음"}
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"처리 실패: {e}"
+        )
 
 
-def service_toggle_favorite_routine(db, user, r_id):
-    result = crud_toggle_favorite_routine(db, user.u_id, r_id)
-
+async def service_delete_favorite_routine(db: AsyncSession, user, r_id: int):
     try:
-        db.commit()
-    except:
-        db.rollback()
+        result = await crud_delete_favorite_routine(db, user.u_id, r_id)
+
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="삭제할 즐겨찾기가 없습니다."
+            )
+
+        await db.commit()
+
+        return {"msg": "즐겨찾기 취소"}
+
+    except HTTPException:
         raise
 
-    if result == "added":
-        return {"msg": "즐겨찾기 등록"}
-    else:
-        return {"msg": "즐겨찾기 취소"}
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"삭제 실패: {e}"
+        )

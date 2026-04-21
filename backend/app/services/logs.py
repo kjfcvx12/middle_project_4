@@ -1,34 +1,68 @@
+from fastapi import HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.db.crud.logs import *
 from app.db.crud.log_detail import *
 
+
 # 로그 + 디테일 생성
-def service_create_log(db, user, data):
-
-    log = crud_create_log(db, user.u_id, data)
-
-    # detail 생성
-    crud_create_log_details(db, log.log_id, data.details)
-
+async def service_create_log(db: AsyncSession, user, data):
     try:
-        db.commit()
-    except:
-        db.rollback()
+        log = await crud_create_log(db, user.u_id, data)
+
+        # detail 생성
+        await crud_create_log_details(db, log.log_id, data.details)
+
+        await db.commit()
+        await db.refresh(log)
+
+        return log
+
+    except HTTPException:
         raise
 
-    return log
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"로그 생성 실패: {e}"
+        )
 
 
-def service_get_logs(db, user):
-    return crud_get_logs(db, user.u_id)
+# 로그 조회
+async def service_get_logs(db: AsyncSession, user):
+    logs = await crud_get_logs(db, user.u_id)
+
+    if not logs:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="로그가 없습니다."
+        )
+
+    return logs
 
 
-def service_delete_log(db, user, log_id):
-    result = crud_delete_log(db, user.u_id, log_id)
-
+# 로그 삭제
+async def service_delete_log(db: AsyncSession, user, log_id: int):
     try:
-        db.commit()
-    except:
-        db.rollback()
+        result = await crud_delete_log(db, user.u_id, log_id)
+
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="삭제할 로그가 없습니다."
+            )
+
+        await db.commit()
+
+        return {"msg": "삭제 완료"}
+
+    except HTTPException:
         raise
 
-    return {"msg": "삭제 완료"} if result else {"msg": "없음"}
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"삭제 실패: {e}"
+        )
