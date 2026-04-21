@@ -1,37 +1,56 @@
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+
 from app.db.models.favorites_routine import Favorite_Routine
 
-# 조회 (유지)
-def crud_get_favorites_routine(db, user_id):
-    return db.query(Favorite_Routine).filter(
-        Favorite_Routine.u_id == user_id
-    ).all()
+
+class FavoriteRoutineCrud:
+
+    @staticmethod
+    async def crud_get_favorites_routine(db: AsyncSession, user_id: int):
+        result = await db.execute(
+            select(Favorite_Routine).where(
+                Favorite_Routine.u_id == user_id
+            )
+        )
+        return result.scalars().all()
 
 
-# 삭제 (선택 유지)
-def crud_delete_favorite_routine(db, user_id, r_id):
-    fav = db.query(Favorite_Routine).filter(
-        Favorite_Routine.u_id == user_id,
-        Favorite_Routine.r_id == r_id
-    ).first()
+    @staticmethod
+    async def crud_delete_favorite_routine(db: AsyncSession, user_id: int, r_id: int):
+        result = await db.execute(
+            select(Favorite_Routine).where(
+                Favorite_Routine.u_id == user_id,
+                Favorite_Routine.r_id == r_id
+            )
+        )
+        fav = result.scalar_one_or_none()
 
-    if fav:
-        db.delete(fav)
-        db.commit()
+        if fav:
+            await db.delete(fav)
+            await db.flush()
+            return True
+
+        return False
 
 
-#  토글
-def crud_toggle_favorite_routine(db, user_id, r_id):
-    fav = db.query(Favorite_Routine).filter(
-        Favorite_Routine.u_id == user_id,
-        Favorite_Routine.r_id == r_id
-    ).first()
+    @staticmethod
+    async def crud_toggle_favorite_routine(db: AsyncSession, user_id: int, r_id: int):
+        result = await db.execute(
+            select(Favorite_Routine).where(
+                Favorite_Routine.u_id == user_id,
+                Favorite_Routine.r_id == r_id
+            )
+        )
+        fav = result.scalar_one_or_none()
 
-    if fav:
-        db.delete(fav)
-        db.commit()
-        return {"status": "removed"}
-    else:
+        if fav:
+            await db.delete(fav)
+            await db.flush()
+            return "removed"
+
         new_fav = Favorite_Routine(u_id=user_id, r_id=r_id)
         db.add(new_fav)
-        db.commit()
-        return {"status": "added"}
+        await db.flush()
+
+        return "added"

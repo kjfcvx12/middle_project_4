@@ -1,37 +1,59 @@
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+
 from app.db.models.favorites_machine import Favorite_Machine
 
-# 조회 (유지)
-def crud_get_favorites_machine(db, user_id):
-    return db.query(Favorite_Machine).filter(
-        Favorite_Machine.u_id == user_id
-    ).all()
+
+class FavoriteMachineCrud:
+
+    # 조회
+    @staticmethod
+    async def crud_get_favorites_machine(db: AsyncSession, user_id: int):
+        result = await db.execute(
+            select(Favorite_Machine).where(
+                Favorite_Machine.u_id == user_id
+            )
+        )
+        return result.scalars().all()
 
 
-# 삭제 (선택 유지)
-def crud_delete_favorite_machine(db, user_id, m_id):
-    fav = db.query(Favorite_Machine).filter(
-        Favorite_Machine.u_id == user_id,
-        Favorite_Machine.m_id == m_id
-    ).first()
+    # 삭제
+    @staticmethod
+    async def crud_delete_favorite_machine(db: AsyncSession, user_id: int, m_id: int):
+        result = await db.execute(
+            select(Favorite_Machine).where(
+                Favorite_Machine.u_id == user_id,
+                Favorite_Machine.m_id == m_id
+            )
+        )
+        fav = result.scalar_one_or_none()
 
-    if fav:
-        db.delete(fav)
-        db.commit()
+        if fav:
+            await db.delete(fav)
+            await db.flush()
+            return True
+
+        return False
 
 
-#  토글
-def crud_toggle_favorite_machine(db, user_id, m_id):
-    fav = db.query(Favorite_Machine).filter(
-        Favorite_Machine.u_id == user_id,
-        Favorite_Machine.m_id == m_id
-    ).first()
+    # 토글
+    @staticmethod
+    async def crud_toggle_favorite_machine(db: AsyncSession, user_id: int, m_id: int):
+        result = await db.execute(
+            select(Favorite_Machine).where(
+                Favorite_Machine.u_id == user_id,
+                Favorite_Machine.m_id == m_id
+            )
+        )
+        fav = result.scalar_one_or_none()
 
-    if fav:
-        db.delete(fav)
-        db.commit()
-        return {"status": "removed"}
-    else:
+        if fav:
+            await db.delete(fav)
+            await db.flush()
+            return "removed"
+
         new_fav = Favorite_Machine(u_id=user_id, m_id=m_id)
         db.add(new_fav)
-        db.commit()
-        return {"status": "added"}
+        await db.flush()
+
+        return "added"

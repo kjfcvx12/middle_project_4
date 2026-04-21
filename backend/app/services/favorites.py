@@ -1,10 +1,9 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.crud.favorites_gym import *
-from app.db.crud.favorites_machine import *
-from app.db.crud.favorites_routine import *
-
+from app.db.crud.favorites_gym import FavoriteGymCrud
+from app.db.crud.favorites_machine import FavoriteMachineCrud
+from app.db.crud.favorites_routine import FavoriteRoutineCrud
 
 # -------- gym --------
 
@@ -12,7 +11,7 @@ async def service_get_favorites_gym(db: AsyncSession, user, u_id: int):
     if user.u_id != u_id:
         raise HTTPException(status_code=403, detail="권한 없음")
 
-    data = await crud_get_favorites_gym(db, u_id)
+    data = await FavoriteGymCrud.crud_get_favorites_gym(db, u_id)
 
     if not data:
         raise HTTPException(
@@ -25,7 +24,7 @@ async def service_get_favorites_gym(db: AsyncSession, user, u_id: int):
 
 async def service_toggle_favorite_gym(db: AsyncSession, user, gym_id: int):
     try:
-        result = await crud_toggle_favorite_gym(db, user.u_id, gym_id)
+        result = await FavoriteGymCrud.crud_toggle_favorite_gym(db, user.u_id, gym_id)
 
         await db.commit()
 
@@ -46,7 +45,7 @@ async def service_toggle_favorite_gym(db: AsyncSession, user, gym_id: int):
 
 async def service_delete_favorite_gym(db: AsyncSession, user, gym_id: int):
     try:
-        result = await crud_delete_favorite_gym(db, user.u_id, gym_id)
+        result = await FavoriteGymCrud.crud_delete_favorite_gym(db, user.u_id, gym_id)
 
         if not result:
             raise HTTPException(
@@ -75,7 +74,7 @@ async def service_get_favorites_machine(db: AsyncSession, user, u_id: int):
     if user.u_id != u_id:
         raise HTTPException(status_code=403, detail="권한 없음")
 
-    data = await crud_get_favorites_machine(db, u_id)
+    data = await FavoriteMachineCrud.crud_get_favorites_machine(db, u_id)
 
     if not data:
         raise HTTPException(
@@ -88,7 +87,7 @@ async def service_get_favorites_machine(db: AsyncSession, user, u_id: int):
 
 async def service_toggle_favorite_machine(db: AsyncSession, user, m_id: int):
     try:
-        result = await crud_toggle_favorite_machine(db, user.u_id, m_id)
+        result = await FavoriteMachineCrud.crud_toggle_favorite_machine(db, user.u_id, m_id)
 
         await db.commit()
 
@@ -109,7 +108,7 @@ async def service_toggle_favorite_machine(db: AsyncSession, user, m_id: int):
 
 async def service_delete_favorite_machine(db: AsyncSession, user, m_id: int):
     try:
-        result = await crud_delete_favorite_machine(db, user.u_id, m_id)
+        result = await FavoriteMachineCrud.crud_delete_favorite_machine(db, user.u_id, m_id)
 
         if not result:
             raise HTTPException(
@@ -138,7 +137,7 @@ async def service_get_favorites_routine(db: AsyncSession, user, u_id: int):
     if user.u_id != u_id:
         raise HTTPException(status_code=403, detail="권한 없음")
 
-    data = await crud_get_favorites_routine(db, u_id)
+    data = await FavoriteRoutineCrud.crud_get_favorites_routine(db, u_id)
 
     if not data:
         raise HTTPException(
@@ -151,7 +150,7 @@ async def service_get_favorites_routine(db: AsyncSession, user, u_id: int):
 
 async def service_toggle_favorite_routine(db: AsyncSession, user, r_id: int):
     try:
-        result = await crud_toggle_favorite_routine(db, user.u_id, r_id)
+        result = await FavoriteRoutineCrud.crud_toggle_favorite_routine(db, user.u_id, r_id)
 
         await db.commit()
 
@@ -172,7 +171,7 @@ async def service_toggle_favorite_routine(db: AsyncSession, user, r_id: int):
 
 async def service_delete_favorite_routine(db: AsyncSession, user, r_id: int):
     try:
-        result = await crud_delete_favorite_routine(db, user.u_id, r_id)
+        result = await FavoriteRoutineCrud.crud_delete_favorite_routine(db, user.u_id, r_id)
 
         if not result:
             raise HTTPException(
