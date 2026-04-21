@@ -6,7 +6,7 @@ from typing import Optional
 from users import User
 from parts import Part
 from routine_details import Routine_Detail
-from like_routines import Like_Routine
+
 
 class Routine(Base):
     __tablename__="routines"
@@ -19,5 +19,4 @@ class Routine(Base):
     part:Mapped["Part"]=relationship("Part",back_populates="routines")
     routine_details: Mapped[list["Routine_Detail"]] = relationship(
     "Routine_Detail", back_populates="routine", cascade="all, delete-orphan")
-    like_routines: Mapped[list["Like_Routine"]] = relationship(
-    "Like_Routine", back_populates="routine", cascade="all, delete-orphan")
+    

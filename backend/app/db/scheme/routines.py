@@ -25,7 +25,6 @@ class Routine_Read(Routine_Base):
     r_id : int
     u_id : int | None = None
     p_id : int  | None = None
-    p_name: str | None = None
     
     class Config:
         from_attributes = True
