@@ -3,18 +3,18 @@ from app.db.models.gyms import Gym
 from app.db.scheme.gyms import GymCreate, GymUpdate
 
 # CREATE
-def create_gym(db: Session, data: GymCreate) -> Gym:
+def crud_gym_create(db: Session, data: GymCreate) -> Gym:
     gym = Gym(**data.model_dump())
     db.add(gym)
     db.flush()
     return gym
 
 # READ
-def get_gym(db: Session, g_id: int):
+def crud_gym_get(db: Session, g_id: int):
     return db.query(Gym).filter(Gym.g_id == g_id).first()
 
 # UPDATE
-def update_gym(db: Session, gym: Gym, data: GymUpdate):
+def crud_gym_update(db: Session, gym: Gym, data: GymUpdate):
     update_data = data.model_dump(exclude_unset=True)
 
     for key, value in update_data.items():
@@ -24,16 +24,16 @@ def update_gym(db: Session, gym: Gym, data: GymUpdate):
     return gym
 
 # DELETE
-def delete_gym(db: Session, gym: Gym):
+def crud_gym_delete(db: Session, gym: Gym):
     db.delete(gym)
     db.flush()
 
 # LIST
-def get_gyms(db: Session, skip: int, limit: int):
+def crud_gyms_gets(db: Session, skip: int, limit: int):
     return db.query(Gym).offset(skip).limit(limit).all()
 
 # SEARCH
-def search_gyms(db: Session, name: str | None, address: str | None):
+def crud_gyms_search(db: Session, name: str | None, address: str | None):
     query = db.query(Gym)
 
     if name:

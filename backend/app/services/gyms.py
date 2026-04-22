@@ -1,70 +1,66 @@
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
+
 from app.db.crud import gyms as gym_crud
 from app.db.scheme.gyms import GymCreate, GymUpdate
-from app.db.models.users import User
-from sqlalchemy.orm import Session
 from app.db.models.gyms import Gym
-from app.services import gym_staffs as gym_staff_service
-from app.services import gym_machines as gym_machine_service
-from fastapi import HTTPException
+
 
 def services_gym_create(db: Session, data: GymCreate):
     try:
-        gym = gym_crud.createGym(db, data)
-
-        db.commit()
-        db.refresh(gym)
-
+        gym = gym_crud.crud_gym_create(db, data)
         return gym
 
-    except Exception:
-        db.rollback()
+    except Exception as e:
         raise HTTPException(status_code=400)
+
 
 def services_gym_service_get(db: Session, g_id: int):
-    gym = gym_crud.get_gym(db, g_id)
-
-    if not gym:
-        raise HTTPException(status_code=404)
-
-    return gym
-
-def services_gym_update(db: Session, g_id: int, data: GymUpdate):
-    gym = gym_crud.getGym(db, g_id)
-
-    if not gym:
-        raise HTTPException(status_code=404, detail="헬스장 없음")
-
     try:
-        gym = gym_crud.updateGym(db, gym, data)
+        gym = gym_crud.crud_gym_get(db, g_id)
 
-        db.commit()
-        db.refresh(gym)
+        if not gym:
+            raise HTTPException(status_code=404)
 
         return gym
 
-    except Exception:
-        db.rollback()
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500)
+
+
+def services_gym_update(db: Session, g_id: int, data: GymUpdate):
+    try:
+        gym = gym_crud.crud_gym_get(db, g_id)
+
+        if not gym:
+            raise HTTPException(status_code=404, detail="헬스장 없음")
+
+        updated_gym = gym_crud.crud_gym_update(db, gym, data)
+
+        return updated_gym
+
+    except HTTPException:
+        raise
+    except Exception as e:
         raise HTTPException(status_code=400)
 
-    except Exception:
-        db.rollback()
-        raise HTTPException(status_code=400)
 
 def services_gym_delete(db: Session, g_id: int):
-    gym = gym_crud.getGym(db, g_id)
-
-    if not gym:
-        raise HTTPException(status_code=404)
-
     try:
-        gym_crud.deleteGym(db, gym)
+        gym = gym_crud.crud_gym_get(db, g_id)
 
-        db.commit()
+        if not gym:
+            raise HTTPException(status_code=404)
 
-    except Exception:
-        db.rollback()
+        gym_crud.crud_gym_delete(db, gym)
+
+    except HTTPException:
+        raise
+    except Exception as e:
         raise HTTPException(status_code=500)
+
 
 def services_gym_list(
     db: Session,
@@ -74,34 +70,43 @@ def services_gym_list(
     address: str | None = None,
     sort: str | None = None
 ):
-    query = db.query(Gym)
+    try:
+        query = db.query(Gym)
 
-    if name:
-        query = query.filter(Gym.g_name.contains(name))
+        if name:
+            query = query.filter(Gym.g_name.contains(name))
 
-    if address:
-        query = query.filter(Gym.g_addr.contains(address))
+        if address:
+            query = query.filter(Gym.g_addr.contains(address))
 
-    total = query.count()
+        total = query.count()
 
-    if sort == "g_name,asc":
-        query = query.order_by(Gym.g_name.asc())
+        if sort == "g_name,asc":
+            query = query.order_by(Gym.g_name.asc())
 
-    elif sort == "g_id,desc":
-        query = query.order_by(Gym.g_id.desc())
+        elif sort == "g_id,desc":
+            query = query.order_by(Gym.g_id.desc())
 
-    elif sort == "like_count,desc":
-        query = query.order_by(Gym.g_id.desc())  # 현재 Gym 테이블만 쓰고 있어서 다른 테이블 기반 집계/정렬 안 됨 (like_gyms 테이블)
+        elif sort == "like_count,desc":
+            query = query.order_by(Gym.g_id.desc())
 
-    elif sort == "favorite_count,desc":
-        query = query.order_by(Gym.g_id.desc())  # 위와 동일 (favorite_gyms 테이블)
+        elif sort == "favorite_count,desc":
+            query = query.order_by(Gym.g_id.desc())
 
-    else:
-        query = query.order_by(Gym.g_id.desc())
+        else:
+            query = query.order_by(Gym.g_id.desc())
 
-    gyms = query.offset(skip).limit(limit).all()
+        gyms = query.offset(skip).limit(limit).all()
 
-    return gyms, total
+        return gyms, total
+
+    except Exception as e:
+        raise HTTPException(status_code=500)
+
 
 def services_gym_search(db: Session, name: str | None, address: str | None):
-    return gym_crud.search_gyms(db, name, address)
+    try:
+        return gym_crud.crud_gyms_search(db, name, address)
+
+    except Exception as e:
+        raise HTTPException(status_code=500)

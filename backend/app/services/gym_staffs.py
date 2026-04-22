@@ -1,64 +1,62 @@
 from sqlalchemy.orm import Session
-from app.db.models.gym_staffs import Gym_Staff
 from fastapi import HTTPException
+
+from app.db.models.gym_staffs import Gym_Staff
+from app.db.crud import gym_staffs as gym_staff_crud
+
 
 # CREATE
 def services_gym_staff_create(db: Session, g_id: int, u_id: int):
-
-    exist = db.query(Gym_Staff).filter(
-        Gym_Staff.g_id == g_id,
-        Gym_Staff.u_id == u_id
-    ).first()
-
-    if exist:
-        raise HTTPException(status_code=400)
-
     try:
-        obj = Gym_Staff(
-            g_id=g_id,
-            u_id=u_id
-        )
+        exist = db.query(Gym_Staff).filter(
+            Gym_Staff.g_id == g_id,
+            Gym_Staff.u_id == u_id
+        ).first()
 
-        db.add(obj)
-        db.commit()
-        db.refresh(obj)
+        if exist:
+            raise HTTPException(status_code=400)
 
+        obj = gym_staff_crud.crud_gym_staffs_create(db, g_id, u_id)
         return obj
 
-    except Exception:
-        db.rollback()
+    except HTTPException:
+        raise
+    except Exception as e:
         raise HTTPException(status_code=400)
+
 
 # DELETE
 def services_gym_staff_delete(db: Session, g_id: int, u_id: int):
-
-    obj = db.query(Gym_Staff).filter(
-        Gym_Staff.g_id == g_id,
-        Gym_Staff.u_id == u_id
-    ).first()
-
-    if not obj:
-        raise HTTPException(status_code=404)
-
     try:
-        db.delete(obj)
-        db.commit()
+        obj = db.query(Gym_Staff).filter(
+            Gym_Staff.g_id == g_id,
+            Gym_Staff.u_id == u_id
+        ).first()
+
+        if not obj:
+            raise HTTPException(status_code=404)
+
+        gym_staff_crud.crud_gym_staffs_delete(db, obj)
+
         return True
 
-    except Exception:
-        db.rollback()
+    except HTTPException:
+        raise
+    except Exception as e:
         raise HTTPException(status_code=500)
 
-# LIST (옵션 - 트레이너 조회용)
+
+# LIST
 def services_gym_staff_get(db: Session, g_id: int):
+    try:
+        staff_list = gym_staff_crud.crud_gym_staffs_get(db, g_id)
 
-    staff_list = (
-        db.query(Gym_Staff)
-        .filter(Gym_Staff.g_id == g_id)
-        .all()
-    )
+        if not staff_list:
+            raise HTTPException(status_code=404)
 
-    if not staff_list:
-        raise HTTPException(status_code=404)
+        return staff_list
 
-    return staff_list
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500)
