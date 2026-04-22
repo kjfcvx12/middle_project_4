@@ -51,5 +51,6 @@ async def crud_delete_log(db: AsyncSession, u_id, log_id):
 
     if log:
         await db.delete(log)
+        await db.flush()
         return True
     return False

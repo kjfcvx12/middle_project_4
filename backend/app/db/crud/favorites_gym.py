@@ -10,12 +10,14 @@ class FavoriteGymCrud:
     @staticmethod
     async def crud_get_favorites_gym(db: AsyncSession, u_id: int):
         result = await db.execute(
-            select(Favorite_Gym).where(Favorite_Gym.u_id == u_id)
+            select(Favorite_Gym).where(
+                Favorite_Gym.u_id == u_id
+            )
         )
         return result.scalars().all()
 
 
-    # 즐겨찾기 삭제
+    # 삭제
     @staticmethod
     async def crud_delete_favorite_gym(db: AsyncSession, u_id: int, gym_id: int):
         result = await db.execute(

@@ -6,6 +6,7 @@ from app.db.models.favorites_routine import Favorite_Routine
 
 class FavoriteRoutineCrud:
 
+    # 조회
     @staticmethod
     async def crud_get_favorites_routine(db: AsyncSession, u_id: int):
         result = await db.execute(
@@ -16,6 +17,7 @@ class FavoriteRoutineCrud:
         return result.scalars().all()
 
 
+    # 삭제
     @staticmethod
     async def crud_delete_favorite_routine(db: AsyncSession, u_id: int, r_id: int):
         result = await db.execute(
@@ -34,6 +36,7 @@ class FavoriteRoutineCrud:
         return False
 
 
+    # 토글
     @staticmethod
     async def crud_toggle_favorite_routine(db: AsyncSession, u_id: int, r_id: int):
         result = await db.execute(

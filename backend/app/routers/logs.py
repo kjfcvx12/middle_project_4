@@ -6,7 +6,10 @@ from app.core.jwt_handle import get_current_user
 from app.db.database import get_db
 from app.db.scheme.logs import LogCreate
 
-router = APIRouter(prefix="/logs")
+router = APIRouter(
+    prefix="/logs",
+    tags=["Log"]
+)
 
 
 # 생성
