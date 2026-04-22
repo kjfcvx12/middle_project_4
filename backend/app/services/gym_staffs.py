@@ -6,7 +6,7 @@ from app.db.crud import gym_staffs as gym_staff_crud
 
 
 # CREATE
-def services_gym_staff_create(db: Session, g_id: int, u_id: int):
+async def services_gym_staff_create(db: Session, g_id: int, u_id: int):
     try:
         exist = db.query(Gym_Staff).filter(
             Gym_Staff.g_id == g_id,
@@ -26,7 +26,7 @@ def services_gym_staff_create(db: Session, g_id: int, u_id: int):
 
 
 # DELETE
-def services_gym_staff_delete(db: Session, g_id: int, u_id: int):
+async def services_gym_staff_delete(db: Session, g_id: int, u_id: int):
     try:
         obj = db.query(Gym_Staff).filter(
             Gym_Staff.g_id == g_id,
@@ -47,7 +47,7 @@ def services_gym_staff_delete(db: Session, g_id: int, u_id: int):
 
 
 # LIST
-def services_gym_staff_get(db: Session, g_id: int):
+async def services_gym_staff_get(db: Session, g_id: int):
     try:
         staff_list = gym_staff_crud.crud_gym_staffs_get(db, g_id)
 

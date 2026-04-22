@@ -5,7 +5,7 @@ from app.db.crud import gyms as gym_crud
 from app.db.scheme.gyms import GymCreate, GymUpdate
 
 
-def services_gym_create(db: Session, data: GymCreate):
+async def services_gym_create(db: Session, data: GymCreate):
     try:
         return gym_crud.crud_gym_create(db, data)
 
@@ -13,7 +13,7 @@ def services_gym_create(db: Session, data: GymCreate):
         raise HTTPException(status_code=400)
 
 
-def services_gym_service_get(db: Session, g_id: int):
+async def services_gym_service_get(db: Session, g_id: int):
     try:
         gym = gym_crud.crud_gym_get(db, g_id)
 
@@ -28,7 +28,7 @@ def services_gym_service_get(db: Session, g_id: int):
         raise HTTPException(status_code=500)
 
 
-def services_gym_update(db: Session, g_id: int, data: GymUpdate):
+async def services_gym_update(db: Session, g_id: int, data: GymUpdate):
     try:
         gym = gym_crud.crud_gym_get(db, g_id)
 
@@ -43,7 +43,7 @@ def services_gym_update(db: Session, g_id: int, data: GymUpdate):
         raise HTTPException(status_code=400)
 
 
-def services_gym_delete(db: Session, g_id: int):
+async def services_gym_delete(db: Session, g_id: int):
     try:
         gym = gym_crud.crud_gym_get(db, g_id)
 
@@ -59,7 +59,7 @@ def services_gym_delete(db: Session, g_id: int):
 
 
 # LIST 
-def services_gym_list(
+async def services_gym_list(
     db: Session,
     name: str | None = None,
     address: str | None = None,
@@ -79,7 +79,7 @@ def services_gym_list(
         raise HTTPException(status_code=500)
 
 
-def services_gym_search(db: Session, name: str | None, address: str | None):
+async def services_gym_search(db: Session, name: str | None, address: str | None):
     try:
         return gym_crud.crud_gyms_search(db, name, address)
 

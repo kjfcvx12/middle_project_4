@@ -10,41 +10,34 @@ router = APIRouter(prefix="/gym_staffs", tags=["Gym_Staff"])
 
 # CREATE
 @router.post("")
-def routers_gym_staff_create(
+async def routers_gym_staff_create(
     data: Gym_Staff_Create,
     db: Session = Depends(get_db),
 ):
-    service.services_gym_staff_create(db, data.g_id, data.u_id)
-
-    return {"msg": "트레이너 등록 완료"}
+    return await service.services_gym_staff_create(
+        db,
+        data.g_id,
+        data.u_id
+    )
 
 
 # DELETE
 @router.delete("")
-def routers_gym_staff_delete(
+async def routers_gym_staff_delete(
     data: Gym_Staff_Delete,
     db: Session = Depends(get_db),
 ):
-    service.services_gym_staff_delete(db, data.g_id, data.u_id)
-
-    return {"msg": "트레이너 등록 취소"}
+    return await service.services_gym_staff_delete(
+        db,
+        data.g_id,
+        data.u_id
+    )
 
 
 # LIST
 @router.get("/{g_id}")
-def routers_gym_staff_get(
+async def routers_gym_staff_get(
     g_id: int,
     db: Session = Depends(get_db),
 ):
-    data = service.services_gym_staff_get(db, g_id)
-
-    return {
-        "data": [
-            {
-                "g_s_id": d.g_s_id,
-                "g_id": d.g_id,
-                "u_id": d.u_id,
-            }
-            for d in data
-        ]
-    }
+    return await service.services_gym_staff_get(db, g_id)
