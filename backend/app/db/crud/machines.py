@@ -8,7 +8,6 @@
 
 from sqlalchemy import select, func
 from models.machines import Machine
-DEFAULT_SIZE=10
 
 class Machines_CRUD:
 
@@ -48,7 +47,7 @@ class Machines_CRUD:
     
     #운동기구 조회 기능
     @staticmethod
-    async def crud_machines_get(db,part=None,keyword=None,page:int=1):
+    async def crud_machines_get(db,part=None,keyword=None,page:int=1,size=10):
         machine_query=select(Machine)
 
         #파트 검색
@@ -67,7 +66,7 @@ class Machines_CRUD:
         total=(await db.execute(total_machine)).scalar()
 
         #페이지네이션을 적용
-        machine_query=machine_query.offset((page-1)*DEFAULT_SIZE).limit(DEFAULT_SIZE)
+        machine_query=machine_query.offset((page-1)*size).limit(size)
 
         result=await db.execute(machine_query)
         machine_list=result.scalars().all()

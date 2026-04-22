@@ -103,7 +103,6 @@ class Machines_Service:
     async def service_machines_get(
         db,
         page:int=1,
-        size:int=10,
         name:str | None = None,
         p_id:int | None = None
     ):
@@ -111,8 +110,6 @@ class Machines_Service:
         if page<1:
             raise HTTPException(400, "page는 1 이상")
         
-        if size<1:
-            raise HTTPException(400,"size는 1 이상")
         
         #CRUD 호출(쿼리 및 페이징)
         total,machine_list=await Machines_CRUD.crud_machines_get(db, part=p_id, keyword=name, page=page)
@@ -130,7 +127,6 @@ class Machines_Service:
         return{
             "total":total,
             "page":page,
-            "size":size,
             "data":data
         }
 

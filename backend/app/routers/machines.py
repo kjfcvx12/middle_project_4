@@ -28,12 +28,11 @@ async def router_machines_create(
 @router.get("")
 async def router_machines_get(
     page:int=1,
-    size:int=10,
     name:str|None=None,
     p_id:int|None=None,
     db:AsyncSession=Depends(get_db)):
 
-    return await Machines_Service.service_machines_get(db,page,size,name,p_id)
+    return await Machines_Service.service_machines_get(db,page,name,p_id)
 
 #운동기구 상세 조회
 @router.get("/{m_id}")
