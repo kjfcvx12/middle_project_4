@@ -34,6 +34,9 @@ class BoardService:
         sort: str = "created_at,desc",
         keyword: str | None = None
 ):
+        if keyword:
+            page = 1
+        
         boards, total_count = await BoardCrud.crud_boards_read(
             db=db,
             page=page,
