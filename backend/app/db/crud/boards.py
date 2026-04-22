@@ -17,6 +17,14 @@ class BoardCrud:
         await db.flush()
         return new_board
     
+    #댓글 조회용 boardCrud
+    @staticmethod
+    async def crud_boards_bidread(db:AsyncSession, b_id:int):
+        result = await db.execute(
+            select(Board).where(Board.b_id == b_id)
+        )
+        return result.scalar_one_or_none()
+    
     #게시물 전체조회
     @staticmethod
     async def crud_boards_read(

@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 from app.db.models import Comment
 from app.db.crud.comments import CommentCrud
+from app.db.crud.boards import BoardCrud
 from app.db.scheme.comments import CommentCreate, CommentUpdate
 
 class CommentService:
@@ -31,6 +32,10 @@ class CommentService:
     #해당 게시글 댓글 조회
     @staticmethod
     async def services_board_comments_read(db: AsyncSession, b_id: int):
+        board = await BoardCrud.crud_boards_bidread(db, b_id)
+        if not board:
+            raise HTTPException(status_code=404, detail="게시글이 존재하지 않습니다")
+
         comments = await CommentCrud.crud_board_comments_read(db, b_id)
         
         comment_list = []
