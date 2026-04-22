@@ -9,10 +9,9 @@ class Comment(Base):
     c_id: Mapped[int] = mapped_column(primary_key=True)
     
     # 외래키 설정
-    # user model push 후 = mapped_column(ForeignKey("users.u_id")) 넣기
     # like model push 후 l_id: Mapped[int] = mapped_column(ForeignKey("likes.l_id"),nullable=True) 넣기
     b_id: Mapped[int] = mapped_column(ForeignKey("boards.b_id"))
-    u_id: Mapped[int] 
+    u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id"))
     
     
     # 댓글 내용 및 시간 기록

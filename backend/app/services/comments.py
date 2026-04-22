@@ -10,12 +10,11 @@ class CommentService:
     
     #댓글 추가
     @staticmethod #user push 후 함수에 current_user:int 추가
-    async def services_comments_create(db: AsyncSession, comment_data: CommentCreate):
+    async def services_comments_create(db: AsyncSession, comment_data: CommentCreate, u_id:int):
         try:
             if not comment_data.c_content or not comment_data.c_content.strip():
                 raise HTTPException(status_code=400, detail="댓글 내용은 비어있을 수 없습니다")
-            #user push 후 new_comment안에 1삭제 current_user 추가
-            new_comment = await CommentCrud.crud_comments_create(db, comment_data,1)
+            new_comment = await CommentCrud.crud_comments_create(db, comment_data,u_id)
 
             await db.commit()
             await db.refresh(new_comment)

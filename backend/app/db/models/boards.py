@@ -9,8 +9,7 @@ class Board(Base):
     b_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     
     # 외래키 설정
-    # user push후 u_id에 붙여넣기 (= mapped_column(ForeignKey("users.u_id")))
-    u_id: Mapped[int] 
+    u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id"))
     
     
     # 게시글 내용 및 시간 기록

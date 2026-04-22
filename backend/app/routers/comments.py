@@ -8,8 +8,8 @@ router = APIRouter(prefix="/comments", tags=["Comment"])
 
 #댓글 추가
 @router.post("/comments")
-async def routers_comments_create(comment:CommentCreate, db:AsyncSession=Depends(get_db)):
-    db_comment = CommentService.services_comments_create(db,comment)
+async def routers_comments_create(u_id:int, comment:CommentCreate, db:AsyncSession=Depends(get_db)):
+    db_comment = CommentService.services_comments_create(db,comment,u_id)
     return await db_comment
 
 #해당 게시글 댓글 조회

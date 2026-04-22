@@ -8,7 +8,6 @@ class CommentBase(BaseModel):
 
 class CommentCreate(BaseModel):
     b_id : int
-    u_id : int
     c_content : str = Field(..., min_length=1, max_length=300)
 
 class CommentUpdate(BaseModel):
