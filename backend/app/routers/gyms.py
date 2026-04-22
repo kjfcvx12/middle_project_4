@@ -2,14 +2,16 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
-from app.db.scheme.gyms import Gym_Create, Gym_Update, Gym_Response, Gym_List_Item
+from app.db.scheme.gyms import Gym_Create, Gym_Update, Gym_Response
 from app.services import gyms as gym_service
+from app.services import gym_staffs as gym_staffs_service
+from app.services import gym_machines as gym_machines_service
 
 router = APIRouter(prefix="/gyms", tags=["Gyms"])
 
 # 헬스장 등록
 @router.post("")
-def create_gym(
+def routers_gym_create(
     data: Gym_Create,
     db: Session = Depends(get_db),
 ):
@@ -22,7 +24,7 @@ def create_gym(
 
 # 헬스장 목록 조회
 @router.get("")
-def list_gyms(
+def routers_gyms_list(
     page: int = 1,
     size: int = 10,
     sort: str | None = None,
@@ -61,7 +63,7 @@ def list_gyms(
 
 # 헬스장 상세 조회
 @router.get("/{g_id}", response_model=Gym_Response)
-def gymDetail(
+def routers_gym_detail(
     g_id: int,
     db: Session = Depends(get_db),
 ):
@@ -69,7 +71,7 @@ def gymDetail(
 
 # 헬스장 정보 수정
 @router.put("/{g_id}")
-def update_gym(
+def routers_gym_update(
     g_id: int,
     data: Gym_Update,
     db: Session = Depends(get_db),
@@ -84,11 +86,11 @@ def update_gym(
 # 헬스장 삭제
 @router.delete("/{g_id}")
 @router.delete("/{g_id}")
-def delete_gym(
+def routers_gym_delete(
     g_id: int,
     db: Session = Depends(get_db),
 ):
-    gym_service.delete_gym_service(db, g_id)
+    gym_service.services_gym_delete(db, g_id)
 
     return {
         "msg": "헬스장 삭제 완료"
@@ -96,16 +98,16 @@ def delete_gym(
 
 # 헬스장 소속 트레이너 조회
 @router.get("/{g_id}/staff")
-def get_gym_staff(
+def routers_gym_staffs_get(
     g_id: int,
     db: Session = Depends(get_db),
 ):
-    return gym_service.get_gym_trainer_service(db, g_id)
+    return gym_staffs_service.services_gym_staff_get(db, g_id)
 
 # 헬스장 운동기구 목록 조회
 @router.get("/machines/{g_id}")
-def get_gym_machines(
+def routers_gym_machines_get(
     g_id: int,
     db: Session = Depends(get_db),
 ):
-    return gym_service.get_gym_machines_service(db, g_id)
+    return gym_machines_service.services_gym_machine_get(db, g_id)

@@ -14,7 +14,7 @@ def create_gym_machine(
     db: Session = Depends(get_db),
     # user=Depends(get_manager_user)
 ):
-    service.create_gym_machine_service(db, data.g_id, data.m_id, data.qty)
+    service.services_gym_machine_create(db, data.g_id, data.m_id, data.qty)
 
     return {
         "msg": "기구 등록 완료"
@@ -22,12 +22,12 @@ def create_gym_machine(
 
 # 운동기구 수량 수정
 @router.put("")
-def update_gym_machine(
+def routers_gym_machine_update(
     data: Gym_Machine_Update,
     db: Session = Depends(get_db),
     # user=Depends(get_manager_user)
 ):
-    service.update_gym_machine_service(db, data.g_id, data.m_id, data.qty)
+    service.services_gym_machine_update(db, data.g_id, data.m_id, data.qty)
 
     return {
         "msg": "수량 수정 완료"
@@ -35,12 +35,12 @@ def update_gym_machine(
 
 # 운동기구 제거
 @router.delete("")
-def delete_gym_machine(
+def routers_gym_machine_delete(
     data: Gym_Machine_Delete,
     db: Session = Depends(get_db),
     # user=Depends(get_manager_user)
 ):
-    service.delete_gym_machine_service(db, data.g_id, data.m_id)
+    service.services_gym_machine_delete(db, data.g_id, data.m_id)
 
     return {
         "msg": "기구 제거 완료"

@@ -9,12 +9,12 @@ router = APIRouter(prefix="/gym_staffs", tags=["Gym_Staff"])
 
 # 헬스장에 트레이너 등록
 @router.post("")
-def create_gym_staff(
+def routers_gym_staff_create(
     data: Gym_Staff_Create,
     db: Session = Depends(get_db),
     # user=Depends(get_manager_user)
 ):
-    service.create_gym_staff_service(db, data.g_id, data.u_id)
+    service.services_gym_staff_create(db, data.g_id, data.u_id)
 
     return {
         "msg": "트레이너 등록 완료"
@@ -22,12 +22,12 @@ def create_gym_staff(
 
 # 헬스장에 트레이너 제거
 @router.delete("")
-def delete_gym_staff(
+def routers_gym_staff_delete(
     data: Gym_Staff_Delete,
     db: Session = Depends(get_db),
     # user=Depends(get_manager_user)
 ):
-    service.delete_gym_staff_service(db, data.g_id, data.u_id)
+    service.services_gym_staff_delete(db, data.g_id, data.u_id)
 
     return {
         "msg": "트레이너 등록 취소"
@@ -35,11 +35,11 @@ def delete_gym_staff(
 
 # 헬스장 트레이너 조회
 @router.get("/{g_id}")
-def get_gym_staff(
+def routers_gym_staff_get(
     g_id: int,
     db: Session = Depends(get_db)
 ):
-    data = service.get_gym_staff_service(db, g_id)
+    data = service.services_gym_staff_get(db, g_id)
 
     return {
         "data": [
