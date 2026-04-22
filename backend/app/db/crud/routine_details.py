@@ -35,7 +35,7 @@ class Routine_Detail_CRUD :
     ):
         query = (
             select(Routine_Detail)
-            .options(joinedload(Routine_Detail.routine),joinedload(Routine_Detail.machine))
+            .options(joinedload(Routine_Detail.routine),joinedload(Routine_Detail.machine).joinedload(Machine.part))
             .where(Routine_Detail.r_d_id == r_d_id)
         )
 

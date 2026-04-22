@@ -1,13 +1,35 @@
 from fastapi import FastAPI
+from fastapi.concurrency import asynccontextmanager
 
 from dotenv import load_dotenv
+
+from app.db.database import Base, async_engine
+from app.routers import  routines,routine_details, users
+#from app.middleware.token_refresh import RefreshTokenMiddleware
 
 
 load_dotenv(dotenv_path="../../.env")
 
-app=FastAPI()
+
+@asynccontextmanager
+async def lifespan(app:FastAPI):
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+    await async_engine.dispose()
+
+app=FastAPI(lifespan=lifespan)
+
+#app.add_middleware(RefreshTokenMiddleware)
 
 
+@app.get("/")
+async def root():
+    return {"message": "home"}
 
+app.include_router(users.router)
+# app.include_router(notes.router)
+app.include_router(routines.router)
+app.include_router(routine_details.router)
 
 #uvicorn main:app --port=8081 --reload

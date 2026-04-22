@@ -2,10 +2,10 @@ from app.db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from sqlalchemy import String, TIMESTAMP, func, ForeignKey
-from typing import Optional
-from .routines import Routine
-from .machines import Machine
+from typing import Optional, TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from parts import Part
 
 class Routine_Detail(Base):
     __tablename__="routine_details"

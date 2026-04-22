@@ -7,7 +7,7 @@ class Routine_Base(BaseModel):
 
 class Routine_Create(Routine_Base):
     u_id : int | None = None
-    p_id : int  | None = None
+    p_id : int  
 
 class Routine_In_DB(Routine_Base):
     r_id : int

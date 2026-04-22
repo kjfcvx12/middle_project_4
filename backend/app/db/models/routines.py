@@ -3,9 +3,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from sqlalchemy import String, TIMESTAMP, func, ForeignKey
 from typing import Optional
-from users import User
-from parts import Part
-from routine_details import Routine_Detail
+
+
 
 
 class Routine(Base):
@@ -19,4 +18,4 @@ class Routine(Base):
     part:Mapped["Part"]=relationship("Part",back_populates="routines")
     routine_details: Mapped[list["Routine_Detail"]] = relationship(
     "Routine_Detail", back_populates="routine", cascade="all, delete-orphan")
-    
+       

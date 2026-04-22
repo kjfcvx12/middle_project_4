@@ -3,7 +3,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from sqlalchemy import String, TIMESTAMP, func, ForeignKey
 from typing import Optional
-from parts import Part
 
 class Machine(Base):
     __tablename__ = "machines"
@@ -13,5 +12,8 @@ class Machine(Base):
     m_url:Mapped[str]=mapped_column(String(255))
     p_id:Mapped[int]=mapped_column(ForeignKey('parts.p_id'), nullable=False)
 
-    part:Mapped["Part"]= relationship("Part",back_populates="parts")
-    
+    part:Mapped["Part"]= relationship("Part",back_populates="machines")
+    routine_details: Mapped[list["Routine_Detail"]] = relationship(
+    "Routine_Detail",
+    back_populates="machine"
+)

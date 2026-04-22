@@ -5,7 +5,7 @@ from sqlalchemy.orm import joinedload
 from ..models import Routine
 from ..scheme import Routine_Create, Routine_Update
 from fastapi import APIRouter, Depends, HTTPException
-from ..models import Like_Routine
+
 
 class Routine_CRUD :
 
