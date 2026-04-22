@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy import String, ForeignKey, TIMESTAMP, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.database import Base
 
 class Board(Base):
@@ -19,4 +19,11 @@ class Board(Base):
         TIMESTAMP, 
         server_default=func.now(), 
         onupdate=func.now()
+    )
+    #cascade
+    comments: Mapped[list["Comment"]] = relationship(
+        "Comment",
+        back_populates="board",
+        cascade="all, delete-orphan",
+        passive_deletes=True
     )

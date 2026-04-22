@@ -29,8 +29,8 @@ class BoardService:
     @staticmethod
     async def services_boards_read(
         db: AsyncSession,
+        size : int,
         page: int = 1,
-        size: int = 10,
         sort: str = "created_at,desc",
         keyword: str | None = None
 ):
@@ -48,7 +48,6 @@ class BoardService:
         return {
             "msg": "조회 성공",
             "page": page,
-            "size": size,
             "total_count": total_count,
             "data": boards
     }
@@ -66,29 +65,59 @@ class BoardService:
     
     #게시물 수정
     @staticmethod
-    async def services_boards_update(db:AsyncSession,b_id:int, board_data:BoardUpdate):
+    async def services_boards_update(db:AsyncSession,b_id:int, board_data:BoardUpdate, u_id:int):
         stmt = select(Board).where(Board.b_id == b_id)
         result = await db.execute(stmt)
         db_board = result.scalar_one_or_none()
 
         if not db_board:
-            raise HTTPException(status_code=404, detail="게시물을 찾을 수 없습니다")
+            raise HTTPException(status_code=404, detail="게시글을 찾을 수 없습니다")
+        if db_board.u_id != u_id:
+            raise HTTPException(status_code=400, detail="수정 권한이 없습니다")
         
         if board_data.b_content is not None and not board_data.b_content.strip():
             raise HTTPException(status_code=400, detail="내용은 비어있을 수 없습니다")
+        
+        if db_board.b_content == board_data.b_content:
+            raise HTTPException(status_code=400, detail="기존 내용과 동일하여 수정할 수 없습니다")
 
-        return await BoardCrud.crud_boards_update(db, db_board, board_data)
+        try:
+            update_board = await BoardCrud.crud_boards_update(db, db_board, board_data, u_id)
+
+            await db.commit()
+            await db.refresh(update_board)
+
+            return {"msg": "게시글 수정 완료", "data":update_board}
+        
+        except HTTPException:
+            await db.rollback()
+            raise
+        except Exception:
+            await db.rollback()
+            raise HTTPException(status_code=400, detail="게시글 수정 실패")
 
     #게시물 삭제
     @staticmethod
-    async def services_boards_delete(db:AsyncSession, b_id:int):
+    async def services_boards_delete(db:AsyncSession, b_id:int, u_id:int):
         stmt = select(Board).where(Board.b_id == b_id)
         result = await db.execute(stmt)
         db_board = result.scalar_one_or_none()
 
         if not db_board:
-            raise HTTPException(status_code=404, detail="게시물을 찾을 수 없습니다")
+            raise HTTPException(status_code=404, detail="게시글을 찾을 수 없습니다")
         
+        if db_board.u_id != u_id:
+            raise HTTPException(status_code=400, detail="삭제 권한이 없습니다")
         
-        await BoardCrud.crud_boards_delete(db, db_board)
-        return {"message": "게시물이 삭제되었습니다"}
+        try:
+            await BoardCrud.crud_boards_delete(db, db_board, u_id)
+            await db.commit()
+
+            return {"message": "게시글이 삭제되었습니다"}
+
+        except HTTPException:
+            await db.rollback()
+            raise
+        except Exception:
+            await db.rollback()
+            raise HTTPException(status_code=400, detail="게시글 삭제 실패")

@@ -19,10 +19,10 @@ async def routers_board_comments_read(b_id:int, db:AsyncSession = Depends(get_db
 
 #댓글 수정
 @router.put("/comments/{c_id}")
-async def routers_comments_update(c_id:int,comment_data:CommentUpdate, db:AsyncSession = Depends(get_db)):
-    return await CommentService.services_comments_update(db, c_id, comment_data)
+async def routers_comments_update(c_id:int,comment_data:CommentUpdate, u_id:int, db:AsyncSession = Depends(get_db)):
+    return await CommentService.services_comments_update(db, c_id, comment_data, u_id)
 
 #게시물 삭제
 @router.delete("/comments/{c_id}")
-async def routers_comments_delete(c_id:int, db:AsyncSession = Depends(get_db)):
-    return await CommentService.services_comments_delete(db, c_id)
+async def routers_comments_delete(c_id:int,u_id:int, db:AsyncSession = Depends(get_db)):
+    return await CommentService.services_comments_delete(db, c_id, u_id)

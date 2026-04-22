@@ -52,19 +52,23 @@ class CommentService:
     
     #댓글 수정
     @staticmethod
-    async def services_comments_update(db:AsyncSession, c_id:int, comment_data:CommentUpdate):
+    async def services_comments_update(db:AsyncSession, c_id:int, comment_data:CommentUpdate, u_id:int):
         stmt = select(Comment).where(Comment.c_id == c_id)
         result = await db.execute(stmt)
         db_comment = result.scalar_one_or_none()
 
         if not db_comment:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="댓글을 찾을 수 없습니다")
+        if db_comment.u_id != u_id:
+            raise HTTPException(status_code=400, detail="수정 권한이 없습니다")
         
         if comment_data.c_content is not None and not comment_data.c_content.strip():
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="내용은 비어있을 수 없습니다")
         
+        if db_comment.c_content == comment_data.c_content:
+            raise HTTPException(status_code=400, detail="기존 내용과 동일하여 수정할 수 없습니다")
         try:
-            update_comment = await CommentCrud.crud_comments_update(db, db_comment, comment_data)
+            update_comment = await CommentCrud.crud_comments_update(db, db_comment, comment_data, u_id)
 
             await db.commit()
             await db.refresh(update_comment)
@@ -80,16 +84,18 @@ class CommentService:
     
     #댓글 삭제
     @staticmethod
-    async def services_comments_delete(db:AsyncSession, c_id:int):
+    async def services_comments_delete(db:AsyncSession, c_id:int, u_id:int):
         stmt = select(Comment).where(Comment.c_id == c_id)
         result = await db.execute(stmt)
         db_comment = result.scalar_one_or_none()
 
         if not db_comment:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="댓글을 찾을 수 없습니다")
+        if db_comment.u_id != u_id:
+            raise HTTPException(status_code=400, detail="삭제 권한이 없습니다")
         
         try:
-            await CommentCrud.crud_comments_delete(db, db_comment)
+            await CommentCrud.crud_comments_delete(db, db_comment, u_id)
             await db.commit()
 
             return {"message":"댓글이 삭제되었습니다"}
@@ -97,6 +103,6 @@ class CommentService:
         except HTTPException:
             await db.rollback()
             raise
-        except Exception:
+        except Exception as e:
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="댓글 삭제 실패")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"댓글 삭제 실패{e}")

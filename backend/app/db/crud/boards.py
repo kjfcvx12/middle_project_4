@@ -78,16 +78,15 @@ class BoardCrud:
     
     #게시물 수정
     @staticmethod
-    async def crud_boards_update(db:AsyncSession, db_board:Board, board_data:BoardUpdate):
+    async def crud_boards_update(db:AsyncSession, db_board:Board, board_data:BoardUpdate, u_id:int):
         if board_data.b_content is not None:
             db_board.b_content = board_data.b_content
 
-        await db.commit()
-        await db.refresh(db_board)
+        await db.flush()
         return db_board
     
     #게시물 삭제
     @staticmethod
-    async def crud_boards_delete(db:AsyncSession, db_board:Board):
+    async def crud_boards_delete(db:AsyncSession, db_board:Board, u_id:int):
         await db.delete(db_board)
-        await db.commit()
+        await db.flush()

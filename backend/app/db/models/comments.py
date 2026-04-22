@@ -1,16 +1,16 @@
 from datetime import datetime
 from sqlalchemy import String, ForeignKey, TIMESTAMP, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.database import Base
 
 class Comment(Base):
     __tablename__ = "comments"
 
-    c_id: Mapped[int] = mapped_column(primary_key=True)
+    c_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     
     # 외래키 설정
     # like model push 후 l_id: Mapped[int] = mapped_column(ForeignKey("likes.l_id"),nullable=True) 넣기
-    b_id: Mapped[int] = mapped_column(ForeignKey("boards.b_id"))
+    b_id: Mapped[int] = mapped_column(ForeignKey("boards.b_id", ondelete="CASCADE"),nullable=False)
     u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id"))
     
     
@@ -21,4 +21,10 @@ class Comment(Base):
         TIMESTAMP, 
         server_default=func.now(), 
         onupdate=func.now()
+    )
+
+    #cascade
+    board: Mapped["Board"] = relationship(
+        "Board",
+        back_populates="comments"
     )

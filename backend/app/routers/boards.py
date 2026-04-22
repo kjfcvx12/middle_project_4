@@ -19,7 +19,7 @@ async def routers_boards_create(u_id:int, board:BoardCreate, db:AsyncSession = D
 @router.get("/boards")
 async def routers_boards_read(
     page: int = Query(1, ge=1),
-    size: int = Query(10, ge=1),
+    size : int = 10,
     sort: str = Query("created_at,desc"),
     keyword: str | None = Query(None),
     db: AsyncSession = Depends(get_db)
@@ -40,10 +40,10 @@ async def get_board_read_detail(b_id: int,db: AsyncSession = Depends(get_db)):
 
 #게시물 수정
 @router.put("/boards/{b_id}")
-async def routers_boards_update(b_id:int, board_data:BoardUpdate, db:AsyncSession = Depends(get_db)):
-    return await BoardService.services_boards_update(db, b_id, board_data)
+async def routers_boards_update(b_id:int, board_data:BoardUpdate,u_id:int, db:AsyncSession = Depends(get_db)):
+    return await BoardService.services_boards_update(db, b_id, board_data, u_id)
 
 #게시물 삭제
 @router.delete("/boards/{b_id}")
-async def routers_boards_delete(b_id:int, db:AsyncSession = Depends(get_db)):
-    return await BoardService.services_boards_delete(db, b_id)
+async def routers_boards_delete(b_id:int,u_id:int, db:AsyncSession = Depends(get_db)):
+    return await BoardService.services_boards_delete(db, b_id, u_id)

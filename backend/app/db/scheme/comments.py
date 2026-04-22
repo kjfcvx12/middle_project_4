@@ -12,7 +12,6 @@ class CommentCreate(BaseModel):
 
 class CommentUpdate(BaseModel):
     b_id : int
-    u_id : int
     c_content : str = Field(..., min_length=1 ,max_length=300)
 
 
