@@ -11,8 +11,8 @@ router = APIRouter(prefix="/boards", tags=["Board"])
 
 #게시물 추가
 @router.post("/boards")
-async def routers_boards_create(board:BoardCreate, db:AsyncSession = Depends(get_db)):
-    db_board = BoardService.services_boards_create(db,board)
+async def routers_boards_create(u_id:int, board:BoardCreate, db:AsyncSession = Depends(get_db)):
+    db_board = BoardService.services_boards_create(db,board, u_id)
     return await db_board
 
 #게시물 조회

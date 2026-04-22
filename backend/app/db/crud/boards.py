@@ -8,9 +8,9 @@ class BoardCrud:
     
     #게시물 추가
     @staticmethod
-    async def crud_boards_create(db:AsyncSession, board_data:BoardCreate):
+    async def crud_boards_create(db:AsyncSession, board_data:BoardCreate, u_id:int):
         new_board = Board(
-            u_id = board_data.u_id,
+            u_id=u_id,
             b_content = board_data.b_content
         )
         db.add(new_board)

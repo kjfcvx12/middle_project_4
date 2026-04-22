@@ -9,9 +9,9 @@ class BoardService:
 
     #게시물 추가
     @staticmethod
-    async def services_boards_create(db: AsyncSession, board_data: BoardCreate):
+    async def services_boards_create(db: AsyncSession, board_data: BoardCreate, u_id:int):
         try:
-            new_board = await BoardCrud.crud_boards_create(db, board_data)
+            new_board = await BoardCrud.crud_boards_create(db, board_data, u_id)
 
             await db.commit()
             await db.refresh(new_board)

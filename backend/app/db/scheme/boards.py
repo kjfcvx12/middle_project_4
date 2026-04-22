@@ -6,7 +6,6 @@ class BoardBase(BaseModel):
     b_content : str = Field(..., min_length=1,max_length=300)
 
 class BoardCreate(BaseModel):
-    u_id : int
     b_content : str = Field(..., min_length=1, max_length=300)
 
 class BoardUpdate(BaseModel):
