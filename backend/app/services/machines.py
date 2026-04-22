@@ -17,58 +17,85 @@ class Machines_Service:
 
     #운동기구 생성
     @staticmethod
-    async def service_machines_create(db, machine_create):
+    async def service_machines_create(db, machine_create,admin:int):
+        try:
+            if not machine_create.m_name:
+                raise HTTPException(400, "이름을 입력하시오")
+            
+            if not machine_create.dsc:
+                raise HTTPException(400, "설명을 입력하시오")
 
-        if not machine_create.m_name:
-            raise HTTPException(400, "이름을 입력하시오")
+
+            new_machine=await Machines_CRUD.crud_machines_create(db, machine_create)
+
+            await db.commit()
+            await db.refresh(new_machine)
+
+            return {
+                "m_id":new_machine.m_id,
+                "msg":"성공적으로 등록되었습니다"
+            }
         
-        if not machine_create.dsc:
-            raise HTTPException(400, "설명을 입력하시오")
-
-
-        new_machine=await Machines_CRUD.crud_machines_create(db, machine_create)
-
-        await db.commit()
-        await db.refresh(new_machine)
-
-        return {
-            "m_id":new_machine.m_id,
-            "msg":"성공적으로 등록되었습니다"
-        }
+        except HTTPException:
+            raise
+        
+        except Exception:
+            await db.rollback()
+            raise HTTPException(500,"등록중 오류 발생")
 
 
     #운동기구 수정
     @staticmethod
-    async def service_machines_update(db, m_id,machine_update):
-        query=select(Machine).where(Machine.m_id==m_id)
-        result=await db.execute(query)
-        machine=result.scalar_one_or_none()
+    async def service_machines_update(db, m_id,machine_update,admin:int):
+        try:
+            query=select(Machine).where(Machine.m_id==m_id)
+            result=await db.execute(query)
+            machine=result.scalar_one_or_none()
 
-        if not machine:
-            raise HTTPException(400, "운동기구가 없습니다")
-        
-        await Machines_CRUD.crud_machines_update(db, machine, machine_update)
+            if not machine:
+                raise HTTPException(400, "운동기구가 없습니다")
+            
+            await Machines_CRUD.crud_machines_update(db, machine, machine_update)
 
-        await db.commit()
-        await db.refresh(machine)
-        return{"msg":"성공적으로 수정되었습니다"}
+            await db.commit()
+            await db.refresh(machine)
+            return{"msg":"성공적으로 수정되었습니다"}
     
+
+        except HTTPException:
+            raise
+        
+        except Exception:
+            await db.rollback()
+            raise HTTPException(500,"수정중 오류 발생")
 
 
     #운동기구 삭제
     @staticmethod
-    async def service_machines_delete(db, m_id):
-        query=select(Machine).where(Machine.m_id==m_id)
-        result=await db.execute(query)
-        machine=result.scalar_one_or_none()
+    async def service_machines_delete(db, m_id, admin:int):
+        try:
+            query=select(Machine).where(Machine.m_id==m_id)
+            result=await db.execute(query)
+            machine=result.scalar_one_or_none()
 
-        if not machine:
-            raise HTTPException(404, "운동기구가 없습니다")
+
+            
+            if not machine:
+                raise HTTPException(404, "운동기구가 없습니다")
+            
+            await Machines_CRUD.crud_machines_delete(db, machine)
+            await db.commit()
+            return {"msg":"성공적으로 삭제되었습니다"}
         
-        await Machines_CRUD.crud_machines_delete(db, machine)
-        await db.commit()
-        return {"msg":"성공적으로 삭제되었습니다"}
-    
+        except HTTPException:
+            raise
+
+        except Exception:
+            await db.rollback()
+            raise HTTPException(500,"삭제 중 오류 발생")
+
+
+
 
 
     #운동기구 목록 조회
@@ -88,7 +115,7 @@ class Machines_Service:
             raise HTTPException(400,"size는 1 이상")
         
         #CRUD 호출(쿼리 및 페이징)
-        total,machine_list=await Machines_CRUD.crud_machines_get(db, part=p_id, keyword=name, page=page, size=size)
+        total,machine_list=await Machines_CRUD.crud_machines_get(db, part=p_id, keyword=name, page=page)
 
         #응답
         data=[

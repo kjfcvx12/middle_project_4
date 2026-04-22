@@ -17,9 +17,11 @@ router=APIRouter(prefix="/machines",tags=["Machine"])
 
 #운동기구 생성
 @router.post("")
-async def router_machines_create(machine_create:MachineCreate,
-                                 db:AsyncSession=Depends(get_db)):
-    return await Machines_Service.service_machines_create(db,machine_create=machine_create)
+async def router_machines_create(
+    machine_create:MachineCreate,
+    admin:int,
+    db:AsyncSession=Depends(get_db)):
+    return await Machines_Service.service_machines_create(db, machine_create=machine_create, admin=admin)
 
 
 #운동기구 목록 조회
@@ -46,14 +48,16 @@ async def router_machines_detail(m_id:int,
 async def router_machines_update(
     m_id:int,
     machine_update:MachineUpdate,
+    admin:int,
     db:AsyncSession=Depends(get_db)):
 
-    return await Machines_Service.service_machines_update(db, m_id, machine_update)
+    return await Machines_Service.service_machines_update(db, m_id, machine_update,admin=admin)
 
 #운동기구 삭제
 @router.delete("/{m_id}")
 async def router_machines_delete(
     m_id:int,
+    admin:int,
     db:AsyncSession=Depends(get_db)):
 
-    return await Machines_Service.service_machines_delete(db, m_id)
+    return await Machines_Service.service_machines_delete(db, m_id,admin=admin)
