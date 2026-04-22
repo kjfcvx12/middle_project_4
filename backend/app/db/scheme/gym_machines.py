@@ -1,24 +1,24 @@
 from pydantic import BaseModel
 
 # CREATE
-class GymMachineCreate(BaseModel):
+class Gym_Machine_Create(BaseModel):
     g_id: int
     m_id: int
     qty: int = 1
 
 # UPDATE
-class GymMachineUpdate(BaseModel):
+class Gym_Machine_Update(BaseModel):
     g_id: int
     m_id: int
     qty: int
 
 # DELETE
-class GymMachineDelete(BaseModel):
+class Gym_Machine_Delete(BaseModel):
     g_id: int
     m_id: int
 
 # RESPONSE
-class GymMachineResponse(BaseModel):
+class Gym_Machine_Response(BaseModel):
     g_m_id: int
     g_id: int
     m_id: int

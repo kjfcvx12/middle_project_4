@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 
 # CREATE
-class GymCreate(BaseModel):
+class Gym_Create(BaseModel):
     g_name: str
     g_addr: str
     g_tel: str
@@ -12,7 +12,7 @@ class GymCreate(BaseModel):
     open_time: Optional[str] = None
 
 # UPDATE
-class GymUpdate(BaseModel):
+class Gym_Update(BaseModel):
     g_name: Optional[str] = None
     g_addr: Optional[str] = None
     g_tel: Optional[str] = None
@@ -22,7 +22,7 @@ class GymUpdate(BaseModel):
     open_time: Optional[str] = None
 
 # RESPONSE
-class GymResponse(BaseModel):
+class Gym_Response(BaseModel):
     g_id: int
     g_name: str
     g_addr: str
@@ -36,7 +36,7 @@ class GymResponse(BaseModel):
         from_attributes = True
 
 # LIST RESPONSE ITEM
-class GymListItem(BaseModel):
+class Gym_List_Item(BaseModel):
     g_id: int
     g_name: str
     g_addr: str

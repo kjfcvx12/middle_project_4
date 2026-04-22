@@ -8,7 +8,7 @@ from app.services import gym_staffs as gym_staff_service
 from app.services import gym_machines as gym_machine_service
 from fastapi import HTTPException
 
-def createGymService(db: Session, data: GymCreate):
+def services_gym_create(db: Session, data: GymCreate):
     try:
         gym = gym_crud.createGym(db, data)
 
@@ -21,7 +21,7 @@ def createGymService(db: Session, data: GymCreate):
         db.rollback()
         raise HTTPException(status_code=400)
 
-def getGymService(db: Session, g_id: int):
+def services_gym_service_get(db: Session, g_id: int):
     gym = gym_crud.get_gym(db, g_id)
 
     if not gym:
@@ -29,7 +29,7 @@ def getGymService(db: Session, g_id: int):
 
     return gym
 
-def updateGymService(db: Session, g_id: int, data: GymUpdate):
+def services_gym_update(db: Session, g_id: int, data: GymUpdate):
     gym = gym_crud.getGym(db, g_id)
 
     if not gym:
@@ -51,7 +51,7 @@ def updateGymService(db: Session, g_id: int, data: GymUpdate):
         db.rollback()
         raise HTTPException(status_code=400)
 
-def deleteGymService(db: Session, g_id: int):
+def services_gym_delete(db: Session, g_id: int):
     gym = gym_crud.getGym(db, g_id)
 
     if not gym:
@@ -66,7 +66,7 @@ def deleteGymService(db: Session, g_id: int):
         db.rollback()
         raise HTTPException(status_code=500)
 
-def listGymService(
+def services_gym_list(
     db: Session,
     skip: int,
     limit: int,
@@ -103,11 +103,5 @@ def listGymService(
 
     return gyms, total
 
-def searchGymService(db: Session, name: str | None, address: str | None):
+def services_gym_search(db: Session, name: str | None, address: str | None):
     return gym_crud.search_gyms(db, name, address)
-
-def getGymTrainerService(db: Session, g_id: int):
-    return gym_staff_service.getGymStaffService(db, g_id)
-
-def getGymMachinesService(db: Session, g_id: int):
-    return gym_machine_service.getGymMachineService(db, g_id)

@@ -3,7 +3,7 @@ from app.db.models.gym_machines import Gym_Machine
 from fastapi import HTTPException
 
 # CREATE
-def createGymMachineService(db: Session, g_id: int, m_id: int, qty: int = 1):
+def services_gym_machine_create(db: Session, g_id: int, m_id: int, qty: int = 1):
 
     exist = db.query(Gym_Machine).filter(
         Gym_Machine.g_id == g_id,
@@ -32,7 +32,7 @@ def createGymMachineService(db: Session, g_id: int, m_id: int, qty: int = 1):
 
 
 # UPDATE
-def updateGymMachineService(db: Session, g_id: int, m_id: int, qty: int):
+def services_gym_machine_update(db: Session, g_id: int, m_id: int, qty: int):
 
     obj = db.query(Gym_Machine).filter(
         Gym_Machine.g_id == g_id,
@@ -55,7 +55,7 @@ def updateGymMachineService(db: Session, g_id: int, m_id: int, qty: int):
         raise HTTPException(status_code=500)
 
 # DELETE
-def deleteGymMachineService(db: Session, g_id: int, m_id: int):
+def services_gym_machine_delete(db: Session, g_id: int, m_id: int):
 
     obj = db.query(Gym_Machine).filter(
         Gym_Machine.g_id == g_id,
@@ -77,7 +77,7 @@ def deleteGymMachineService(db: Session, g_id: int, m_id: int):
 
 
 # LIST (옵션 - 운동기구 조회용)
-def getGymMachineService(db: Session, g_id: int):
+def services_gym_machine_get(db: Session, g_id: int):
 
     machines = (
         db.query(Gym_Machine)

@@ -1,17 +1,17 @@
 from pydantic import BaseModel, Field
 
-# CREATE / DELETE 요청
-class GymStaffCreate(BaseModel):
+# CREATE
+class Gym_Staff_Create(BaseModel):
     g_id: int
     u_id: int
 
-
-class GymStaffDelete(BaseModel):
+# DELETE
+class Gym_Staff_Delete(BaseModel):
     g_id: int
     u_id: int
 
 # RESPONSE
-class GymStaffResponse(BaseModel):
+class Gym_Staff_Response(BaseModel):
     g_s_id: int
     g_id: int
     u_id: int

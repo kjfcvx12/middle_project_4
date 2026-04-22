@@ -2,23 +2,19 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
-from app.db.scheme.gym_machines import (
-    GymMachineCreate,
-    GymMachineUpdate,
-    GymMachineDelete
-)
+from app.db.scheme.gym_machines import Gym_Machine_Create, Gym_Machine_Update, Gym_Machine_Delete
 from app.services import gym_machines as service
 
 router = APIRouter(prefix="/gym_machines", tags=["Gym_Machine"])
 
 # 헬스장에 운동기구 등록
 @router.post("")
-def createGymMachine(
-    data: GymMachineCreate,
+def create_gym_machine(
+    data: Gym_Machine_Create,
     db: Session = Depends(get_db),
     # user=Depends(get_manager_user)
 ):
-    service.createGymMachineService(db, data.g_id, data.m_id, data.qty)
+    service.create_gym_machine_service(db, data.g_id, data.m_id, data.qty)
 
     return {
         "msg": "기구 등록 완료"
@@ -26,12 +22,12 @@ def createGymMachine(
 
 # 운동기구 수량 수정
 @router.put("")
-def updateGymMachine(
-    data: GymMachineUpdate,
+def update_gym_machine(
+    data: Gym_Machine_Update,
     db: Session = Depends(get_db),
     # user=Depends(get_manager_user)
 ):
-    service.updateGymMachineService(db, data.g_id, data.m_id, data.qty)
+    service.update_gym_machine_service(db, data.g_id, data.m_id, data.qty)
 
     return {
         "msg": "수량 수정 완료"
@@ -39,12 +35,12 @@ def updateGymMachine(
 
 # 운동기구 제거
 @router.delete("")
-def deleteGymMachine(
-    data: GymMachineDelete,
+def delete_gym_machine(
+    data: Gym_Machine_Delete,
     db: Session = Depends(get_db),
     # user=Depends(get_manager_user)
 ):
-    service.deleteGymMachineService(db, data.g_id, data.m_id)
+    service.delete_gym_machine_service(db, data.g_id, data.m_id)
 
     return {
         "msg": "기구 제거 완료"
