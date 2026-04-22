@@ -19,13 +19,23 @@ async def create_log(
     return await service_create_log(db, user, data)
 
 
-# 조회
+# 목록 조회
 @router.get("/")
 async def get_logs(
     db: AsyncSession = Depends(get_db),
     user=Depends(get_current_user)
 ):
     return await service_get_logs(db, user)
+
+
+# 더보기 (핵심)
+@router.get("/{log_id}")
+async def get_log_detail(
+    log_id: int,
+    db: AsyncSession = Depends(get_db),
+    user=Depends(get_current_user)
+):
+    return await service_get_log_detail(db, user, log_id)
 
 
 # 삭제
