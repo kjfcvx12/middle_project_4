@@ -8,19 +8,19 @@ class FavoriteGymCrud:
 
     # 특정 유저 즐겨찾기 조회
     @staticmethod
-    async def crud_get_favorites_gym(db: AsyncSession, user_id: int):
+    async def crud_get_favorites_gym(db: AsyncSession, u_id: int):
         result = await db.execute(
-            select(Favorite_Gym).where(Favorite_Gym.u_id == user_id)
+            select(Favorite_Gym).where(Favorite_Gym.u_id == u_id)
         )
         return result.scalars().all()
 
 
     # 즐겨찾기 삭제
     @staticmethod
-    async def crud_delete_favorite_gym(db: AsyncSession, user_id: int, gym_id: int):
+    async def crud_delete_favorite_gym(db: AsyncSession, u_id: int, gym_id: int):
         result = await db.execute(
             select(Favorite_Gym).where(
-                Favorite_Gym.u_id == user_id,
+                Favorite_Gym.u_id == u_id,
                 Favorite_Gym.gym_id == gym_id
             )
         )
@@ -36,10 +36,10 @@ class FavoriteGymCrud:
 
     # 즐겨찾기 토글
     @staticmethod
-    async def crud_toggle_favorite_gym(db: AsyncSession, user_id: int, gym_id: int):
+    async def crud_toggle_favorite_gym(db: AsyncSession, u_id: int, gym_id: int):
         result = await db.execute(
             select(Favorite_Gym).where(
-                Favorite_Gym.u_id == user_id,
+                Favorite_Gym.u_id == u_id,
                 Favorite_Gym.gym_id == gym_id
             )
         )
@@ -50,7 +50,7 @@ class FavoriteGymCrud:
             await db.flush()   
             return "removed"
 
-        new_fav = Favorite_Gym(u_id=user_id, gym_id=gym_id)
+        new_fav = Favorite_Gym(u_id=u_id, gym_id=gym_id)
         db.add(new_fav)
         await db.flush()       
 

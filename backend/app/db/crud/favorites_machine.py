@@ -8,10 +8,10 @@ class FavoriteMachineCrud:
 
     # 조회
     @staticmethod
-    async def crud_get_favorites_machine(db: AsyncSession, user_id: int):
+    async def crud_get_favorites_machine(db: AsyncSession, u_id: int):
         result = await db.execute(
             select(Favorite_Machine).where(
-                Favorite_Machine.u_id == user_id
+                Favorite_Machine.u_id == u_id
             )
         )
         return result.scalars().all()
@@ -19,10 +19,10 @@ class FavoriteMachineCrud:
 
     # 삭제
     @staticmethod
-    async def crud_delete_favorite_machine(db: AsyncSession, user_id: int, m_id: int):
+    async def crud_delete_favorite_machine(db: AsyncSession, u_id: int, m_id: int):
         result = await db.execute(
             select(Favorite_Machine).where(
-                Favorite_Machine.u_id == user_id,
+                Favorite_Machine.u_id == u_id,
                 Favorite_Machine.m_id == m_id
             )
         )
@@ -38,10 +38,10 @@ class FavoriteMachineCrud:
 
     # 토글
     @staticmethod
-    async def crud_toggle_favorite_machine(db: AsyncSession, user_id: int, m_id: int):
+    async def crud_toggle_favorite_machine(db: AsyncSession, u_id: int, m_id: int):
         result = await db.execute(
             select(Favorite_Machine).where(
-                Favorite_Machine.u_id == user_id,
+                Favorite_Machine.u_id == u_id,
                 Favorite_Machine.m_id == m_id
             )
         )
@@ -52,7 +52,7 @@ class FavoriteMachineCrud:
             await db.flush()
             return "removed"
 
-        new_fav = Favorite_Machine(u_id=user_id, m_id=m_id)
+        new_fav = Favorite_Machine(u_id=u_id, m_id=m_id)
         db.add(new_fav)
         await db.flush()
 

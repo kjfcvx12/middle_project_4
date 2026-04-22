@@ -5,12 +5,11 @@ from app.db.crud.logs import *
 from app.db.crud.log_detail import *
 
 
-# 로그 + 디테일 생성
+# 생성
 async def service_create_log(db: AsyncSession, user, data):
     try:
         log = await crud_create_log(db, user.u_id, data)
 
-        # detail 생성
         await crud_create_log_details(db, log.log_id, data.details)
 
         await db.commit()
@@ -29,7 +28,7 @@ async def service_create_log(db: AsyncSession, user, data):
         )
 
 
-# 로그 조회
+# 목록 조회
 async def service_get_logs(db: AsyncSession, user):
     logs = await crud_get_logs(db, user.u_id)
 
@@ -42,7 +41,20 @@ async def service_get_logs(db: AsyncSession, user):
     return logs
 
 
-# 로그 삭제
+# 추가: 상세 조회 (더보기)
+async def service_get_log_detail(db: AsyncSession, user, log_id: int):
+    log = await crud_get_log_detail(db, user.u_id, log_id)
+
+    if not log:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="로그가 없습니다."
+        )
+
+    return log
+
+
+# 삭제
 async def service_delete_log(db: AsyncSession, user, log_id: int):
     try:
         result = await crud_delete_log(db, user.u_id, log_id)

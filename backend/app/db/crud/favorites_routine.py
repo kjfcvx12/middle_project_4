@@ -7,20 +7,20 @@ from app.db.models.favorites_routine import Favorite_Routine
 class FavoriteRoutineCrud:
 
     @staticmethod
-    async def crud_get_favorites_routine(db: AsyncSession, user_id: int):
+    async def crud_get_favorites_routine(db: AsyncSession, u_id: int):
         result = await db.execute(
             select(Favorite_Routine).where(
-                Favorite_Routine.u_id == user_id
+                Favorite_Routine.u_id == u_id
             )
         )
         return result.scalars().all()
 
 
     @staticmethod
-    async def crud_delete_favorite_routine(db: AsyncSession, user_id: int, r_id: int):
+    async def crud_delete_favorite_routine(db: AsyncSession, u_id: int, r_id: int):
         result = await db.execute(
             select(Favorite_Routine).where(
-                Favorite_Routine.u_id == user_id,
+                Favorite_Routine.u_id == u_id,
                 Favorite_Routine.r_id == r_id
             )
         )
@@ -35,10 +35,10 @@ class FavoriteRoutineCrud:
 
 
     @staticmethod
-    async def crud_toggle_favorite_routine(db: AsyncSession, user_id: int, r_id: int):
+    async def crud_toggle_favorite_routine(db: AsyncSession, u_id: int, r_id: int):
         result = await db.execute(
             select(Favorite_Routine).where(
-                Favorite_Routine.u_id == user_id,
+                Favorite_Routine.u_id == u_id,
                 Favorite_Routine.r_id == r_id
             )
         )
@@ -49,7 +49,7 @@ class FavoriteRoutineCrud:
             await db.flush()
             return "removed"
 
-        new_fav = Favorite_Routine(u_id=user_id, r_id=r_id)
+        new_fav = Favorite_Routine(u_id=u_id, r_id=r_id)
         db.add(new_fav)
         await db.flush()
 
