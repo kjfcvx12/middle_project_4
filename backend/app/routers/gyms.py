@@ -9,35 +9,32 @@ from app.services import gym_machines as gym_machines_service
 
 router = APIRouter(prefix="/gyms", tags=["Gyms"])
 
-# 헬스장 등록
+
+# CREATE
 @router.post("")
 def routers_gym_create(
     data: Gym_Create,
     db: Session = Depends(get_db),
 ):
-    gym = gym_service.create_gym_service(db, data)
+    gym = gym_service.services_gym_create(db, data)
 
     return {
         "msg": "헬스장 등록 완료",
         "g_id": gym.g_id
     }
 
-# 헬스장 목록 조회
+
+# LIST
 @router.get("")
 def routers_gyms_list(
     page: int = 1,
-    size: int = 10,
     sort: str | None = None,
     name: str | None = None,
     address: str | None = None,
     db: Session = Depends(get_db),
 ):
-    skip = (page - 1) * size
-
-    gyms, total = gym_service.list_gym_service(
+    gyms, total = gym_service.services_gym_list(
         db=db,
-        skip=skip,
-        limit=size,
         name=name,
         address=address,
         sort=sort
@@ -57,34 +54,35 @@ def routers_gyms_list(
     return {
         "total": total,
         "page": page,
-        "size": size,
         "data": data,
     }
 
-# 헬스장 상세 조회
+
+# DETAIL
 @router.get("/{g_id}", response_model=Gym_Response)
 def routers_gym_detail(
     g_id: int,
     db: Session = Depends(get_db),
 ):
-    return gym_service.get_gym_service(db, g_id)
+    return gym_service.services_gym_service_get(db, g_id)
 
-# 헬스장 정보 수정
+
+# UPDATE
 @router.put("/{g_id}")
 def routers_gym_update(
     g_id: int,
     data: Gym_Update,
     db: Session = Depends(get_db),
 ):
-    gym = gym_service.update_gym_service(db, g_id, data)
+    gym = gym_service.services_gym_update(db, g_id, data)
 
     return {
         "msg": "수정 완료",
         "g_id": gym.g_id
     }
 
-# 헬스장 삭제
-@router.delete("/{g_id}")
+
+# DELETE
 @router.delete("/{g_id}")
 def routers_gym_delete(
     g_id: int,
@@ -96,7 +94,8 @@ def routers_gym_delete(
         "msg": "헬스장 삭제 완료"
     }
 
-# 헬스장 소속 트레이너 조회
+
+# STAFF
 @router.get("/{g_id}/staff")
 def routers_gym_staffs_get(
     g_id: int,
@@ -104,7 +103,8 @@ def routers_gym_staffs_get(
 ):
     return gym_staffs_service.services_gym_staff_get(db, g_id)
 
-# 헬스장 운동기구 목록 조회
+
+# MACHINES
 @router.get("/machines/{g_id}")
 def routers_gym_machines_get(
     g_id: int,

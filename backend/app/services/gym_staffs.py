@@ -16,12 +16,12 @@ def services_gym_staff_create(db: Session, g_id: int, u_id: int):
         if exist:
             raise HTTPException(status_code=400)
 
-        obj = gym_staff_crud.crud_gym_staffs_create(db, g_id, u_id)
-        return obj
+        obj = Gym_Staff(g_id=g_id, u_id=u_id)
+        return gym_staff_crud.crud_gym_staffs_create(db, obj)
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=400)
 
 
@@ -42,7 +42,7 @@ def services_gym_staff_delete(db: Session, g_id: int, u_id: int):
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500)
 
 
@@ -58,5 +58,5 @@ def services_gym_staff_get(db: Session, g_id: int):
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500)

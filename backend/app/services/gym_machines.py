@@ -8,50 +8,40 @@ from app.db.crud import gym_machines as gym_machine_crud
 # CREATE
 def services_gym_machine_create(db: Session, g_id: int, m_id: int, qty: int = 1):
     try:
-        exist = db.query(Gym_Machine).filter(
-            Gym_Machine.g_id == g_id,
-            Gym_Machine.m_id == m_id
-        ).first()
+        exist = gym_machine_crud.crud_gym_machine_get(db, g_id, m_id)
 
         if exist:
             raise HTTPException(status_code=400)
 
-        obj = gym_machine_crud.crud_gym_machine_create(db, g_id, m_id, qty)
-        return obj
+        obj = Gym_Machine(g_id=g_id, m_id=m_id, qty=qty)
+        return gym_machine_crud.crud_gym_machine_create(db, obj)
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500)
 
 
 # UPDATE
 def services_gym_machine_update(db: Session, g_id: int, m_id: int, qty: int):
     try:
-        obj = db.query(Gym_Machine).filter(
-            Gym_Machine.g_id == g_id,
-            Gym_Machine.m_id == m_id
-        ).first()
+        obj = gym_machine_crud.crud_gym_machine_get(db, g_id, m_id)
 
         if not obj:
             raise HTTPException(status_code=404)
 
-        updated = gym_machine_crud.crud_gym_machine_update(db, obj, qty)
-        return updated
+        return gym_machine_crud.crud_gym_machine_update(db, obj, qty)
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500)
 
 
 # DELETE
 def services_gym_machine_delete(db: Session, g_id: int, m_id: int):
     try:
-        obj = db.query(Gym_Machine).filter(
-            Gym_Machine.g_id == g_id,
-            Gym_Machine.m_id == m_id
-        ).first()
+        obj = gym_machine_crud.crud_gym_machine_get(db, g_id, m_id)
 
         if not obj:
             raise HTTPException(status_code=404)
@@ -62,7 +52,7 @@ def services_gym_machine_delete(db: Session, g_id: int, m_id: int):
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500)
 
 
@@ -78,5 +68,5 @@ def services_gym_machine_get(db: Session, g_id: int):
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500)
