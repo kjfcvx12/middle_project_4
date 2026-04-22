@@ -16,6 +16,12 @@ from app.db.crud.favorite_gyms import Favorite_Gym_Crud
 from app.db.crud.favorite_machines import Favorite_Machine_Crud
 from app.db.crud.favorite_routines import Favorite_Routine_Crud
 
+from app.db.scheme.like_boards import Like_Board_Read
+from app.db.scheme.like_comments import Like_Comment_Read
+from app.db.scheme.like_gyms import Like_Gym_Read
+from app.db.scheme.like_machines import Like_Machine_Read
+
+
 
 from app.db.crud.like_boards import Like_Board_Crud
 from app.db.crud.like_comments import Like_Comment_Crud
@@ -65,7 +71,7 @@ class User_Service:
     
 
     @staticmethod
-    async def services_user_get_email_by_name_phone(db: AsyncSession, u_name:str, phone:str):
+    async def services_user_get_email_by_name_phone(db: AsyncSession, u_name:str, phone:str) -> str:
         try:
             user = await User_Crud.crud_user_get_by_email(db, u_name, phone)
 
@@ -181,6 +187,7 @@ class User_Service:
                                 detail=f"사용자 정보 수정 실패 :{e}")
 
 
+    # 유저 삭제
     @staticmethod
     async def services_user_delete(db: AsyncSession, u_id: int) -> dict:
         try: 
@@ -252,7 +259,7 @@ class User_Service:
     
     # 유저가 좋아요 누른 게시글
     @staticmethod
-    async def services_user_like_boards_get_page(db:AsyncSession, u_id:int, page: int) -> list[Favorite_Routine_Read]:
+    async def services_user_like_boards_get_page(db:AsyncSession, u_id:int, page: int) -> list[Like_Board_Read]:
         result=await Like_Board_Crud.crud_like_boards_page_by_u_id(db, u_id, page)
 
         if not result:
@@ -264,7 +271,7 @@ class User_Service:
 
     # 유저가 좋아요 누른 댓글
     @staticmethod
-    async def services_user_like_comments_get_page(db:AsyncSession, u_id:int, page: int) -> list[Favorite_Routine_Read]:
+    async def services_user_like_comments_get_page(db:AsyncSession, u_id:int, page: int) -> list[Like_Comment_Read]:
         result=await Like_Comment_Crud.crud_like_comments_page_by_u_id(db, u_id, page)
 
         if not result:
@@ -276,7 +283,7 @@ class User_Service:
 
     # 유저가 좋아요 누른 운동기구
     @staticmethod
-    async def services_user_like_machines_get_page(db:AsyncSession, u_id:int, page: int) -> list[Favorite_Routine_Read]:
+    async def services_user_like_machines_get_page(db:AsyncSession, u_id:int, page: int) -> list[Like_Machine_Read]:
         result=await Like_Machine_Crud.crud_like_machines_page_by_u_id(db, u_id, page)
 
         if not result:
@@ -288,7 +295,7 @@ class User_Service:
 
     # 유저가 좋아요 누른 체육관
     @staticmethod
-    async def services_user_like_gyms_get_page(db:AsyncSession, u_id:int, page: int) -> list[Favorite_Routine_Read]:
+    async def services_user_like_gyms_get_page(db:AsyncSession, u_id:int, page: int) -> list[Like_Gym_Read]:
         result=await Like_Gym_Crud.crud_like_gyms_page_by_u_id(db, u_id, page)
 
         if not result:
@@ -297,27 +304,3 @@ class User_Service:
         
         return result
     
-
-    # 유저가 좋아요 누른 게시글 total
-    @staticmethod
-    async def services_user_like_boards_total(db:AsyncSession, u_id:int) -> int:
-        return await Like_Board_Crud.crud_like_boards_all_by_u_id(db, u_id)     
-
-
-    # 유저가 좋아요 누른 댓글 total
-    @staticmethod
-    async def services_user_like_comments_total(db:AsyncSession, u_id:int) -> int:
-        return await Like_Comment_Crud.crud_like_comments_all_by_u_id(db, u_id)     
-
-
-    # 유저가 좋아요 누른 운동기구 total
-    @staticmethod
-    async def services_user_like_machines_total(db:AsyncSession, u_id:int) -> int:
-        return await Like_Machine_Crud.crud_like_machines_all_by_u_id(db, u_id)     
-
-
-    # 유저가 좋아요 누른 체육관 total
-    @staticmethod
-    async def services_user_like_gyms_total(db:AsyncSession, u_id:int) -> int:
-        return await Like_Gym_Crud.crud_like_gyms_all_by_u_id(db, u_id)        
-        

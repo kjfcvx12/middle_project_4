@@ -42,7 +42,7 @@ class Like_Machine_Crud:
         size=10
         skip = (page - 1) * size
         
-        query=(select(Like_Machine)
+        query=(query(Like_Machine)
                .options(joinedload(Like_Machine.machine))
                .where(Like_Machine.u_id==u_id)
                .order_by(Like_Machine.l_m_id.desc())
@@ -54,12 +54,3 @@ class Like_Machine_Crud:
         return result.scalars().unique().all()
     
 
-    # 유저 좋아요 운동기구 전체 개수
-    @staticmethod
-    async def crud_like_machines_all_by_u_id(db:AsyncSession, u_id:int)->int:
-        query=(select(func.count(Like_Machine.l_m_id))
-               .where(Like_Machine.u_id==u_id))
-        
-        result=await db.execute(query)
-
-        return result.scalar()

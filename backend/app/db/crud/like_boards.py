@@ -55,13 +55,3 @@ class Like_Board_Crud:
 
         return result.scalars().unique().all()
     
-
-    # 유저 좋아요 게시글 전체 개수
-    @staticmethod
-    async def crud_like_boards_all_by_u_id(db:AsyncSession, u_id:int)->int:
-        query=(select(func.count(Like_Board.l_b_id))
-               .where(Like_Board.u_id==u_id))
-        
-        result=await db.execute(query)
-
-        return result.scalar()

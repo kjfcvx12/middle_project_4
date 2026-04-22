@@ -54,13 +54,5 @@ class Like_Gym_Crud:
         return result.scalars().unique().all()
     
 
-    # 유저 좋아요 체육관 전체 개수
-    @staticmethod
-    async def crud_like_gyms_all_by_u_id(db:AsyncSession, u_id:int)->int:
-        query=(select(func.count(Like_Gym.l_g_id))
-               .where(Like_Gym.u_id==u_id))
-        
-        result=await db.execute(query)
 
-        return result.scalar()
 

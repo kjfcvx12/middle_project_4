@@ -55,13 +55,3 @@ class Like_Comment_Crud:
 
         return result.scalars().unique().all()
     
-
-    # 유저 좋아요 댓글 전체 개수
-    @staticmethod
-    async def crud_like_comments_all_by_u_id(db:AsyncSession, u_id:int)->int:
-        query=(select(func.count(Like_Comment.l_b_id))
-               .where(Like_Comment.u_id==u_id))
-        
-        result=await db.execute(query)
-
-        return result.scalar()
