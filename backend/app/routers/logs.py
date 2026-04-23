@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.services.logs import *
-from app.core.jwt_handle import get_current_user
+from app.core.auth import auth_get_u_id
 from app.db.database import get_db
 from app.db.scheme.logs import LogCreate
 
@@ -17,18 +17,18 @@ router = APIRouter(
 async def create_log(
     data: LogCreate,
     db: AsyncSession = Depends(get_db),
-    user=Depends(get_current_user)
+    u_id=Depends(auth_get_u_id)
 ):
-    return await service_create_log(db, user, data)
+    return await service_create_log(db, u_id, data)
 
 
 # 목록 조회
 @router.get("/")
 async def get_logs(
     db: AsyncSession = Depends(get_db),
-    user=Depends(get_current_user)
+    u_id=Depends(auth_get_u_id)
 ):
-    return await service_get_logs(db, user)
+    return await service_get_logs(db, u_id)
 
 
 # 더보기 (핵심)
@@ -36,9 +36,9 @@ async def get_logs(
 async def get_log_detail(
     log_id: int,
     db: AsyncSession = Depends(get_db),
-    user=Depends(get_current_user)
+    u_id=Depends(auth_get_u_id)
 ):
-    return await service_get_log_detail(db, user, log_id)
+    return await service_get_log_detail(db, u_id, log_id)
 
 
 # 삭제
@@ -46,6 +46,6 @@ async def get_log_detail(
 async def delete_log(
     log_id: int,
     db: AsyncSession = Depends(get_db),
-    user=Depends(get_current_user)
+    u_id=Depends(auth_get_u_id)
 ):
-    return await service_delete_log(db, user, log_id)
+    return await service_delete_log(db, u_id, log_id)

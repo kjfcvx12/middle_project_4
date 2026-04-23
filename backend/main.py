@@ -11,7 +11,8 @@ from app.routers import users, notes
 from app.routers import boards, comments
 from app.routers import gyms, gym_staffs,gym_machines
 from app.routers import machines, parts
-from app.routers import  routines,routine_details
+from app.routers import routines,routine_details
+from app.routers import logs
 
 
 load_dotenv(dotenv_path="../../.env")
@@ -49,7 +50,7 @@ app.include_router(gym_machines.router)
 app.include_router(routines.router)
 app.include_router(routine_details.router)
 
-
+app.include_router(logs.router)
 
 
 
