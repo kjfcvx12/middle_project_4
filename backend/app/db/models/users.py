@@ -67,5 +67,5 @@ class User(Base):
     gym_staffs : Mapped["Gym_Staff"] = relationship(back_populates="user", cascade="all, delete-orphan", uselist=False)
 
 
-    sent_notes: Mapped[list["Note"]] = relationship("Note", foreign_keys="[Note.send_id]", back_populates="sender")
-    received_notes: Mapped[list["Note"]] = relationship("Note", foreign_keys="[Note.rece_id]", back_populates="receiver")
+    sent_notes: Mapped[list["Note"]] = relationship("Note", foreign_keys="Note.send_id", back_populates="sender")
+    received_notes: Mapped[list["Note"]] = relationship("Note", foreign_keys="Note.rece_id", back_populates="receiver")

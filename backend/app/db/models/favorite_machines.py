@@ -12,8 +12,8 @@ class Favorite_Machine(Base):
 
     f_m_id: Mapped[int] = mapped_column(primary_key=True)
 
-    u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id"))
-    m_id: Mapped[int] = mapped_column(ForeignKey("machines.m_id"))
+    u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id", ondelete="CASCADE"))
+    m_id: Mapped[int] = mapped_column(ForeignKey("machines.m_id", ondelete="CASCADE"))
 
     # 관계
     user: Mapped["User"] = relationship(back_populates="favorite_machines")

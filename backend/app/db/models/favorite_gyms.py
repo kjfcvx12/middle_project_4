@@ -12,8 +12,8 @@ class Favorite_Gym(Base):
 
     f_g_id: Mapped[int] = mapped_column(primary_key=True)
 
-    u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id"))
-    g_id: Mapped[int] = mapped_column(ForeignKey("gyms.g_id"))
+    u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id", ondelete="CASCADE"))
+    g_id: Mapped[int] = mapped_column(ForeignKey("gyms.g_id", ondelete="CASCADE"))
 
     # 관계
     user: Mapped["User"] = relationship(back_populates="favorite_gyms")

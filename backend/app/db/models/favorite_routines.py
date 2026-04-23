@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 class Favorite_Routine(Base):
     __tablename__="favorite_routines"
     f_r_id : Mapped[int]=mapped_column(primary_key=True)
-    u_id : Mapped[int]=mapped_column(ForeignKey('users.u_id'),nullable=False)
-    r_id : Mapped[int]=mapped_column(ForeignKey('routines.r_id'))
+    u_id : Mapped[int]=mapped_column(ForeignKey('users.u_id', ondelete="CASCADE"))
+    r_id : Mapped[int]=mapped_column(ForeignKey('routines.r_id', ondelete="CASCADE"))
 
     user: Mapped["User"] = relationship(back_populates="favorite_routines")
     routines: Mapped[list["Routine"]] = relationship(back_populates="favorite_routines")
