@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
 from app.db.models.gyms import Gym
-from app.db.scheme.gyms import GymCreate, GymUpdate
+from app.db.scheme.gyms import Gym_Create, Gym_Update
 
 
 # CREATE
-def crud_gym_create(db: Session, data: GymCreate) -> Gym:
+def crud_gym_create(db: Session, data: Gym_Create) -> Gym:
     gym = Gym(**data.model_dump())
     db.add(gym)
     db.flush()
@@ -16,8 +16,8 @@ def crud_gym_get(db: Session, g_id: int):
     return db.query(Gym).filter(Gym.g_id == g_id).first()
 
 
-# UPDATE
-def crud_gym_update(db: Session, gym: Gym, data: GymUpdate):
+# UPDATEv
+def crud_gym_update(db: Session, gym: Gym, data: Gym_Update):
     update_data = data.model_dump(exclude_unset=True)
 
     for key, value in update_data.items():
