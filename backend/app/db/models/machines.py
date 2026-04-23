@@ -6,6 +6,8 @@ from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .parts import Part
+    from .routine_details import Routine_Detail
+    from .favorite_routines import Favorite_Routine
 
 class Machine(Base):
     __tablename__ = "machines"
@@ -15,4 +17,6 @@ class Machine(Base):
     m_url:Mapped[str]=mapped_column(String(255))
     p_id:Mapped[Optional[int]]=mapped_column(ForeignKey('parts.p_id', ondelete="SET NULL"))
     
-    part:Mapped[Optional["Part"]]= relationship(back_populates="machines")
+    part:Mapped["Part"]= relationship("Part",back_populates="machines")
+    routine_details: Mapped[list["Routine_Detail"]] = relationship("Routine_Detail", back_populates="machine")
+    favorite_routines: Mapped[list["Favorite_Routine"]]=relationship("routines")

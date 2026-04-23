@@ -1,6 +1,13 @@
 from fastapi import Request, Response, HTTPException, Depends, status
+from fastapi import Request, Response, HTTPException, Depends, status
 from jwt import ExpiredSignatureError, InvalidTokenError
 from typing import Optional
+
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+
+from app.db.database import get_db
+from app.db.models.users import User
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -37,6 +44,7 @@ def set_auth_cookies(response:Response, access_token:str, refresh_token:str)->No
 #사용자 쿠키에 액세스 토큰있는지 확인
 #쿠키에서 가져온 액세스 토큰 검증/유효한지 안한지 -> 인증 로직
 async def auth_get_u_id(request:Request)-> int:
+async def auth_get_u_id(request:Request)-> int:
     access_token=request.cookies.get("access_token")
     if not access_token:
         raise HTTPException(status_code=401, detail="Access_token missing")
@@ -45,7 +53,10 @@ async def auth_get_u_id(request:Request)-> int:
     try:
         u_id=verify_token(access_token)
         if u_id is None:
+        u_id=verify_token(access_token)
+        if u_id is None:
             raise HTTPException(status_code=401,detail="no uid")
+        return u_id
         return u_id
 
     except ExpiredSignatureError:

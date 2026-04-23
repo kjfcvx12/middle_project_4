@@ -8,10 +8,11 @@ if TYPE_CHECKING:
     from .machines import Machine
     
 
+
 class Part(Base):
     __tablename__="parts"
     p_id:Mapped[int]=mapped_column(primary_key=True)
     p_name:Mapped[str]=mapped_column(String(100),nullable=False)
 
-    machines:Mapped[list["Machine"]]= relationship(back_populates="part")
-    #routine:Mapped["Routine"]= relationship(back_populates="part")
+    machines:Mapped[list["Machine"]]= relationship("Machine", back_populates="part")
+    routines:Mapped["Routine"]= relationship("Routine", back_populates="part")
