@@ -6,7 +6,7 @@ from app.db.database import Base
 if TYPE_CHECKING:
     from app.db.models.logs import Log
 
-class LogDetail(Base):
+class Log_Detail(Base):
     __tablename__ = "log_details"
 
     log_d_id: Mapped[int] = mapped_column(primary_key=True)

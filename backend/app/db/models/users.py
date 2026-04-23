@@ -47,25 +47,26 @@ class User(Base):
     refresh_token: Mapped[Optional[str]] = mapped_column(String(255))
 
 
-
-    routines : Mapped[list["Routine"]] = relationship(back_populates="user", cascade="all, delete-orphan")
-    logs : Mapped[list["Log"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    # 유저 삭제시 전부 삭제
+    routines : Mapped[list["Routine"]] = relationship("Routine", back_populates="user", cascade="all, delete-orphan")
+    logs : Mapped[list["Log"]] = relationship("Log", back_populates="user", cascade="all, delete-orphan")
     
-    favorite_gyms : Mapped[list["Favorite_Gym"]] = relationship(back_populates="user", cascade="all, delete-orphan")
-    favorite_machines : Mapped[list["Favorite_Machine"]] = relationship(back_populates="user", cascade="all, delete-orphan")
-    favorite_routines : Mapped[list["Favorite_Routine"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    favorite_gyms : Mapped[list["Favorite_Gym"]] = relationship("Favorite_Gym", back_populates="user", cascade="all, delete-orphan")
+    favorite_machines : Mapped[list["Favorite_Machine"]] = relationship("Favorite_Machine", back_populates="user", cascade="all, delete-orphan")
+    favorite_routines : Mapped[list["Favorite_Routine"]] = relationship("Favorite_Routine", back_populates="user", cascade="all, delete-orphan")
 
 
-    boards : Mapped[list["Board"]] = relationship(back_populates="user")
-    comments : Mapped[list["Comment"]] = relationship(back_populates="user")
+    # 유저 삭제시 유지
+    boards : Mapped[list["Board"]] = relationship("Board", back_populates="user", passive_deletes=True)
+    comments : Mapped[list["Comment"]] = relationship("Comment", back_populates="user", passive_deletes=True)
 
-    like_gyms : Mapped[list["Like_Gym"]] = relationship(back_populates="user")
-    like_machines : Mapped[list["Like_Machine"]] = relationship(back_populates="user")
-    like_boards : Mapped[list["Like_Board"]] = relationship(back_populates="user")
-    like_comments : Mapped[list["Like_Comment"]] = relationship(back_populates="user")
+    like_gyms : Mapped[list["Like_Gym"]] = relationship("Like_Gym", back_populates="user", passive_deletes=True)
+    like_machines : Mapped[list["Like_Machine"]] = relationship("Like_Machine", back_populates="user", passive_deletes=True)
+    like_boards : Mapped[list["Like_Board"]] = relationship("Like_Board", back_populates="user", passive_deletes=True)
+    like_comments : Mapped[list["Like_Comment"]] = relationship("Like_Comment", back_populates="user", passive_deletes=True)
 
-    gym_staffs : Mapped["Gym_Staff"] = relationship(back_populates="user", cascade="all, delete-orphan", uselist=False)
+    gym_staff : Mapped["Gym_Staff"] = relationship("Gym_Staff", back_populates="user", cascade="all, delete-orphan", uselist=False)
 
-
-    sent_notes: Mapped[list["Note"]] = relationship("Note", foreign_keys="Note.send_id", back_populates="sender")
-    received_notes: Mapped[list["Note"]] = relationship("Note", foreign_keys="Note.rece_id", back_populates="receiver")
+    # 쪽지용
+    sent_notes: Mapped[list["Note"]] = relationship("Note", foreign_keys="Note.send_id", back_populates="sender", passive_deletes=True)
+    received_notes: Mapped[list["Note"]] = relationship("Note", foreign_keys="Note.rece_id", back_populates="receiver", passive_deletes=True)

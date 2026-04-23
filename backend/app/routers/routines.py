@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.database import get_db
 from app.services.routines import Routine_Services
-from app.core.auth import auth_get_admin_id, auth_get_u_id, auth_get_staff_id
+from app.core.auth import auth_get_admin_id, auth_get_u_id, auth_get_staff_role
 from app.db.scheme.routines import Routine_Create, Routine_Update
 
 router = APIRouter(prefix="/routines", tags=["Routine"])

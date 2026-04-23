@@ -2,10 +2,10 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
 from app.db.crud import gyms as gym_crud
-from app.db.scheme.gyms import GymCreate, GymUpdate
+from app.db.scheme.gyms import Gym_Create, Gym_Update
 
 
-async def services_gym_create(db: Session, data: GymCreate):
+async def services_gym_create(db: Session, data: Gym_Create):
     try:
         result=gym_crud.crud_gym_create(db, data)
 
@@ -34,7 +34,7 @@ async def services_gym_get(db: Session, g_id: int):
         raise HTTPException(status_code=500)
 
 
-async def services_gym_update(db: Session, g_id: int, data: GymUpdate):
+async def services_gym_update(db: Session, g_id: int, data: Gym_Update):
     try:
         gym = gym_crud.crud_gym_get(db, g_id)
 

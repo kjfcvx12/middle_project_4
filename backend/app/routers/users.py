@@ -10,7 +10,6 @@ from app.db.scheme.users import User_Read, User_Login, User_Create, User_Update
 
 from app.services.users import User_Service
 
-<<<<<<< HEAD
 from app.db.scheme.logs import Log_Read
 from app.db.scheme.favorite_gyms import Favorite_Gym_Read
 from app.db.scheme.favorite_machines import Favorite_Machine_Read
@@ -20,8 +19,6 @@ from app.db.scheme.like_boards import Like_Board_Read
 from app.db.scheme.like_comments import Like_Comment_Read
 from app.db.scheme.like_gyms import Like_Gym_Read
 from app.db.scheme.like_machines import Like_Machine_Read
-=======
->>>>>>> origin/kimdeokhyun
 
 
 router=APIRouter(prefix='/users',tags=['User'])
@@ -86,7 +83,6 @@ async def router_user_update_u_id(user_update: User_Update,
 @router.delete("/del", status_code=status.HTTP_204_NO_CONTENT)
 async def router_user_delete_u_id(u_id:int=Depends(auth_get_u_id),
                          db: AsyncSession = Depends(get_db)):
-<<<<<<< HEAD
     return await User_Service.services_user_delete(db,u_id)
 
 
@@ -149,6 +145,3 @@ async def router_user_like_gyms_get_page(page:int,
                                          u_id:int=Depends(auth_get_u_id),
                                          db: AsyncSession = Depends(get_db)):
     return await User_Service.services_user_like_gyms_get_page(db, u_id, page)
-=======
-    return await User_Service.services_user_delete(db,u_id)
->>>>>>> origin/kimdeokhyun

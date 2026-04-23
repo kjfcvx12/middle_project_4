@@ -16,7 +16,6 @@ from app.db.models.parts import Part
 
 from app.db.models.routines import Routine
 from app.db.models.routine_details import Routine_Detail
-from app.db.models.like_routines import Like_Routine
 from app.db.models.favorite_routines import Favorite_Routine
 
 from app.db.models.logs import Log

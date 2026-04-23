@@ -15,7 +15,7 @@ class Favorite_Routine(Base):
     r_id : Mapped[int]=mapped_column(ForeignKey('routines.r_id', ondelete="CASCADE"))
 
     user: Mapped["User"] = relationship(back_populates="favorite_routines")
-    routines: Mapped[list["Routine"]] = relationship(back_populates="favorite_routines")
+    routines: Mapped["Routine"] = relationship(back_populates="favorite_routines")
 
 
     # 중복 방지

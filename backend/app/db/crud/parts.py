@@ -1,12 +1,5 @@
-#함수명
-#crud_parts_create
-#crud_parts_get
-#crud_parts_delete
-
 from sqlalchemy import select
-from models.parts import Part
-from sqlalchemy.orm import selectinload
-from models.machines import Machine
+from app.db.models.machines import Machine
 from app.db.models.parts import Part
 
 class Parts_CRUD:

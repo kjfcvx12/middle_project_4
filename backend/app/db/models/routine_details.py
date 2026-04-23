@@ -5,7 +5,6 @@ from sqlalchemy import String, TIMESTAMP, func, ForeignKey
 from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .parts import Part
     from .routines import Routine
     from .machines import Machine
 

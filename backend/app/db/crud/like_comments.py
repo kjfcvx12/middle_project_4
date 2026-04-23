@@ -5,7 +5,6 @@ from sqlalchemy import func
 from app.db.models.like_comments import Like_Comment
 from app.db.scheme.like_comments import Like_Comment_Create
 
-from app.db.scheme.comment import Comment
 
 
 class Like_Comment_Crud:

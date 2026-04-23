@@ -5,7 +5,6 @@ from sqlalchemy import func
 from app.db.models.like_boards import Like_Board
 from app.db.scheme.like_boards import Like_Board_Create
 
-from app.db.scheme.board import Board
 
 
 class Like_Board_Crud:

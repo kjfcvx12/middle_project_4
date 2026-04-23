@@ -4,9 +4,8 @@ from app.db.crud.users import User_Crud
 
 from app.db.scheme.users import User_Create, User_Update, User_Login
 
-# from app.db.scheme.logs import Log_Read
-<<<<<<< HEAD
-# from app.db.crud.logs import Log_crud
+from app.db.scheme.logs import Log_Read
+from app.db.crud.logs import Log_Crud
 
 from app.db.scheme.favorite_gyms import Favorite_Gym_Read
 from app.db.scheme.favorite_machines import Favorite_Machine_Read
@@ -27,24 +26,6 @@ from app.db.crud.like_boards import Like_Board_Crud
 from app.db.crud.like_comments import Like_Comment_Crud
 from app.db.crud.like_gyms import Like_Gym_Crud
 from app.db.crud.like_machines import Like_Machine_Crud
-=======
-
-# from app.db.crud.logs import Log_crud
-
-# from app.db.scheme.favorite_gyms import Favorite_Gym_Read
-# from app.db.scheme.favorite_machines import Favorite_Machine_Read
-# from app.db.scheme.favorite_routines import Favorite_Routine_Read
-
-# from app.db.crud.favorite_gyms import Favorite_Gym_Crud
-# from app.db.crud.favorite_machines import Favorite_Machine_Crud
-# from app.db.crud.favorite_routines import Favorite_Routine_Crud
-
-
-# from app.db.crud.like_boards import Like_Board_Crud
-# from app.db.crud.like_comments import Like_Comment_Crud
-# from app.db.crud.like_gyms import Like_Gym_Crud
-# from app.db.crud.like_machines import Like_Machine_Crud
->>>>>>> origin/kimdeokhyun
 
 
 
@@ -89,11 +70,7 @@ class User_Service:
     
 
     @staticmethod
-<<<<<<< HEAD
     async def services_user_get_email_by_name_phone(db: AsyncSession, u_name:str, phone:str) -> str:
-=======
-    async def services_user_get_email_by_name_phone(db: AsyncSession, u_name:str, phone:str):
->>>>>>> origin/kimdeokhyun
         try:
             user = await User_Crud.crud_user_get_by_email(db, u_name, phone)
 
@@ -155,11 +132,7 @@ class User_Service:
     # 유저 생성
     @staticmethod
     async def services_user_create(db:AsyncSession, user:User_Create):
-<<<<<<< HEAD
         try:
-=======
-        # try:
->>>>>>> origin/kimdeokhyun
             already_user=await User_Crud.crud_user_get_by_email(db, user.email)
 
             if already_user:
@@ -172,7 +145,6 @@ class User_Service:
             await db.refresh(new_user)
             return new_user
         
-<<<<<<< HEAD
         except HTTPException:
             raise
 
@@ -180,15 +152,6 @@ class User_Service:
             await db.rollback()
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                                 detail=f"사용자 등록 실패 :{e}")
-=======
-        # except HTTPException:
-            # raise
-
-        # except Exception as e:
-        #     await db.rollback()
-        #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-        #                         detail=f"사용자 등록 실패 :{e}")
->>>>>>> origin/kimdeokhyun
        
     
     # 유저 업데이트
@@ -223,10 +186,7 @@ class User_Service:
                                 detail=f"사용자 정보 수정 실패 :{e}")
 
 
-<<<<<<< HEAD
     # 유저 삭제
-=======
->>>>>>> origin/kimdeokhyun
     @staticmethod
     async def services_user_delete(db: AsyncSession, u_id: int) -> dict:
         try: 
@@ -249,20 +209,19 @@ class User_Service:
     
 
 
-    # # 유저 운동기록 조회
-    # @staticmethod
-    # async def services_user_get_logs_by_u_id(db: AsyncSession, u_id: int, page: int) -> list[Log_Read]:
-    #     result=await Logs_Crud.crud_logs_by_u_id(db, u_id, page)
+    # 유저 운동기록 조회
+    @staticmethod
+    async def services_user_get_logs_by_u_id(db: AsyncSession, u_id: int, page: int) -> list[Log_Read]:
+        result=await Logs_Crud.crud_logs_by_u_id(db, u_id, page)
 
-    #     if not result:
-    #         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-    #                             detail='유저의 운동기록이 없습니다.')
+        if not result:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                detail='유저의 운동기록이 없습니다.')
         
-    #     return result
+        return result
 
 
 
-<<<<<<< HEAD
     # 유저 체육관 즐겨찾기 목록 조회
     @staticmethod
     async def services_user_favorite_gyms_get_all(db:AsyncSession, u_id:int) -> list[Favorite_Gym_Read]:
@@ -344,110 +303,3 @@ class User_Service:
         
         return result
     
-=======
-    # # 유저 체육관 즐겨찾기 목록 조회
-    # @staticmethod
-    # async def services_user_favorite_gyms_get_all(db:AsyncSession, u_id:int) -> list[Favorite_Gym_Read]:
-    #     result=await Favorite_Gym_Crud.crud_favorite_gyms_by_u_id(db, u_id)
-
-    #     if not result:
-    #         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-    #                             detail='즐겨찾기한 체육관이 없습니다.')
-        
-    #     return result
-
-    # # 유저 운동기구 즐겨찾기 목록 조회
-    # @staticmethod
-    # async def services_user_favorite_machines_get_all(db:AsyncSession, u_id:int) -> list[Favorite_Machine_Read]:
-    #     result=await Favorite_Machine_Crud.crud_favorite_machines_by_u_id(db, u_id)
-
-    #     if not result:
-    #         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-    #                             detail='즐겨찾기한 운동기구가 없습니다.')
-        
-    #     return result
-    
-    # # 유저 루틴 즐겨찾기 목록 조회
-    # @staticmethod
-    # async def services_user_favorite_routines_get_all(db:AsyncSession, u_id:int) -> list[Favorite_Routine_Read]:
-    #     result=await Favorite_Routine_Crud.crud_favorite_routines_by_u_id(db, u_id)
-
-    #     if not result:
-    #         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-    #                             detail='즐겨찾기한 루틴이 없습니다.')
-        
-    #     return result
-
-    
-    # # 유저가 좋아요 누른 게시글
-    # @staticmethod
-    # async def services_user_like_boards_get_page(db:AsyncSession, u_id:int, page: int) -> list[Favorite_Routine_Read]:
-    #     result=await Like_Board_Crud.crud_like_boards_page_by_u_id(db, u_id, page)
-
-    #     if not result:
-    #         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-    #                             detail='좋아요 한 게시글이 없습니다.')
-        
-    #     return result
-    
-
-    # # 유저가 좋아요 누른 댓글
-    # @staticmethod
-    # async def services_user_like_comments_get_page(db:AsyncSession, u_id:int, page: int) -> list[Favorite_Routine_Read]:
-    #     result=await Like_Comment_Crud.crud_like_comments_page_by_u_id(db, u_id, page)
-
-    #     if not result:
-    #         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-    #                             detail='좋아요 한 댓글이 없습니다.')
-        
-    #     return result
-    
-
-    # # 유저가 좋아요 누른 운동기구
-    # @staticmethod
-    # async def services_user_like_machines_get_page(db:AsyncSession, u_id:int, page: int) -> list[Favorite_Routine_Read]:
-    #     result=await Like_Machine_Crud.crud_like_machines_page_by_u_id(db, u_id, page)
-
-    #     if not result:
-    #         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-    #                             detail='좋아요 한 운동기구가 없습니다.')
-        
-    #     return result
-
-
-    # # 유저가 좋아요 누른 체육관
-    # @staticmethod
-    # async def services_user_like_gyms_get_page(db:AsyncSession, u_id:int, page: int) -> list[Favorite_Routine_Read]:
-    #     result=await Like_Gym_Crud.crud_like_gyms_page_by_u_id(db, u_id, page)
-
-    #     if not result:
-    #         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-    #                             detail='좋아요 한 체육관이 없습니다.')
-        
-    #     return result
-    
-
-    # # 유저가 좋아요 누른 게시글 total
-    # @staticmethod
-    # async def services_user_like_boards_total(db:AsyncSession, u_id:int) -> int:
-    #     return await Like_Board_Crud.crud_like_boards_all_by_u_id(db, u_id)     
-
-
-    # # 유저가 좋아요 누른 댓글 total
-    # @staticmethod
-    # async def services_user_like_comments_total(db:AsyncSession, u_id:int) -> int:
-    #     return await Like_Comment_Crud.crud_like_comments_all_by_u_id(db, u_id)     
-
-
-    # # 유저가 좋아요 누른 운동기구 total
-    # @staticmethod
-    # async def services_user_like_machines_total(db:AsyncSession, u_id:int) -> int:
-    #     return await Like_Machine_Crud.crud_like_machines_all_by_u_id(db, u_id)     
-
-
-    # # 유저가 좋아요 누른 체육관 total
-    # @staticmethod
-    # async def services_user_like_gyms_total(db:AsyncSession, u_id:int) -> int:
-    #     return await Like_Gym_Crud.crud_like_gyms_all_by_u_id(db, u_id)        
-        
->>>>>>> origin/kimdeokhyun

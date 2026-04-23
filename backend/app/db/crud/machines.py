@@ -1,13 +1,5 @@
-#함수명
-# crud_machines_create
-# crud_machines_get
-# crud_machines_update
-# crud_machines_delete
-
-
-
 from sqlalchemy import select, func
-from models.machines import Machine
+from app.db.models.machines import Machine
 
 class Machines_CRUD:
 

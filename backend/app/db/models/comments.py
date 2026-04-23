@@ -2,6 +2,15 @@ from datetime import datetime
 from sqlalchemy import String, ForeignKey, TIMESTAMP, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.database import Base
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .boards import Board
+    from .users import User
+    from .like_comments import Like_Comment
+    
+
+
 
 class Comment(Base):
     __tablename__ = "comments"
@@ -28,3 +37,6 @@ class Comment(Base):
         "Board",
         back_populates="comments"
     )
+
+    user: Mapped["User"] = relationship("User", back_populates="comments")
+    like_comments: Mapped[list["Like_Comment"]] = relationship("Like_Comment", back_populates="comment")
