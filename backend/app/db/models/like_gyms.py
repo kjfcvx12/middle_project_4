@@ -19,4 +19,3 @@ class Like_Gym(Base):
    
     user: Mapped["User"] = relationship(back_populates="like_gyms")
     gym: Mapped["Gym"] = relationship(back_populates="like_gyms")
-
