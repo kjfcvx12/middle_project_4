@@ -4,13 +4,11 @@ from pydantic import BaseModel
 class Gym_Machine_Create(BaseModel):
     g_id: int
     m_id: int
-    qty: int = 1
+    qty: int
 
 # UPDATE
 class Gym_Machine_Update(BaseModel):
-    g_id: int
-    m_id: int
-    qty: int
+    qty: int | None = None 
 
 # DELETE
 class Gym_Machine_Delete(BaseModel):

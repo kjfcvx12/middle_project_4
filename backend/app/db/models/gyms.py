@@ -1,6 +1,12 @@
 from app.db.database import Base
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Boolean
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .like_gyms import Like_Gym
+    from .favorite_gyms import Favorite_Gym
+
 
 class Gym(Base):
     __tablename__ = "gyms"
@@ -14,3 +20,6 @@ class Gym(Base):
     parking: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     elev: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     open_time: Mapped[str] = mapped_column(String(50), nullable=True)
+
+    like_gyms: Mapped[list["Like_Gym"]]=relationship(back_populates="gym", cascade="all, delete-orphan")
+    favorite_gyms: Mapped[list["Favorite_Gym"]] = relationship(back_populates="gym", cascade="all, delete-orphan")

@@ -9,7 +9,7 @@ from app.services import gym_machines as gym_machines_service
 
 router = APIRouter(prefix="/gyms", tags=["Gyms"])
 
-
+# Gym
 # CREATE
 @router.post("")
 async def routers_gym_create(
@@ -30,6 +30,7 @@ async def routers_gyms_list(
 ):
     return await gym_service.services_gym_list(
         db=db,
+        page=page,
         name=name,
         address=address,
         sort=sort
@@ -64,7 +65,14 @@ async def routers_gym_delete(
     return await gym_service.services_gym_delete(db, g_id)
 
 
+# SEARCH
+@router.get("/search")
+async def routers_gym_search(name: str | None, address : str | None, db: Session=Depends(get_db)):
+    return await gym_service.services_gym_search(db,name,address)
+
+
 # STAFF
+# LIST
 @router.get("/{g_id}/staff")
 async def routers_gym_staffs_get(
     g_id: int,
@@ -72,8 +80,8 @@ async def routers_gym_staffs_get(
 ):
     return await gym_staffs_service.services_gym_staff_get(db, g_id)
 
-
 # MACHINES
+# LIST
 @router.get("/machines/{g_id}")
 async def routers_gym_machines_get(
     g_id: int,

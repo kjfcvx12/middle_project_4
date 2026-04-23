@@ -36,12 +36,14 @@ def crud_gym_delete(db: Session, gym: Gym):
 # LIST
 def crud_gyms_gets(
     db: Session,
-    skip: int,
-    limit: int,
+    page: int,
     name: str | None = None,
     address: str | None = None,
     sort: str | None = None
 ):
+    size=10
+    skip = (page - 1) * size
+
     query = db.query(Gym)
 
     if name:
@@ -62,7 +64,7 @@ def crud_gyms_gets(
     else:
         query = query.order_by(Gym.g_id.desc())
 
-    gyms = query.offset(skip).limit(limit).all()
+    gyms = query.offset(skip).limit(size).all()
 
     return gyms, total
 

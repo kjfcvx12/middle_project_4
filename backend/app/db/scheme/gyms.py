@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional
 
 # CREATE
 class Gym_Create(BaseModel):
@@ -36,9 +36,5 @@ class Gym_Response(BaseModel):
         from_attributes = True
 
 # LIST RESPONSE ITEM
-class Gym_List_Item(BaseModel):
-    g_id: int
-    g_name: str
-    g_addr: str
-    like_count: int = 0
-    favorite_count: int = 0
+class Gym_List_Item(Gym_Response):
+    pass

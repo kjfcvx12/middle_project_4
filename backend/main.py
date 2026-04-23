@@ -7,12 +7,8 @@ from dotenv import load_dotenv
 from app.db.database import Base, async_engine
 from app.routers import users, notes
 #from app.middleware.token_refresh import RefreshTokenMiddleware
-
 from app.db.database import Base, async_engine
 #from app.routers import users
-#from app.middleware.token_refresh import RefreshTokenMiddleware
-
-# routers import 추가
 #from app.routers import gyms
 #from app.routers import gym_staffs
 #from app.routers import gym_machines

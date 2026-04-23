@@ -74,7 +74,7 @@ async def auth_get_admin_id(u_id: int = Depends(auth_get_u_id), db: AsyncSession
     return u_id
 
 
-async def auth_get_staff_id(u_id: int = Depends(auth_get_u_id), db: AsyncSession = Depends(get_db)) -> int:
+async def auth_get_staff_role(u_id: int = Depends(auth_get_u_id), db: AsyncSession = Depends(get_db)) -> int:
   
     result = await db.execute(select(User.role).filter(User.u_id == u_id))
     role = result.scalar_one_or_none()

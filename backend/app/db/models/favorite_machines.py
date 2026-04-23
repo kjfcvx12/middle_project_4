@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from .machines import Machine
 
 class Favorite_Machine(Base):
-    __tablename__ = "favorites_machine"
+    __tablename__ = "favorite_machine"
 
     f_m_id: Mapped[int] = mapped_column(primary_key=True)
 
@@ -16,8 +16,8 @@ class Favorite_Machine(Base):
     m_id: Mapped[int] = mapped_column(ForeignKey("machines.m_id"))
 
     # 관계
-    user: Mapped["User"] = relationship(back_populates="favorites_machines")
-    machine: Mapped["Machine"] = relationship(back_populates="favorites_machines")
+    user: Mapped["User"] = relationship(back_populates="favorite_machines")
+    machine: Mapped["Machine"] = relationship(back_populates="favorite_machines")
 
     # 중복 방지
     __table_args__ = (
