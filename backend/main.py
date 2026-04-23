@@ -8,6 +8,7 @@ from app.db.database import Base, async_engine
 #from app.middleware.token_refresh import RefreshTokenMiddleware
 
 from app.routers import users, notes
+from app.routers import boards, comments
 from app.routers import gyms, gym_staffs,gym_machines
 from app.routers import machines, parts
 
@@ -33,6 +34,11 @@ async def root():
 
 app.include_router(users.router)
 app.include_router(notes.router)
+
+app.include_router(boards.router)
+app.include_router(comments.router)
+
+
 
 
 #uvicorn main:app --port=8081 --reload
