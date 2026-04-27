@@ -49,11 +49,11 @@ class Note_Service:
     async def services_note_create(db:AsyncSession, note:Note_Create, u_id:int) -> str:
 
         try:
-            note.send_id = u_id 
-
-            new_note = await Note_Crud.crud_note_create(db, note)
+            new_note = await Note_Crud.crud_note_create(db, note, u_id)
 
             role=await User_Crud.crud_user_get_by_role(db, note.rece_id)
+
+            email=await User_Crud.crud_user_get_email_by_u_id(db, note.rece_id)
 
             await db.commit()
             await db.refresh(new_note)
@@ -61,7 +61,7 @@ class Note_Service:
             if role=='admin':
                 msg="문의가 관리자에게 접수되었습니다."
             else:
-                msg=f"쪽지가 {note.rece_id}님에게 전송되었습니다."
+                msg=f"쪽지가 {email}에게 전송되었습니다."
 
             return msg
         
