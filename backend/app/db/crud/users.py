@@ -33,6 +33,12 @@ class User_Crud:
         result = await db.execute(select(User).filter(User.u_id == u_id))
         return result.scalars().first()
     
+    # 유저 email 찾기
+    @staticmethod
+    async def crud_user_get_email_by_u_id(db:AsyncSession,u_id:int) -> str | None:
+        result = await db.execute(select(User.email).filter(User.u_id == u_id))
+        return result.scalar_one_or_none()
+    
 
     # role 찾기
     @staticmethod
