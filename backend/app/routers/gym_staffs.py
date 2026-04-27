@@ -32,12 +32,3 @@ async def routers_gym_staff_delete(
         data.g_id,
         data.u_id
     )
-
-
-# LIST
-@router.get("/{g_id}")
-async def routers_gym_staff_get(
-    g_id: int,
-    db: Session = Depends(get_db),
-):
-    return await service.services_gym_staff_get(db, g_id)
