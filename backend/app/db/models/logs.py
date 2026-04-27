@@ -32,6 +32,6 @@ class Log(Base):
         cascade="all, delete-orphan"
     )
 
-    user: Mapped["User"] = relationship("User", back_populates="log")
+    user: Mapped["User"] = relationship("User", back_populates="logs")
     routine: Mapped["Routine"] = relationship("Routine", back_populates="log")
     machine: Mapped["Machine"] = relationship("Machine", back_populates="log")

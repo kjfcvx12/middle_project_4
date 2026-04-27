@@ -7,9 +7,10 @@ from typing import Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     from .parts import Part
     from .routine_details import Routine_Detail
-    from .favorite_routines import Favorite_Routine
+    from .favorite_machines import Favorite_Machine
     from .like_machines import Like_Machine
     from .gym_machines import Gym_Machine
+    from .logs import Log
 
 class Machine(Base):
     __tablename__ = "machines"
@@ -21,6 +22,7 @@ class Machine(Base):
     
     part:Mapped["Part"]= relationship("Part",back_populates="machines")
     routine_details: Mapped[list["Routine_Detail"]] = relationship("Routine_Detail", back_populates="machine")
-    favorite_routines: Mapped[list["Favorite_Routine"]] = relationship("Favorite_Routine", back_populates="machine")
+    favorite_machines: Mapped[list["Favorite_Machine"]] = relationship("Favorite_Machine", back_populates="machine")
     gym_machines: Mapped[list["Gym_Machine"]] = relationship("Gym_Machine", back_populates="machine")
     like_machines: Mapped[list["Like_Machine"]] = relationship("Like_Machine", back_populates="machine")
+    log: Mapped["Log"] = relationship("Log", back_populates="machine")

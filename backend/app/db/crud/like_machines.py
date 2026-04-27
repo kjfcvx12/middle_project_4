@@ -42,7 +42,7 @@ class Like_Machine_Crud:
         size=10
         skip = (page - 1) * size
         
-        query=(query(Like_Machine)
+        query=(select(Like_Machine)
                .options(joinedload(Like_Machine.machine))
                .where(Like_Machine.u_id==u_id)
                .order_by(Like_Machine.l_m_id.desc())
