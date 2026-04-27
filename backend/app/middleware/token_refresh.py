@@ -2,7 +2,7 @@ from fastapi import Request
 
 from app.core.jwt_handle import verify_token, create_access_token, create_refresh_token
 from app.core.auth import set_auth_cookies
-from app.db.crud.users import UserCrud
+from app.db.crud.users import User_Crud
 from app.db.database import get_db
 
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -37,20 +37,20 @@ class RefreshTokenMiddleware(BaseHTTPMiddleware):
         #만료/잘못된 토큰이면 기존 응답 반환
         if refresh_token:
             try:
-                user_id=verify_token(refresh_token)
+                u_id=verify_token(refresh_token)
             
             except (ExpiredSignatureError, InvalidTokenError):
                 return response
 
         
-            new_access_token=create_access_token(user_id)
-            new_refresh_token=create_refresh_token(user_id)
+            new_access_token=create_access_token(u_id)
+            new_refresh_token=create_refresh_token(u_id)
 
             #db에 새 리프레시 토큰 저장
             #anext() : 비동기 제네레이터에서 값 가져오는 함수 => 다음 세션객체 가져오려고
             try:
                 db=await anext(get_db())
-                await UserCrud.update_refresh_token_by_id(db, user_id, new_refresh_token)
+                await User_Crud.update_refresh_token_by_id(db, u_id, new_refresh_token)
                 await db.commit()
             except Exception:
                 await db.rollback()

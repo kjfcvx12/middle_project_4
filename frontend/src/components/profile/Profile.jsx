@@ -2,10 +2,10 @@ import React from 'react';
 import { useAuth } from '../AuthContext';
 
 const Profile = () => {
-    const {setIsLoggedIn} =useAuth();
+    const {logout} =useAuth();
     return (
         <div>
-            <button onClick={()=>{setIsLoggedIn(false)}}>로그아웃</button>
+            <button onClick={logout}>로그아웃</button>
         </div>
     );
 };
