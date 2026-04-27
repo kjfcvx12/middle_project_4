@@ -38,3 +38,11 @@ dist/
 # 🔹 데이터 (필요 없으면)
 data/
 *.csv
+
+# python
+__pycache__/
+*.pyc
+
+# venv
+.venv/
+venv/
