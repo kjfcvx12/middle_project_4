@@ -1,0 +1,28 @@
+from app.db.database import Base
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from datetime import datetime
+from sqlalchemy import String, TIMESTAMP, func, ForeignKey
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .parts import Part
+    from .routine_details import Routine_Detail
+    from .favorite_machines import Favorite_Machine
+    from .like_machines import Like_Machine
+    from .gym_machines import Gym_Machine
+    from .logs import Log
+
+class Machine(Base):
+    __tablename__ = "machines"
+    m_id:Mapped[int]=mapped_column(primary_key=True)
+    m_name:Mapped[str]=mapped_column(String(100), nullable=False)
+    dsc:Mapped[str]=mapped_column(String(200), nullable=True)
+    m_url:Mapped[str]=mapped_column(String(255))
+    p_id:Mapped[Optional[int]]=mapped_column(ForeignKey('parts.p_id', ondelete="SET NULL"))
+    
+    part:Mapped["Part"]= relationship("Part",back_populates="machines")
+    routine_details: Mapped[list["Routine_Detail"]] = relationship("Routine_Detail", back_populates="machine")
+    favorite_machines: Mapped[list["Favorite_Machine"]] = relationship("Favorite_Machine", back_populates="machine")
+    gym_machines: Mapped[list["Gym_Machine"]] = relationship("Gym_Machine", back_populates="machine")
+    like_machines: Mapped[list["Like_Machine"]] = relationship("Like_Machine", back_populates="machine")
+    log: Mapped["Log"] = relationship("Log", back_populates="machine")

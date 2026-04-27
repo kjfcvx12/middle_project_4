@@ -1,0 +1,84 @@
+from sqlalchemy.orm import Session
+from fastapi import HTTPException
+
+from app.db.models.gym_machines import Gym_Machine
+from app.db.crud import gym_machines as gym_machine_crud
+
+
+# CREATE
+async def services_gym_machine_create(db: Session, g_id: int, m_id: int, qty: int = 1):
+    try:
+        exist = gym_machine_crud.crud_gym_machine_get(db, g_id, m_id)
+
+        if exist:
+            raise HTTPException(status_code=400)
+
+        obj = Gym_Machine(g_id=g_id, m_id=m_id, qty=qty)
+        result=gym_machine_crud.crud_gym_machine_create(db, obj)
+    
+        await db.commit()
+        await db.refresh(result)
+        return result
+
+    except HTTPException:
+        raise
+    except Exception:
+        await db.rollback()
+        raise HTTPException(status_code=500)
+
+
+# UPDATE
+async def services_gym_machine_update(db: Session, g_id: int, m_id: int, qty: int):
+    try:
+        obj = gym_machine_crud.crud_gym_machine_get(db, g_id, m_id)
+
+        if not obj:
+            raise HTTPException(status_code=404)
+
+        result=gym_machine_crud.crud_gym_machine_update(db, obj, qty)
+
+        await db.commit()
+        await db.refresh(result)
+        return result
+
+    except HTTPException:
+        raise
+    except Exception:
+        await db.rollback()
+        raise HTTPException(status_code=500)
+
+
+# DELETE
+async def services_gym_machine_delete(db: Session, g_id: int, m_id: int):
+    try:
+        obj = gym_machine_crud.crud_gym_machine_get(db, g_id, m_id)
+
+        if not obj:
+            raise HTTPException(status_code=404)
+
+        gym_machine_crud.crud_gym_machine_delete(db, obj)
+
+        await db.commit()
+        return True
+
+    except HTTPException:
+        raise
+    except Exception:
+        await db.rollback()
+        raise HTTPException(status_code=500)
+
+
+# LIST
+async def services_gym_machine_get(db: Session, g_id: int):
+    try:
+        machines = gym_machine_crud.crud_gym_machines_get_id(db, g_id)
+
+        if not machines:
+            raise HTTPException(status_code=404)
+
+        return machines
+
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=500)

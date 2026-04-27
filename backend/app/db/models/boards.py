@@ -2,6 +2,13 @@ from datetime import datetime
 from sqlalchemy import String, ForeignKey, TIMESTAMP, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.database import Base
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .users import User
+    from .comments import Comment
+    from .like_boards import Like_Board
+    
 
 class Board(Base):
     __tablename__ = "boards"
@@ -21,9 +28,11 @@ class Board(Base):
         onupdate=func.now()
     )
     #cascade
+    user: Mapped["User"] = relationship("User", back_populates="boards")
     comments: Mapped[list["Comment"]] = relationship(
         "Comment",
         back_populates="board",
         cascade="all, delete-orphan",
         passive_deletes=True
     )
+    like_boards: Mapped[list["Like_Board"]] = relationship("Like_Board", back_populates="board")

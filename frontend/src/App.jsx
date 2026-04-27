@@ -1,13 +1,12 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
-import NaviBar from "./Components/NaviBar";
-import Board from "./Components/Board/BoardList";
-
-const Home = () => <div>home</div>;
-const Gym = () => <div>gym</div>;
-const Routine = () => <div>routine</div>;
-const Log = () => <div>log</div>;
-const Profile = () => <div>profile</div>;
+import NaviBar from "./components/NaviBar";
+import Board from "./components/board/Board";
+import Gym from "./components/gym/Gym";
+import Home from "./components/home/Home";
+import Log from "./components/log/Log";
+import Profile from "./components/profile/Profile";
+import Routine from "./components/routine/Routine";
 
 const App = () => {
   const navStyle = {
