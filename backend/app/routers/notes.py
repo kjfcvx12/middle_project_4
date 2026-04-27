@@ -63,4 +63,4 @@ async def router_note_rece_del(n_id:int,
 @router.delete("/del", status_code=status.HTTP_200_OK)
 async def router_ghost_note_delete(admin:int=Depends(auth_get_admin_id),
                                    db: AsyncSession = Depends(get_db)):
-    await Note_Service.services_ghost_note_delete(db)
+    return await Note_Service.services_ghost_note_delete(db)
