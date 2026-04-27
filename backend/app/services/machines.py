@@ -35,13 +35,11 @@ class Machines_Service:
                 "m_id":new_machine.m_id,
                 "msg":"성공적으로 등록되었습니다"
             }
-        
-        except HTTPException:
-            raise
+
         
         except Exception:
             await db.rollback()
-            raise HTTPException(500,"등록중 오류 발생")
+            raise HTTPException(400,"등록중 오류 발생")
 
 
     #운동기구 수정
@@ -62,12 +60,10 @@ class Machines_Service:
             return{"msg":"성공적으로 수정되었습니다"}
     
 
-        except HTTPException:
-            raise
         
         except Exception:
             await db.rollback()
-            raise HTTPException(500,"수정중 오류 발생")
+            raise HTTPException(400,"수정중 오류 발생")
 
 
     #운동기구 삭제
@@ -87,12 +83,11 @@ class Machines_Service:
             await db.commit()
             return {"msg":"성공적으로 삭제되었습니다"}
         
-        except HTTPException:
-            raise
+
 
         except Exception:
             await db.rollback()
-            raise HTTPException(500,"삭제 중 오류 발생")
+            raise HTTPException(500,"루틴에 사용중인 머신은 삭제할 수 없습니다")
 
 
 

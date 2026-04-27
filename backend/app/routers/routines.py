@@ -23,7 +23,7 @@ async def routers_routines_create(
 async def routers_routines_read_all(
     name:str | None=None,
     p_id:int | None=None,
-    u_id:int | None=None,
+    u_id:int = Depends(auth_get_u_id),
     db:AsyncSession=Depends(get_db)
 ):
     read_routines = await Routine_Services.services_routines_read_all(db,name,p_id,u_id)
