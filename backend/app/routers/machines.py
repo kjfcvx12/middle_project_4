@@ -12,6 +12,8 @@ from app.db.database import get_db
 from app.services.machines import Machines_Service
 from app.db.scheme.machines import MachineCreate, MachineUpdate
 
+from app.core.auth import auth_get_admin_id
+
 router=APIRouter(prefix="/machines",tags=["Machine"])
 
 
@@ -19,7 +21,7 @@ router=APIRouter(prefix="/machines",tags=["Machine"])
 @router.post("")
 async def router_machines_create(
     machine_create:MachineCreate,
-    admin:int,
+    admin:int=Depends(auth_get_admin_id),
     db:AsyncSession=Depends(get_db)):
     return await Machines_Service.service_machines_create(db, machine_create=machine_create, admin=admin)
 
@@ -47,7 +49,7 @@ async def router_machines_detail(m_id:int,
 async def router_machines_update(
     m_id:int,
     machine_update:MachineUpdate,
-    admin:int,
+    admin:int=Depends(auth_get_admin_id),
     db:AsyncSession=Depends(get_db)):
 
     return await Machines_Service.service_machines_update(db, m_id, machine_update,admin=admin)
@@ -56,7 +58,7 @@ async def router_machines_update(
 @router.delete("/{m_id}")
 async def router_machines_delete(
     m_id:int,
-    admin:int,
+    admin:int=Depends(auth_get_admin_id),
     db:AsyncSession=Depends(get_db)):
 
     return await Machines_Service.service_machines_delete(db, m_id,admin=admin)

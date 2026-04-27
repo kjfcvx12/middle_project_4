@@ -30,8 +30,10 @@ class Note_Crud:
 
     # 쪽지 생성
     @staticmethod
-    async def crud_note_create(db:AsyncSession, note: Note_Create) -> Note:          
-        db_note=Note(**note.model_dump())
+    async def crud_note_create(db:AsyncSession, note: Note_Create, u_id:int) -> Note:
+        note_data = note.model_dump()
+
+        db_note=Note(**note_data, send_id=u_id)
         db.add(db_note)
         await db.flush()
         return db_note
