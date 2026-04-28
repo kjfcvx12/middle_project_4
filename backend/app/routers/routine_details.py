@@ -6,7 +6,7 @@ from app.services.routine_details import Routine_Detail_Services
 from app.core.auth import auth_get_u_id
 from app.db.scheme import Routine_Detail_Create, Routine_Detail_Update
 
-router=APIRouter(prefix="/routine_drtails", tags=["Rouine_Detail"])
+router=APIRouter(prefix="/routine_details", tags=["Rouine_Detail"])
 
 @router.post("/")
 async def routers_routine_details_create(
@@ -35,7 +35,8 @@ async def routers_routine_details_read_by_r_id(
                 "sets" : i.sets,
                 "reps" : i.reps,
                 "rest_time" : i.rest_time,
-                "p_name" : i.machine.part.p_name if i.machine and i.machine.part else None
+                "p_name" : i.machine.part.p_name if i.machine and i.machine.part else None,
+                "weight" : i.weight
             }
             for i in read_routine_details
         ]
@@ -58,6 +59,7 @@ async def routers_routine_detail_read_by_r_d_id(
         "sets" : read_routine_detail.sets,
         "reps" : read_routine_detail.reps,
         "rest_time" : read_routine_detail.rest_time,
+        "weight" : read_routine_detail.weight,
         "p_name" : (read_routine_detail.machine.part.p_name if 
                     read_routine_detail.machine and 
                     read_routine_detail.machine.part else None)
