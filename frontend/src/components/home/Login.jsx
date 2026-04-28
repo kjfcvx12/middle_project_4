@@ -7,7 +7,7 @@ const Login = () => {
 
     const [isOpen, setIsOpen] = useState(true);
     const [loginData, setLoginData] = useState({email: '', pw: '' });
-    const [signupData, setSignupData] = useState({email: '', pw: '', u_name: '', phone:'' })
+    const [signupData, setSignupData] = useState({email: '', pw: '', u_name: '', phone:'', info:'' })
 
     // 입력값 변경 핸들러
     const handleChangeLogin = (e) => {
@@ -108,6 +108,7 @@ const Login = () => {
                     <form onSubmit={handleSubmit} style={formStyle}>
                         <input
                             name="email"
+                            type='email'
                             placeholder="email"
                             onChange={handleChangeSignup}
                             required
@@ -128,6 +129,13 @@ const Login = () => {
                         />
                         <input
                             name="phone"
+                            type="text"
+                            placeholder="전화번호"
+                            onChange={handleChangeSignup}
+                            required
+                        />
+                        <input
+                            name="info"
                             type="text"
                             placeholder="전화번호"
                             onChange={handleChangeSignup}
