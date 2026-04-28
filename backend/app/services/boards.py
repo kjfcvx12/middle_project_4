@@ -16,14 +16,11 @@ class BoardService:
             await db.commit()
             await db.refresh(new_board)
 
-            return {
-                "msg": "게시글 작성 성공",
-                "data": new_board
-        }
+            return new_board
 
         except Exception:
             await db.rollback()
-            raise
+            raise HTTPException(status_code=400, detail="400에러")
     
     #게시물 조회
     @staticmethod
@@ -45,12 +42,7 @@ class BoardService:
             keyword=keyword
     )
 
-        return {
-            "msg": "조회 성공",
-            "page": page,
-            "total_count": total_count,
-            "data": boards
-    }
+        return boards, total_count, page
     
     #게시글 상세조회
     @staticmethod
@@ -60,7 +52,7 @@ class BoardService:
         if not board:
             raise HTTPException(status_code=404,detail="게시글을 찾을 수 없습니다")
 
-        return {"msg": "조회 성공","data": board}
+        return board
     
     
     #게시물 수정
@@ -87,11 +79,9 @@ class BoardService:
             await db.commit()
             await db.refresh(update_board)
 
-            return {"msg": "게시글 수정 완료", "data":update_board}
+            return update_board
         
-        except HTTPException:
-            await db.rollback()
-            raise
+
         except Exception:
             await db.rollback()
             raise HTTPException(status_code=400, detail="게시글 수정 실패")
@@ -113,11 +103,8 @@ class BoardService:
             await BoardCrud.crud_boards_delete(db, db_board, u_id)
             await db.commit()
 
-            return {"message": "게시글이 삭제되었습니다"}
+            return None
 
-        except HTTPException:
-            await db.rollback()
-            raise
         except Exception:
             await db.rollback()
             raise HTTPException(status_code=400, detail="게시글 삭제 실패")

@@ -6,7 +6,6 @@ class Routine_Base(BaseModel):
     r_name: Annotated[str, Field(max_length=100)]
 
 class Routine_Create(Routine_Base):
-    u_id : int | None = None
     p_id : int  
 
 class Routine_In_DB(Routine_Base):
