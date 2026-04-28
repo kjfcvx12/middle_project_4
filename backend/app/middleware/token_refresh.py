@@ -2,60 +2,59 @@ from fastapi import Request
 
 from app.core.jwt_handle import verify_token, create_access_token, create_refresh_token
 from app.core.auth import set_auth_cookies
-from app.db.crud.users import UserCrud
+from app.db.crud.users import User_Crud
 from app.db.database import get_db
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from jwt import ExpiredSignatureError, InvalidTokenError
 
 
-# 클라이언트가 호출하면 미들웨어가 먼저 실행된다
-# 액세스토큰을 먼저 확인 -> 리프레시 토큰 확인
-# 미들웨어 없으면, 15분 마다 토큰만료에러 보고 다시 로그인을 해야됨...
-# => 자동으로 새로운 액세스토큰 발급받고 요청 계속 진행시키기 위해 미들웨어에다 넣음
-
-# BaseHTTPMiddleware를 상속받아 미들웨어를 만들거임
-# 요청(request) -> 처리 (handler) -> 응답(response) 사이에 추가로직 삽입 가능
-# call_next(request) : 다음 미들웨어 or 라우터 요청이 전달된다
 class RefreshTokenMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request:Request, call_next):
-        response = await call_next(request)
+    async def dispatch(self, request: Request, call_next):
+        # 1. 쿠키에서 토큰 추출
+        access_token = request.cookies.get("access_token")
+        refresh_token = request.cookies.get("refresh_token")
+        
+        is_token_refreshed = False
+        new_access = None
+        new_refresh = None
 
-        #쿠키에서 토큰 가져옴
-        access_token=request.cookies.get("access_token")
-        refresh_token=request.cookies.get("refresh_token")
-        #액세스토큰 존재하면, 유효성 검증 => 만료/잘못된 토큰이면 pass -> 리프레시로 이동
+        # 2. 액세스 토큰 검증 및 재발급 로직
         try:
             if access_token:
-                verify_token(access_token)
-                return response
-            
+                verify_token(access_token)  # 정상일 경우 통과
         except (ExpiredSignatureError, InvalidTokenError):
-            pass
+            # 액세스 토큰이 만료되었고 리프레시 토큰이 있는 경우
+            if refresh_token:
+                db = None
+                try:
+                    # 리프레시 토큰 검증 및 사용자 식별
+                    u_id = verify_token(refresh_token)
+                    
+                    # 새로운 토큰 쌍 생성
+                    new_access = create_access_token(u_id)
+                    new_refresh = create_refresh_token(u_id)
+                    
+                    # DB 세션 생성 및 업데이트
+                    db = await anext(get_db())
+                    await User_Crud.update_refresh_token_by_id(db, u_id, new_refresh)
+                    await db.commit()
+                    
+                    is_token_refreshed = True
+                except Exception as e:
+                    if db:
+                        await db.rollback()
+                    # 리프레시 토큰도 만료되었거나 DB 오류 시 조용히 넘김 (이후 인증 필터에서 처리)
+                    pass
+                finally:
+                    if db:
+                        await db.close() # 세션 누수 방지를 위해 반드시 닫기
 
-        #리프레시 토큰 존재하면 검증시도, 정상이면 user_id 가져옴
-        #만료/잘못된 토큰이면 기존 응답 반환
-        if refresh_token:
-            try:
-                user_id=verify_token(refresh_token)
+        # 3. 본래 요청(라우터 로직) 수행
+        response = await call_next(request)
+
+        # 4. 토큰이 갱신되었다면 응답 쿠키에 주입
+        if is_token_refreshed:
+            set_auth_cookies(response, new_access, new_refresh)
             
-            except (ExpiredSignatureError, InvalidTokenError):
-                return response
-
-        
-            new_access_token=create_access_token(user_id)
-            new_refresh_token=create_refresh_token(user_id)
-
-            #db에 새 리프레시 토큰 저장
-            #anext() : 비동기 제네레이터에서 값 가져오는 함수 => 다음 세션객체 가져오려고
-            try:
-                db=await anext(get_db())
-                await UserCrud.update_refresh_token_by_id(db, user_id, new_refresh_token)
-                await db.commit()
-            except Exception:
-                await db.rollback()
-                raise
-
-            set_auth_cookies(response, new_access_token, new_refresh_token)
-        
         return response
