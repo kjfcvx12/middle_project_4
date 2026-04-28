@@ -4,8 +4,8 @@ from fastapi.concurrency import asynccontextmanager
 from dotenv import load_dotenv
 
 from app.db.database import Base, async_engine
-#from app.middleware.token_refresh import RefreshTokenMiddleware
-
+from app.middleware.token_refresh import RefreshTokenMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import users, notes
 from app.routers import boards, comments
@@ -27,8 +27,20 @@ async def lifespan(app:FastAPI):
 
 app=FastAPI(lifespan=lifespan)
 
-#app.add_middleware(RefreshTokenMiddleware)
 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173", 
+        "http://127.0.0.1:5173"
+    ],  # 프론트엔드 주소 (정확히 일치해야 함)
+    allow_credentials=True,               # 쿠키 허용을 위해 필수
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.add_middleware(RefreshTokenMiddleware)
 
 @app.get("/")
 async def root():
