@@ -24,22 +24,6 @@ const Login = () => {
 
     // 로그인 처리
     const handleSubmit = (e) => {
-<<<<<<< HEAD
-    e.preventDefault();
-    
-    if (isOpen) {
-        // 로그인 로직
-        console.log("로그인 시도:", loginData.email);
-        alert(`${loginData.email}님 환영합니다!`);
-        login(loginData);
-    } else {
-        // 회원가입 로직
-        console.log("회원가입 시도:", signupData.email);
-        alert("회원가입이 완료되었습니다.");
-        signup(signupData)
-    }
-};
-=======
         e.preventDefault();
         
         if (isOpen) {
@@ -54,7 +38,6 @@ const Login = () => {
             signup(signupData);
         }
     };
->>>>>>> 140928e56de3d13f60bb363e1f90b9645b9a5813
 
     return (
         <div style={{ padding: '50px', textAlign: 'center' }}>
