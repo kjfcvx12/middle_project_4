@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { createBoard } from "../../api/board";
+import { createBoard, getBoards } from "../../api/board";
 import BoardDetail from "./BoardDetail";
 
 const Board = () => {
@@ -21,10 +21,7 @@ const Board = () => {
 
     const fetch_boards = async () => {
       try {
-        const response = await fetch(
-          `http://127.0.0.1:8081/boards?page=${page}&size=${size}`,
-        );
-        const result = await response.json();
+        const result = await getBoards(page, size);
 
         set_boards(result.data || []);
         set_total_count(result.total_count || 0);
