@@ -10,7 +10,7 @@ class Note_Base(BaseModel):
 
 
 class Note_Create(Note_Base):
-    send_id:int
+    pass
 
 
 

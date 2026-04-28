@@ -7,9 +7,9 @@ class CommentCrud:
 
     #댓글 추가
     @staticmethod 
-    async def crud_comments_create(db:AsyncSession, comment_data:CommentCreate, u_id:int):
+    async def crud_comments_create(db:AsyncSession, b_id:int, comment_data:CommentCreate, u_id:int):
         new_comment = Comment(
-            b_id = comment_data.b_id,
+            b_id = b_id,
             u_id = u_id,
             c_content = comment_data.c_content
         )
@@ -27,7 +27,7 @@ class CommentCrud:
     
     #댓글 수정
     @staticmethod
-    async def crud_comments_update(db:AsyncSession, db_comment:Comment, comment_data:CommentUpdate, u_id:int):
+    async def crud_comments_update(db:AsyncSession, b_id:int, db_comment:Comment, comment_data:CommentUpdate, u_id:int):
         if comment_data.c_content is not None:
             db_comment.c_content = comment_data.c_content
         await db.flush()
@@ -35,6 +35,6 @@ class CommentCrud:
     
     #댓글 삭제
     @staticmethod
-    async def crud_comments_delete(db:AsyncSession, db_comment:Comment,u_id:int):
+    async def crud_comments_delete(db:AsyncSession, b_id:int, db_comment:Comment,u_id:int):
         await db.delete(db_comment)
         await db.flush()

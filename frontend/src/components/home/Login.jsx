@@ -3,23 +3,40 @@ import { useAuth } from '../AuthContext';
 
 
 const Login = () => {
-    const { isLoggedIn, setIsLoggedIn, logout } = useAuth();
+    const { login, logout, signup } = useAuth();
 
     const [isOpen, setIsOpen] = useState(true);
-    const [loginData, setLoginData] = useState({ email: '', pw: '' });
+    const [loginData, setLoginData] = useState({email: '', pw: '' });
+    const [signupData, setSignupData] = useState({email: '', pw: '', u_name: '', phone:'' })
 
     // 입력값 변경 핸들러
-    const handleChange = (e) => {
+    const handleChangeLogin = (e) => {
         const { name, value } = e.target;
         setLoginData({ ...loginData, [name]: value });
     };
 
+
+    const handleChangeSignup = (e) => {
+        const { name, value } = e.target;
+        setSignupData({ ...signupData, [name]: value });
+    };
+
+
     // 로그인 처리
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("로그인 시도:", loginData.email);
-        alert(`${loginData.e}님 환영합니다!`);
-        setIsLoggedIn(true)
+        
+        if (isOpen) {
+            // 로그인 로직
+            console.log("로그인 시도:", loginData.email);
+            alert(`${loginData.email}님 환영합니다!`);
+            login(loginData);
+        } else {
+            // 회원가입 로직
+            console.log("회원가입 시도:", signupData.email);
+            alert("회원가입이 완료되었습니다.");
+            signup(signupData);
+        }
     };
 
     return (
@@ -33,18 +50,20 @@ const Login = () => {
                         <input
                             name="email"
                             placeholder="email"
-                            onChange={handleChange}
+                            value={loginData.email}
+                            onChange={handleChangeLogin}
                             required
                         />
                         <input
                             name="pw"
-                            type="pw"
+                            type="password"
                             placeholder="비밀번호"
-                            onChange={handleChange}
+                            value={loginData.pw}
+                            onChange={handleChangeLogin}
                             required
                         />
                         <input type="checkbox" id="autologin" name="autologin" value="autologin"/>
-                            <label for="autologin">로그인 상태 유지</label>
+                            <label htmlFor="autologin">로그인 상태 유지</label>
                         
                          {/* Silent Refresh 사용법 */}
                         <button type="submit">로그인</button>
@@ -73,28 +92,28 @@ const Login = () => {
                         <input
                             name="email"
                             placeholder="email"
-                            onChange={handleChange}
+                            onChange={handleChangeSignup}
                             required
                         />
                         <input
                             name="pw"
-                            type="pw"
+                            type="password"
                             placeholder="비밀번호"
-                            onChange={handleChange}
+                            onChange={handleChangeSignup}
                             required
                         />
                         <input
                             name="u_name"
                             type="text"
                             placeholder="이름"
-                            onChange={handleChange}
+                            onChange={handleChangeSignup}
                             required
                         />
                         <input
                             name="phone"
                             type="text"
                             placeholder="전화번호"
-                            onChange={handleChange}
+                            onChange={handleChangeSignup}
                             required
                         />
                         <button type="submit">회원가입</button>

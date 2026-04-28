@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 class BoardBase(BaseModel):
-    u_id : int
+    u_id : int | None = None
     b_content : str = Field(..., min_length=1,max_length=300)
 
 class BoardCreate(BaseModel):
@@ -13,13 +13,11 @@ class BoardUpdate(BaseModel):
 
 class BoardRead(BaseModel):
     b_id : int
-    i_id : int
-    u_id : int
-    u_name : str
-    b_content : str
-    like_count : int
-    created_at : datetime
-    updated_at : datetime | None=None
+    u_id : int | None = None
+    u_name : str | None = None
+    b_content : str | None = None
+    created_at : datetime | None = None
+    updated_at : datetime | None = None
 
     class Config:
         from_attributes = True
