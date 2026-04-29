@@ -212,7 +212,7 @@ class User_Service:
     # 유저 운동기록 조회
     @staticmethod
     async def services_user_get_logs_by_u_id(db: AsyncSession, u_id: int, page: int) -> list[Log_Read]:
-        result=await Logs_Crud.crud_logs_by_u_id(db, u_id, page)
+        result=await Log_Crud.crud_get_logs(db, u_id, page)
 
         if not result:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
