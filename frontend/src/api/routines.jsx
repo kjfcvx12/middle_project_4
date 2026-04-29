@@ -6,9 +6,9 @@ export const routines_create = ({r_name, u_id, p_id})=>{
 };
 
 // 루틴 목록 조회 (쿼리 포함)
-export const routines_read = ({name, p_id, u_id}={}) =>{
+export const routines_read = ({name, p_id}={}) =>{
     return api.get("/routines",{
-        params : {name, p_id,u_id}
+        params : {name, p_id}
     },);
 };
 

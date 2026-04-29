@@ -3,7 +3,7 @@ import api from "./api";
 // 운동 추가
 export const routine_detail_create = ({r_id, m_id, step, sets, reps, rest_time})=>{
     return api.post("/routine_details", {
-        r_id, m_id, setp, sets, reps, rest_time
+        r_id, m_id, step, sets, reps, rest_time
     });
 };
 
