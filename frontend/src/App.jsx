@@ -9,6 +9,10 @@ import Log from './components/log/Log';
 import Board from './components/board/Board';
 import Profile from './components/profile/Profile';
 import { useAuth } from './components/AuthContext';
+import MachineList from './components/routine/machine/machine_list';
+import MachineDetail from './components/routine/machine/machine_detail';
+
+
 
 
 const ProtectedRoute = ({ isLoggedIn }) => {
@@ -46,6 +50,9 @@ const App = () => {
               <Route path="/log" element={<Log />} />
               <Route path="/board" element={<Board />} />
               <Route path="/profile" element={<Profile />} />
+              {/* 머신 추가 */}
+              <Route path="/machines" element={<MachineList />} />
+              <Route path="/machines/:m_id" element={<MachineDetail />} />
             </Route>
 
 

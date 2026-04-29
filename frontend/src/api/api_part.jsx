@@ -1,11 +1,6 @@
-import React from 'react';
+import api from './api';
 
-const api_part = () => {
-    return (
-        <div>
-            
-        </div>
-    );
+// 운동 부위 목록 조회
+export const parts_read=()=>{
+  return api.get('/parts');
 };
-
-export default api_part;
