@@ -1,9 +1,9 @@
-import React from 'react';
+import BoardList from "./BoardList";
 
 const Board = () => {
   return (
     <div>
-      
+      <BoardList />
     </div>
   );
 };

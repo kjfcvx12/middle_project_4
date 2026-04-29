@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { createBoard, getBoards } from "../../api/board";
 import BoardDetail from "./BoardDetail";
 
-const Board = () => {
+const BoardList = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const mode = searchParams.get("mode");
@@ -22,6 +22,7 @@ const Board = () => {
     const fetch_boards = async () => {
       try {
         const result = await getBoards(page, size);
+        console.log("게시글 응답:", result);
 
         set_boards(result.data || []);
         set_total_count(result.total_count || 0);
@@ -43,11 +44,12 @@ const Board = () => {
     }
 
     try {
-      await createBoard(1, {
+      await createBoard({
         b_content,
       });
 
       alert("게시글 작성 완료");
+      set_b_content("");
       navigate("/board");
     } catch (error) {
       console.error("게시글 작성 실패:", error.response?.data || error.message);
@@ -96,4 +98,4 @@ const Board = () => {
   );
 };
 
-export default Board;
+export default BoardList;

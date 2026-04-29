@@ -15,7 +15,7 @@ const BoardCreate = () => {
     }
 
     try {
-      await createBoard(1, {
+      await createBoard({
         b_content,
       });
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { createComment, getBoardDetail, getComments } from "../../api/board";
+import { getBoardDetail } from "../../api/board";
+import Comment from "./Comments";
 
 const BoardDetail = () => {
   const [searchParams] = useSearchParams();
@@ -9,8 +10,6 @@ const BoardDetail = () => {
   const id = searchParams.get("id");
 
   const [board, set_board] = useState(null);
-  const [comments, set_comments] = useState([]);
-  const [c_content, set_c_content] = useState("");
 
   useEffect(() => {
     const fetch_board_detail = async () => {
@@ -22,51 +21,10 @@ const BoardDetail = () => {
       }
     };
 
-    const fetch_comments = async () => {
-      try {
-        const result = await getComments(id);
-
-        console.log("댓글 응답:", result);
-
-        set_comments(Array.isArray(result) ? result : result.data || []);
-      } catch (error) {
-        console.error("댓글 조회 실패:", error);
-      }
-    };
-
     if (id) {
       fetch_board_detail();
-      fetch_comments();
     }
   }, [id]);
-
-  const handle_comment_submit = async (e) => {
-    e.preventDefault();
-
-    if (!c_content.trim()) {
-      alert("댓글 내용을 입력해주세요.");
-      return;
-    }
-
-    try {
-      await createComment(id, 1, {
-        c_content,
-      });
-
-      set_c_content("");
-
-      const comment_result = await getComments(id);
-
-      set_comments(
-        Array.isArray(comment_result)
-          ? comment_result
-          : comment_result.data || [],
-      );
-    } catch (error) {
-      console.error("댓글 작성 실패:", error);
-      alert("댓글 작성 실패");
-    }
-  };
 
   if (!id) {
     return <div style={{ paddingBottom: "80px" }}>게시글 ID가 없습니다.</div>;
@@ -88,23 +46,7 @@ const BoardDetail = () => {
 
       <hr />
 
-      <h2>댓글</h2>
-
-      <form onSubmit={handle_comment_submit}>
-        <input
-          value={c_content}
-          onChange={(e) => set_c_content(e.target.value)}
-          placeholder="댓글을 입력하세요"
-        />
-        <button type="submit">댓글 등록</button>
-      </form>
-
-      {comments.map((comment) => (
-        <div key={comment.c_id}>
-          <p>{comment.c_content}</p>
-          <small>작성자 ID: {comment.u_id}</small>
-        </div>
-      ))}
+      <Comment b_id={id} />
 
       <button onClick={() => navigate("/board")}>목록으로</button>
     </div>
