@@ -20,6 +20,7 @@ class User_Create(BaseModel):
 class User_Login(BaseModel):
     email: EmailStr
     pw: Annotated[str, Field(max_length=72)]
+    autologin: bool = False
 
 
 class User_Update(BaseModel):
