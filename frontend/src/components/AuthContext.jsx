@@ -1,5 +1,5 @@
-import { createContext, useState, useContext, useEffect } from 'react';
-import { user_login, user_me, user_signup, user_logout } from './../api/user';
+import { createContext, useContext, useEffect, useState } from "react";
+import { user_login, user_logout, user_me, user_signup } from "./../api/user";
 
 const AuthContext = createContext(null);
 
@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
     const initAuth = async () => {
       try {
         // 백엔드 쿠키가 있으면 유저 정보가 오고, 없으면 에러가 납니다.
-        const response = await user_me(); 
+        const response = await user_me();
         if (response.data) {
           setUser(response.data);
           setIsLoggedIn(true);
@@ -38,7 +38,10 @@ export const AuthProvider = ({ children }) => {
       setIsLoggedIn(true);
       return { success: true };
     } catch (error) {
-      return { success: false, error: error.response?.data?.detail || "로그인 실패" };
+      return {
+        success: false,
+        error: error.response?.data?.detail || "로그인 실패",
+      };
     }
   };
 
@@ -61,12 +64,17 @@ export const AuthProvider = ({ children }) => {
       await user_signup(data);
       return { success: true };
     } catch (error) {
-      return { success: false, error: error.response?.data?.detail || "회원가입 실패" };
+      return {
+        success: false,
+        error: error.response?.data?.detail || "회원가입 실패",
+      };
     }
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout, signup, loading }}>
+    <AuthContext.Provider
+      value={{ isLoggedIn, user, login, logout, signup, loading }}
+    >
       {!loading && children}
     </AuthContext.Provider>
   );
