@@ -48,6 +48,13 @@ export const user_admin_get_user = async (u_id) => {
   return response;
 };
 
+// Get 현재 사용자 정보
+export const user_profile = async (u_id) => {
+  const response = await api.get('/users/profile');
+  return response;
+};
+
+
 
 // PUT	현재 id 사용자 수정
 export const user_edit = async (data) => {

@@ -16,7 +16,7 @@ const Login = () => {
         const finalValue = type === 'checkbox' ? checked : value;
 
         if (isOpen){
-            setLoginData({ ...loginData, [name]: value });
+            setLoginData({ ...loginData, [name]: finalValue });
         }else{
             setSignupData({ ...signupData, [name]: value });
         }
@@ -79,7 +79,6 @@ const Login = () => {
                         />
                         <label htmlFor="autologin">로그인 상태 유지</label>
                         
-                         {/* Silent Refresh 사용법 */}
                         <button type="submit">로그인</button>
                     </form>
                     <button>
