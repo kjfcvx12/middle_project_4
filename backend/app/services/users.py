@@ -69,6 +69,7 @@ class User_Service:
         return user.email
     
 
+    # 잊어버린 이메일 이름과 전화번호로 찾기
     @staticmethod
     async def services_user_get_email_by_name_phone(db: AsyncSession, u_name:str, phone:str) -> str:
         try:

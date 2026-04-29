@@ -11,7 +11,7 @@ const Login = () => {
 
     // 입력값 변경 핸들러
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
 
         const finalValue = type === 'checkbox' ? checked : value;
 

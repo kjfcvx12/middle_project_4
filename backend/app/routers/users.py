@@ -41,7 +41,7 @@ async def router_user_signup(user:User_Create, db:AsyncSession=Depends(get_db)):
 async def router_user_login(user:User_Login, response:Response, db:AsyncSession=Depends(get_db)):
     result=await User_Service.services_user_login(db, user)
     db_user, access_token, refresh_token=result
-    set_auth_cookies(response, access_token, refresh_token)
+    set_auth_cookies(response, access_token, refresh_token, autologin=user.autologin)
     return db_user
 
 
