@@ -41,8 +41,8 @@ async def router_user_signup(user:User_Create, db:AsyncSession=Depends(get_db)):
 async def router_user_login(user:User_Login, response:Response, db:AsyncSession=Depends(get_db)):
     result=await User_Service.services_user_login(db, user)
     db_user, access_token, refresh_token=result
-    set_auth_cookies(response, access_token, refresh_token)
-    return {"message": "로그인 성공"}
+    set_auth_cookies(response, access_token, refresh_token, autologin=user.autologin)
+    return db_user
 
 
 # POST 로그아웃
@@ -95,28 +95,28 @@ async def router_user_get_logs_by_u_id(page:int,
 
 
 # 유저 체육관 즐겨찾기 목록 조회
-@router.get("favorite_gyms/{u_id}", response_model=list[Favorite_Gym_Read])
+@router.get("/favorite_gyms/{u_id}", response_model=list[Favorite_Gym_Read])
 async def router_user_favorite_gyms_get_all(u_id:int=Depends(auth_get_u_id),
                                             db: AsyncSession = Depends(get_db)):
     return await User_Service.services_user_favorite_gyms_get_all(db, u_id)
 
 
 # 유저 운동기구 즐겨찾기 목록 조회
-@router.get("favorite_machines/{u_id}", response_model=list[Favorite_Machine_Read])
+@router.get("/favorite_machines/{u_id}", response_model=list[Favorite_Machine_Read])
 async def router_user_favorite_machines_get_all(u_id:int=Depends(auth_get_u_id),
                                                 db: AsyncSession = Depends(get_db)):
     return await User_Service.services_user_favorite_machines_get_all(db, u_id)
 
 
 # 유저 루틴 즐겨찾기 목록 조회
-@router.get("favorite_machines/{u_id}", response_model=list[Favorite_Routine_Read])
+@router.get("/favorite_routines/{u_id}", response_model=list[Favorite_Routine_Read])
 async def router_user_favorite_routines_get_all(u_id:int=Depends(auth_get_u_id),
                                                 db: AsyncSession = Depends(get_db)):
     return await User_Service.services_user_favorite_routines_get_all(db, u_id)
 
 
 # 유저가 좋아요 누른 게시글
-@router.get("like_boards/{u_id}", response_model=list[Like_Board_Read])
+@router.get("/like_boards/{u_id}", response_model=list[Like_Board_Read])
 async def router_user_like_boards_get_page(page:int, 
                                            u_id:int=Depends(auth_get_u_id),
                                            db: AsyncSession = Depends(get_db)):
@@ -124,7 +124,7 @@ async def router_user_like_boards_get_page(page:int,
 
 
 # 유저가 좋아요 누른 댓글
-@router.get("like_comments/{u_id}", response_model=list[Like_Comment_Read])
+@router.get("/like_comments/{u_id}", response_model=list[Like_Comment_Read])
 async def router_user_like_comments_get_page(page:int, 
                                              u_id:int=Depends(auth_get_u_id),
                                              db: AsyncSession = Depends(get_db)):
@@ -132,7 +132,7 @@ async def router_user_like_comments_get_page(page:int,
 
 
 # 유저가 좋아요 누른 운동기구
-@router.get("like_machines/{u_id}", response_model=list[Like_Machine_Read])
+@router.get("/like_machines/{u_id}", response_model=list[Like_Machine_Read])
 async def router_user_like_machines_get_page(page:int, 
                                              u_id:int=Depends(auth_get_u_id),
                                              db: AsyncSession = Depends(get_db)):
@@ -140,7 +140,7 @@ async def router_user_like_machines_get_page(page:int,
 
 
 # 유저가 좋아요 누른 체육관
-@router.get("like_gyms/{u_id}", response_model=list[Like_Gym_Read])
+@router.get("/like_gyms/{u_id}", response_model=list[Like_Gym_Read])
 async def router_user_like_gyms_get_page(page:int, 
                                          u_id:int=Depends(auth_get_u_id),
                                          db: AsyncSession = Depends(get_db)):

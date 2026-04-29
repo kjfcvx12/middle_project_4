@@ -6,36 +6,44 @@ const Login = () => {
     const { login, logout, signup } = useAuth();
 
     const [isOpen, setIsOpen] = useState(true);
-    const [loginData, setLoginData] = useState({email: '', pw: '' });
+    const [loginData, setLoginData] = useState({email: '', pw: '' , autologin:false});
     const [signupData, setSignupData] = useState({email: '', pw: '', u_name: '', phone:'', info:'' })
 
     // 입력값 변경 핸들러
-    const handleChangeLogin = (e) => {
-        const { name, value } = e.target;
-        setLoginData({ ...loginData, [name]: value });
-    };
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
 
+        const finalValue = type === 'checkbox' ? checked : value;
 
-    const handleChangeSignup = (e) => {
-        const { name, value } = e.target;
-        setSignupData({ ...signupData, [name]: value });
+        if (isOpen){
+            setLoginData({ ...loginData, [name]: value });
+        }else{
+            setSignupData({ ...signupData, [name]: value });
+        }
     };
 
 
     // 로그인 처리
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         
         if (isOpen) {
             // 로그인 로직
-            console.log("로그인 시도:", loginData.email);
-            alert(`${loginData.email}님 환영합니다!`);
-            login(loginData);
+            const result = await login(loginData);
+            if (result.success) {
+                alert(`환영합니다!`);
+            } else {
+                alert(result.error || "로그인에 실패했습니다.");
+            }
         } else {
             // 회원가입 로직
-            console.log("회원가입 시도:", signupData.email);
-            alert("회원가입이 완료되었습니다.");
-            signup(signupData);
+            const result = await signup(signupData);
+            if (result.success) {
+                alert("회원가입이 완료되었습니다. 로그인해 주세요.");
+                setIsOpen(true);
+            } else {
+                alert(result.error || "회원가입 실패");
+            }
         }
     };
 
@@ -51,7 +59,7 @@ const Login = () => {
                             name="email"
                             placeholder="email"
                             value={loginData.email}
-                            onChange={handleChangeLogin}
+                            onChange={handleChange}
                             required
                         />
                         <input
@@ -59,11 +67,17 @@ const Login = () => {
                             type="password"
                             placeholder="비밀번호"
                             value={loginData.pw}
-                            onChange={handleChangeLogin}
+                            onChange={handleChange}
                             required
                         />
-                        <input type="checkbox" id="autologin" name="autologin" value="autologin"/>
-                            <label htmlFor="autologin">로그인 상태 유지</label>
+                        <input 
+                            type="checkbox" 
+                            id="autologin" 
+                            name="autologin"
+                            checked={loginData.autologin}
+                            onChange={handleChange} 
+                        />
+                        <label htmlFor="autologin">로그인 상태 유지</label>
                         
                          {/* Silent Refresh 사용법 */}
                         <button type="submit">로그인</button>
@@ -93,35 +107,40 @@ const Login = () => {
                             name="email"
                             type='email'
                             placeholder="email"
-                            onChange={handleChangeSignup}
+                            value={signupData.email}
+                            onChange={handleChange}
                             required
                         />
                         <input
                             name="pw"
                             type="password"
                             placeholder="비밀번호"
-                            onChange={handleChangeSignup}
+                            value={signupData.pw}
+                            onChange={handleChange}
                             required
                         />
                         <input
                             name="u_name"
                             type="text"
                             placeholder="이름"
-                            onChange={handleChangeSignup}
+                            value={signupData.u_name}
+                            onChange={handleChange}
                             required
                         />
                         <input
                             name="phone"
                             type="text"
                             placeholder="전화번호"
-                            onChange={handleChangeSignup}
+                            value={signupData.phone}
+                            onChange={handleChange}
                             required
                         />
                         <input
                             name="info"
                             type="text"
-                            placeholder="전화번호"
-                            onChange={handleChangeSignup}
+                            placeholder="자기소개"
+                            value={signupData.info}
+                            onChange={handleChange}
                             required
                         />
                         <button type="submit">회원가입</button>

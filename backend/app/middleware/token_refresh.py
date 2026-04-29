@@ -37,7 +37,7 @@ class RefreshTokenMiddleware(BaseHTTPMiddleware):
                     
                     # DB 세션 생성 및 업데이트
                     db = await anext(get_db())
-                    await User_Crud.update_refresh_token_by_id(db, u_id, new_refresh)
+                    await User_Crud.crud_user_update_token(db, u_id, new_refresh)
                     await db.commit()
                     
                     is_token_refreshed = True
