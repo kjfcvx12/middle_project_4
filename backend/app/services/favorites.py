@@ -18,7 +18,7 @@ from app.db.crud.favorite_routines import Favorite_Routine_Crud
 
 class Favorite_Service:
 
-    # 체육관 즐겨찾기 추가
+    # 헬스장 즐겨찾기 추가
     @staticmethod
     async def services_favorite_gym_create(db:AsyncSession, u_id:int, g_id:int) -> Favorite_Gym_Read:
         try:
@@ -31,7 +31,7 @@ class Favorite_Service:
 
             if check:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                    detail="이미 즐겨찾기에 등록된 체육관입니다.")
+                                    detail="이미 즐겨찾기에 등록된 헬스장입니다.")
 
             db_data = Favorite_Gym_Create(u_id=u_id, g_id=g_id)
 
@@ -47,10 +47,10 @@ class Favorite_Service:
         except Exception as e:
             await db.rollback()
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"체육관 즐겨찾기 실패 :{e}")
+                                detail=f"헬스장 즐겨찾기 실패 :{e}")
 
 
-    # 체육관 즐겨찾기 해제
+    # 헬스장 즐겨찾기 해제
     @staticmethod
     async def services_favorite_gym_delete(db: AsyncSession, f_g_id: int) -> dict:
         try: 
@@ -61,7 +61,7 @@ class Favorite_Service:
                                     detail='해제할 즐겨찾기가 없습니다')
 
             await db.commit()
-            return {'message':'체육관 즐겨찾기 해제'}
+            return {'message':'헬스장 즐겨찾기 해제'}
         
         except HTTPException:
             raise
@@ -69,7 +69,7 @@ class Favorite_Service:
         except Exception as e:
             await db.rollback()
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"체육관 즐겨찾기 해제 실패 :{e}")
+                                detail=f"헬스장 즐겨찾기 해제 실패 :{e}")
     
 
     # 운동기구 즐겨찾기 추가

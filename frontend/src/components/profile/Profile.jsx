@@ -51,7 +51,7 @@ const Profile = () => {
         const FavMachineList = await user_get_favorite_machines(currentId);
         const FavRoutineList = await user_get_favorite_routines(currentId);
 
-        setFavGyms(FavGymsList.data.length === 0 ? ['즐겨찾기한 체육관이 없습니다.'] : FavGymsList.data);
+        setFavGyms(FavGymsList.data.length === 0 ? ['즐겨찾기한 헬스장이 없습니다.'] : FavGymsList.data);
         setFavMachines(FavMachineList.data.length === 0 ? ['즐겨찾기한 운동기구가 없습니다.'] : FavMachineList.data);
         setFavRoutines(FavRoutineList.data.length === 0 ? ['즐겨찾기한 루틴이 없습니다.'] : FavRoutineList.data);
 
