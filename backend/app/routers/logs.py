@@ -28,6 +28,7 @@ async def get_logs(
     db: AsyncSession = Depends(get_db),
     u_id=Depends(auth_get_u_id)
 ):
+    print(" 로그 API 들어옴")
     return await service_get_logs(db, u_id)
 
 

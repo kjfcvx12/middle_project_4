@@ -2,6 +2,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, String
 from typing import TYPE_CHECKING
 from app.db.database import Base
+from sqlalchemy import Integer
+
 
 if TYPE_CHECKING:
     from app.db.models.logs import Log
@@ -18,6 +20,8 @@ class Log_Detail(Base):
 
     sets: Mapped[int] = mapped_column(nullable=False)
     reps: Mapped[int] = mapped_column(nullable=False)
+    weight: Mapped[int] = mapped_column(Integer, default=0)   # kg
+    duration: Mapped[int] = mapped_column(Integer, default=0) # 초
 
     fail_memo: Mapped[str | None] = mapped_column(String(100))
     memo: Mapped[str] = mapped_column(String(300), nullable=False)
