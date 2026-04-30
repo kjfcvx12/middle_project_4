@@ -14,7 +14,7 @@ router = APIRouter(prefix="/gym_staffs", tags=["Gym_Staff"])
 @router.post("")
 async def routers_gym_staff_create(
     data: Gym_Staff_Create,
-    admin:int=Depends(auth_get_admin_id),
+    #admin:int=Depends(auth_get_admin_id),
     db: Session = Depends(get_db),
 ):
 
@@ -29,7 +29,7 @@ async def routers_gym_staff_create(
 @router.delete("")
 async def routers_gym_staff_delete(
     data: Gym_Staff_Delete,
-    admin:int=Depends(auth_get_admin_id),
+    #admin:int=Depends(auth_get_admin_id),
     db: Session = Depends(get_db),
 ):
     return await service.services_gym_staff_delete(
