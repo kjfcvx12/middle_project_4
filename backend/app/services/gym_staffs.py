@@ -17,11 +17,14 @@ async def services_gym_staff_create(db: Session, g_id: int, u_id: int):
             raise HTTPException(status_code=400)
 
         obj = Gym_Staff(g_id=g_id, u_id=u_id)
-        return gym_staff_crud.crud_gym_staffs_create(db, obj)
+        result=gym_staff_crud.crud_gym_staffs_create(db, obj)
 
+        await db.commit()
+        await db.refresh(result)
     except HTTPException:
         raise
     except Exception:
+        await db.rollback()
         raise HTTPException(status_code=400)
 
 
@@ -38,11 +41,13 @@ async def services_gym_staff_delete(db: Session, g_id: int, u_id: int):
 
         gym_staff_crud.crud_gym_staffs_delete(db, obj)
 
+        await db.commit()
         return True
 
     except HTTPException:
         raise
     except Exception:
+        await db.rollback()
         raise HTTPException(status_code=500)
 
 

@@ -1,5 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select, func
+from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy import func
 from app.db.models.like_gyms import Like_Gym
 from app.db.scheme.like_gyms import Like_Gym_Create
 
@@ -32,3 +34,25 @@ class Like_Gym_Crud:
                                  filter(Like_Gym.g_id==g_id))
         
         return db_data.scalar()
+    
+
+    # 유저 좋아요 체육관 page 조회
+    @staticmethod
+    async def crud_like_gyms_page_by_u_id(db:AsyncSession, u_id:int, page: int = 1)->list[Like_Gym]:
+        size=10
+        skip = (page - 1) * size
+        
+        query=(select(Like_Gym)
+               .options(joinedload(Like_Gym.gym))
+               .where(Like_Gym.u_id==u_id)
+               .order_by(Like_Gym.l_g_id.desc())
+               .offset(skip)
+               .limit(size))
+        
+        result=await db.execute(query)
+
+        return result.scalars().unique().all()
+    
+
+
+

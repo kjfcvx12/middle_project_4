@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
 from app.db.models.gyms import Gym
-from app.db.scheme.gyms import GymCreate, GymUpdate
+from app.db.scheme.gyms import Gym_Create, Gym_Update
 
 
 # CREATE
-def crud_gym_create(db: Session, data: GymCreate) -> Gym:
+def crud_gym_create(db: Session, data: Gym_Create) -> Gym:
     gym = Gym(**data.model_dump())
     db.add(gym)
     db.flush()
@@ -16,8 +16,8 @@ def crud_gym_get(db: Session, g_id: int):
     return db.query(Gym).filter(Gym.g_id == g_id).first()
 
 
-# UPDATE
-def crud_gym_update(db: Session, gym: Gym, data: GymUpdate):
+# UPDATEv
+def crud_gym_update(db: Session, gym: Gym, data: Gym_Update):
     update_data = data.model_dump(exclude_unset=True)
 
     for key, value in update_data.items():
@@ -41,7 +41,11 @@ def crud_gyms_gets(
     address: str | None = None,
     sort: str | None = None
 ):
+<<<<<<< HEAD
     size = 10  # 기본 limit
+=======
+    size=10
+>>>>>>> 58e719c560343188a154edfc7bbb003500c69f21
     skip = (page - 1) * size
 
     query = db.query(Gym)

@@ -1,0 +1,24 @@
+from app.db.database import Base
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import  ForeignKey, UniqueConstraint
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.db.models.users import User
+    from app.db.models.routines import Routine
+
+
+class Favorite_Routine(Base):
+    __tablename__="favorite_routines"
+    f_r_id : Mapped[int]=mapped_column(primary_key=True)
+    u_id : Mapped[int]=mapped_column(ForeignKey('users.u_id', ondelete="CASCADE"))
+    r_id : Mapped[int]=mapped_column(ForeignKey('routines.r_id', ondelete="CASCADE"))
+
+    user: Mapped["User"] = relationship(back_populates="favorite_routines")
+    routines: Mapped["Routine"] = relationship(back_populates="favorite_routines")
+
+
+    # 중복 방지
+    __table_args__ = (
+        UniqueConstraint("u_id", "r_id"),
+    )

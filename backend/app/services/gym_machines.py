@@ -14,11 +14,16 @@ async def services_gym_machine_create(db: Session, g_id: int, m_id: int, qty: in
             raise HTTPException(status_code=400)
 
         obj = Gym_Machine(g_id=g_id, m_id=m_id, qty=qty)
-        return gym_machine_crud.crud_gym_machine_create(db, obj)
+        result=gym_machine_crud.crud_gym_machine_create(db, obj)
+    
+        await db.commit()
+        await db.refresh(result)
+        return result
 
     except HTTPException:
         raise
     except Exception:
+        await db.rollback()
         raise HTTPException(status_code=500)
 
 
@@ -30,11 +35,16 @@ async def services_gym_machine_update(db: Session, g_id: int, m_id: int, qty: in
         if not obj:
             raise HTTPException(status_code=404)
 
-        return gym_machine_crud.crud_gym_machine_update(db, obj, qty)
+        result=gym_machine_crud.crud_gym_machine_update(db, obj, qty)
+
+        await db.commit()
+        await db.refresh(result)
+        return result
 
     except HTTPException:
         raise
     except Exception:
+        await db.rollback()
         raise HTTPException(status_code=500)
 
 
@@ -48,11 +58,13 @@ async def services_gym_machine_delete(db: Session, g_id: int, m_id: int):
 
         gym_machine_crud.crud_gym_machine_delete(db, obj)
 
+        await db.commit()
         return True
 
     except HTTPException:
         raise
     except Exception:
+        await db.rollback()
         raise HTTPException(status_code=500)
 
 

@@ -1,7 +1,23 @@
-import React from 'react';
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import NaviBar from './components/NaviBar';
+import Home from './components/home/Home';
+import Login from './components/home/Login';
+import Gym from './components/gym/Gym';
+import Routine from './components/routine/Routine';
+import Log from './components/log/Log';
+import Board from './components/board/Board';
+import Profile from './components/profile/Profile';
+import { useAuth } from './components/AuthContext';
+
+
+const ProtectedRoute = ({ isLoggedIn }) => {
+  return isLoggedIn ? <Outlet /> : <Navigate to="/login" replace />;
+};
 
 const App = () => {
+  const { isLoggedIn} = useAuth();
+
   const navStyle = {
     position: 'fixed',
     bottom: 0,
@@ -12,27 +28,38 @@ const App = () => {
     borderTop: '1px solid #ccc',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    zIndex: 1000
   };
 
   return (
-    <div>
-      <p>home</p>
+    <Router>
+      <div style={{ paddingBottom: '60px' }}>
+        <section>
+          <Routes>{(!isLoggedIn&&
+            <Route path="/" element={<Login />} />)}
+            
+            <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/gym" element={<Gym />} />
+              <Route path="/routine" element={<Routine />} />
+              <Route path="/log" element={<Log />} />
+              <Route path="/board" element={<Board />} />
+              <Route path="/profile" element={<Profile />} />
+            </Route>
 
-      
-      <nav className='bottom-nav' style={navStyle}>
-        <table>
-        <tr>
-          <td>home</td>
-          <td>헬스장</td>
-          <td>루틴</td>
-          <td>기록</td>
-          <td>커뮤니티</td>
-          <td>프로필</td>
-        </tr>
-      </table>
-      </nav>
-    </div>
+
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </section>
+
+        {isLoggedIn && (
+          <footer className="bottom-nav" style={navStyle}>
+            <NaviBar />
+          </footer>
+        )}
+      </div>
+    </Router>
   );
 };
 
