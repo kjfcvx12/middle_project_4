@@ -1,48 +1,75 @@
-import { createContext, useState, useContext } from 'react';
-import { user_login } from '../api/user';
+import { createContext, useContext, useEffect, useState } from "react";
+import { user_login, user_logout, user_me, user_signup } from "./../api/user";
 
 const AuthContext = createContext(null);
-
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // 2. 로그인 로직 연동
-  const login = async (credentials) => {
-    try {
-      const response = await user_login(credentials)
-      // 서버에서 토큰을 준다면 로컬 스토리지에 저장
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
+
+  useEffect(() => {
+    const initAuth = async () => {
+      try {
+        const response = await user_me();
+        if (response.data) {
+          setUser(response.data);
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        setIsLoggedIn(false);
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
+    };
+    initAuth();
+  }, []);
+
+
+  const login = async (data) => {
+    try {
+      const response = await user_login(data);
+      setUser(response.data);
       setIsLoggedIn(true);
-      setUser(response.data.user);
       return { success: true };
     } catch (error) {
-      console.error("로그인 실패:", error.response?.data || error.message);
-      return { success: false, error: error.response?.data };
+      return {
+        success: false,
+        error: error.response?.data?.detail || "로그인 실패",
+      };
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    setIsLoggedIn(false);
-    setUser(null);
+
+  const logout = async () => {
+    try {
+      await user_logout();
+    } catch (error) {
+      console.error("로그아웃 요청 실패:", error);
+    } finally {
+      setIsLoggedIn(false);
+      setUser(null);
+    }
   };
 
-  const signup = async (userData) => {
+
+  const signup = async (data) => {
     try {
-      await api.post('/users/signup', userData);
+      await user_signup(data);
       return { success: true };
     } catch (error) {
-      return { success: false, error: error.response?.data };
+      return {
+        success: false,
+        error: error.response?.data?.detail || "회원가입 실패",
+      };
     }
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout, signup }}>
-      {children}
+    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user, login, logout, signup, loading }}>
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

@@ -68,7 +68,7 @@ class Machines_Service:
 
     #운동기구 삭제
     @staticmethod
-    async def service_machines_delete(db, m_id, admin:str):
+    async def service_machines_delete(db, m_id, admin:int):
         try:
             query=select(Machine).where(Machine.m_id==m_id)
             result=await db.execute(query)

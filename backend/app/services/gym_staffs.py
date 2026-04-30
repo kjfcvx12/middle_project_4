@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 
 from app.db.models.gym_staffs import Gym_Staff
@@ -6,62 +6,60 @@ from app.db.crud import gym_staffs as gym_staff_crud
 
 
 # CREATE
-async def services_gym_staff_create(db: Session, g_id: int, u_id: int):
+async def services_gym_staff_create(db: AsyncSession, g_id: int, u_id: int):
     try:
-        exist = db.query(Gym_Staff).filter(
-            Gym_Staff.g_id == g_id,
-            Gym_Staff.u_id == u_id
-        ).first()
+        exist = await gym_staff_crud.crud_gym_staffs_get_one(db, g_id, u_id)
 
         if exist:
             raise HTTPException(status_code=400)
 
         obj = Gym_Staff(g_id=g_id, u_id=u_id)
-        result=gym_staff_crud.crud_gym_staffs_create(db, obj)
+        result = await gym_staff_crud.crud_gym_staffs_create(db, obj)
 
         await db.commit()
         await db.refresh(result)
+
+        return {"msg": "트레이너 등록 완료"}
+
     except HTTPException:
         raise
-    except Exception:
+    except Exception as e:
         await db.rollback()
-        raise HTTPException(status_code=400)
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # DELETE
-async def services_gym_staff_delete(db: Session, g_id: int, u_id: int):
+async def services_gym_staff_delete(db: AsyncSession, g_id: int, u_id: int):
     try:
-        obj = db.query(Gym_Staff).filter(
-            Gym_Staff.g_id == g_id,
-            Gym_Staff.u_id == u_id
-        ).first()
+        obj = await gym_staff_crud.crud_gym_staffs_get_one(db, g_id, u_id)
 
         if not obj:
-            raise HTTPException(status_code=404)
+            raise HTTPException(status_code=404, detail=str(e))
 
-        gym_staff_crud.crud_gym_staffs_delete(db, obj)
+        await gym_staff_crud.crud_gym_staffs_delete(db, obj)
 
         await db.commit()
-        return True
+
+        return {"msg": "트레이너 등록 취소"}
 
     except HTTPException:
         raise
-    except Exception:
+    except Exception as e:
         await db.rollback()
-        raise HTTPException(status_code=500)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # LIST
-async def services_gym_staff_get(db: Session, g_id: int):
+async def services_gym_staff_get(db: AsyncSession, g_id: int):
     try:
-        staff_list = gym_staff_crud.crud_gym_staffs_get(db, g_id)
+        staff_list = await gym_staff_crud.crud_gym_staffs_get(db, g_id)
 
-        if not staff_list:
-            raise HTTPException(status_code=404)
+        return [
+            {
+                "u_id": staff.u_id
+            }
+            for staff in staff_list
+        ]
 
-        return staff_list
-
-    except HTTPException:
-        raise
-    except Exception:
+    except Exception as e:
         raise HTTPException(status_code=500)

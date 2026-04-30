@@ -8,7 +8,9 @@ class Gym_Machine_Create(BaseModel):
 
 # UPDATE
 class Gym_Machine_Update(BaseModel):
-    qty: int | None = None 
+    g_id: int
+    m_id: int
+    qty: int
 
 # DELETE
 class Gym_Machine_Delete(BaseModel):

@@ -60,4 +60,4 @@ async def router_machines_delete(
     admin:int = Depends(auth_get_admin_id),
     db:AsyncSession=Depends(get_db)):
 
-    return await Machines_Service.service_machines_delete(db, m_id,admin=admin)
+    return await Machines_Service.service_machines_delete(db, m_id, admin=admin)

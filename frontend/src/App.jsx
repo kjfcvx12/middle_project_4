@@ -8,6 +8,7 @@ import Routine from './components/routine/Routine';
 import Log from './components/log/Log';
 import Board from './components/board/Board';
 import Profile from './components/profile/Profile';
+import UserEdit from './components/profile/UserEdit';
 import { useAuth } from './components/AuthContext';
 import MachineList from './components/routine/machine/machine_list';
 import MachineDetail from './components/routine/machine/machine_detail';
