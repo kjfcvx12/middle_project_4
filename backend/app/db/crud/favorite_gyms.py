@@ -9,21 +9,21 @@ from app.db.scheme.favorite_gyms import Favorite_Gym_Create, Favorite_Gym_Read
 class Favorite_Gym_Crud:
     # 헬스장 즐겨찾기 등록
     @staticmethod
-    async def crud_favorite_gyms_create(db:AsyncSession, fg: Favorite_Gym_Create) -> str:          
+    async def crud_favorite_gyms_create(db:AsyncSession, fg: Favorite_Gym_Create) -> Favorite_Gym_Read:          
         db_data=Favorite_Gym(**fg.model_dump())
         db.add(db_data)
         await db.flush()
-        return '헬스장 즐겨찾기 등록'
+        return db_data
     
 
     # 헬스장 즐겨찾기 취소
     @staticmethod
-    async def crud_favorite_gyms_delete(db:AsyncSession , f_g_id:int)->str|None:
+    async def crud_favorite_gyms_delete(db:AsyncSession , f_g_id:int)->Favorite_Gym|None:
         db_data = await db.get(Favorite_Gym, f_g_id)
         if db_data:
             await db.delete(db_data)
             await db.flush()
-            return '헬스장 즐겨찾기 취소'
+            return db_data
         return None
     
 
@@ -37,6 +37,8 @@ class Favorite_Gym_Crud:
         
         return db_data.scalars().all()
     
+
+    # 유저 체육관 즐겨찾기 수 반환
     @staticmethod
     async def crud_favorite_gyms_count(db: AsyncSession, g_id: int) -> int:
         result = await db.execute(
