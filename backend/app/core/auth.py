@@ -56,9 +56,8 @@ async def auth_get_u_id(request: Request, response: Response) -> int:
 
     try:
         u_id = verify_token(refresh_token)
-
-        new_access = create_access_token(data={"sub": str(u_id)})
-
+        
+        new_access = create_access_token(u_id=u_id, data={"sub": str(u_id)})
         response.set_cookie(
             key="access_token",
             value=new_access,

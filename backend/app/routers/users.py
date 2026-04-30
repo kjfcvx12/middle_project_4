@@ -29,6 +29,10 @@ router=APIRouter(prefix='/users',tags=['User'])
 async def router_user_me(u_id: int = Depends(auth_get_u_id)):
     return u_id
 
+# Get 현재 사용자 정보
+@router.get("/profile", response_model=User_Read)
+async def router_user_profile(u_id: int = Depends(auth_get_u_id), db:AsyncSession=Depends(get_db)):
+    return await User_Service.services_user_get_u_id(db, u_id)
 
 # POST 회원가입
 @router.post('/signup',response_model=User_Read)
