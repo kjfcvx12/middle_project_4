@@ -1,32 +1,42 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from app.db.models.gym_machines import Gym_Machine
 
+
 # CREATE
-def crud_gym_machine_create(db: Session, obj: Gym_Machine):
+async def crud_gym_machine_create(db: AsyncSession, obj: Gym_Machine):
     db.add(obj)
-    db.flush()
+    await db.flush()
     return obj
+
 
 # READ
-def crud_gym_machine_get(db: Session, g_id: int, m_id: int):
-    return db.query(Gym_Machine).filter(
-        Gym_Machine.g_id == g_id,
-        Gym_Machine.m_id == m_id
-    ).first()
+async def crud_gym_machine_get(db: AsyncSession, g_id: int, m_id: int):
+    result = await db.execute(
+        select(Gym_Machine).where(
+            Gym_Machine.g_id == g_id,
+            Gym_Machine.m_id == m_id
+        )
+    )
+    return result.scalar_one_or_none()
+
 
 # UPDATE
-def crud_gym_machine_update(db: Session, obj: Gym_Machine, qty: int):
+async def crud_gym_machine_update(db: AsyncSession, obj: Gym_Machine, qty: int):
     obj.qty = qty
-    db.flush()
+    await db.flush()
     return obj
 
+
 # DELETE
-def crud_gym_machine_delete(db: Session, obj: Gym_Machine):
-    db.delete(obj)
-    db.flush()
+async def crud_gym_machine_delete(db: AsyncSession, obj: Gym_Machine):
+    await db.delete(obj)
+    await db.flush()
+
 
 # LIST
-def crud_gym_machines_get_id(db: Session, g_id: int):
-    return db.query(Gym_Machine).filter(
-        Gym_Machine.g_id == g_id
-    ).all()
+async def crud_gym_machines_get_id(db: AsyncSession, g_id: int):
+    result = await db.execute(
+        select(Gym_Machine).where(Gym_Machine.g_id == g_id)
+    )
+    return result.scalars().all()
