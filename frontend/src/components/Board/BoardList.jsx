@@ -94,8 +94,46 @@ const BoardList = () => {
           <p>{board.b_content}</p>
         </div>
       ))}
+
+      {total_pages > 0 && (
+        <div style={styles.pagination}>
+          <button disabled={page === 1} onClick={() => set_page(page - 1)}>
+            {"<"}
+          </button>
+
+          {Array.from({ length: total_pages }, (_, i) => i + 1).map((p) => (
+            <button
+              key={p}
+              onClick={() => set_page(p)}
+              style={p === page ? styles.activePage : {}}
+            >
+              {p}
+            </button>
+          ))}
+
+          <button
+            disabled={page === total_pages}
+            onClick={() => set_page(page + 1)}
+          >
+            {">"}
+          </button>
+        </div>
+      )}
     </div>
   );
+};
+const styles = {
+  pagination: {
+    marginTop: "20px",
+    display: "flex",
+    gap: "8px",
+    justifyContent: "center",
+  },
+
+  activePage: {
+    backgroundColor: "#ddd",
+    fontWeight: "bold",
+  },
 };
 
 export default BoardList;
