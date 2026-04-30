@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 
 from app.db.models.gym_machines import Gym_Machine
@@ -6,79 +6,85 @@ from app.db.crud import gym_machines as gym_machine_crud
 
 
 # CREATE
-async def services_gym_machine_create(db: Session, g_id: int, m_id: int, qty: int = 1):
+async def services_gym_machine_create(db: AsyncSession, g_id: int, m_id: int, qty: int):
     try:
-        exist = gym_machine_crud.crud_gym_machine_get(db, g_id, m_id)
+        exist = await gym_machine_crud.crud_gym_machine_get(db, g_id, m_id)
 
         if exist:
-            raise HTTPException(status_code=400)
+            raise HTTPException(status_code=400, detail="이미 등록된 기구입니다.")
 
         obj = Gym_Machine(g_id=g_id, m_id=m_id, qty=qty)
-        result=gym_machine_crud.crud_gym_machine_create(db, obj)
-    
+
+        result = await gym_machine_crud.crud_gym_machine_create(db, obj)
+
         await db.commit()
         await db.refresh(result)
-        return result
+
+        return {"msg": "기구 등록 완료"}
 
     except HTTPException:
         raise
-    except Exception:
+    except Exception as e:
         await db.rollback()
-        raise HTTPException(status_code=500)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # UPDATE
-async def services_gym_machine_update(db: Session, g_id: int, m_id: int, qty: int):
+async def services_gym_machine_update(db: AsyncSession, g_id: int, m_id: int, qty: int):
     try:
-        obj = gym_machine_crud.crud_gym_machine_get(db, g_id, m_id)
+        obj = await gym_machine_crud.crud_gym_machine_get(db, g_id, m_id)
 
         if not obj:
-            raise HTTPException(status_code=404)
+            raise HTTPException(status_code=404, detail="기구 정보 없음")
 
-        result=gym_machine_crud.crud_gym_machine_update(db, obj, qty)
+        obj.qty = qty
 
         await db.commit()
-        await db.refresh(result)
-        return result
+        await db.refresh(obj)
+
+        return {"msg": "수량 수정 완료"}
 
     except HTTPException:
         raise
-    except Exception:
+    except Exception as e:
         await db.rollback()
-        raise HTTPException(status_code=500)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # DELETE
-async def services_gym_machine_delete(db: Session, g_id: int, m_id: int):
+async def services_gym_machine_delete(db: AsyncSession, g_id: int, m_id: int):
     try:
-        obj = gym_machine_crud.crud_gym_machine_get(db, g_id, m_id)
+        obj = await gym_machine_crud.crud_gym_machine_get(db, g_id, m_id)
 
         if not obj:
-            raise HTTPException(status_code=404)
+            raise HTTPException(status_code=404, detail="기구 정보 없음")
 
-        gym_machine_crud.crud_gym_machine_delete(db, obj)
+        await gym_machine_crud.crud_gym_machine_delete(db, obj)
 
         await db.commit()
-        return True
+
+        return {"msg": "기구 제거 완료"}
 
     except HTTPException:
         raise
-    except Exception:
+    except Exception as e:
         await db.rollback()
-        raise HTTPException(status_code=500)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # LIST
-async def services_gym_machine_get(db: Session, g_id: int):
+async def services_gym_machine_get(db: AsyncSession, g_id: int):
     try:
-        machines = gym_machine_crud.crud_gym_machines_get_id(db, g_id)
+        machines = await gym_machine_crud.crud_gym_machines_get_id(db, g_id)
 
-        if not machines:
-            raise HTTPException(status_code=404)
+        return [
+            {
+                "g_id": m.g_id,
+                "m_id": m.m_id,
+                "qty": m.qty
+            }
+            for m in machines
+        ]
 
-        return machines
-
-    except HTTPException:
-        raise
-    except Exception:
-        raise HTTPException(status_code=500)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

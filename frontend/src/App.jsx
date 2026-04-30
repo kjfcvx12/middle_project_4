@@ -8,6 +8,7 @@ import Routines_page from './components/routine/routines_page';
 import Log from './components/log/Log';
 import Board from './components/board/Board';
 import Profile from './components/profile/Profile';
+import UserEdit from './components/profile/UserEdit';
 import { useAuth } from './components/AuthContext';
 import routines_page from './components/routine/routines_page';
 
@@ -47,6 +48,8 @@ const App = () => {
               <Route path="/log" element={<Log />} />
               <Route path="/board" element={<Board />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/edit" element={<UserEdit />} />
+              
             </Route>
 
 

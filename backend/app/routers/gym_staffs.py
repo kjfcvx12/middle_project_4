@@ -5,7 +5,7 @@ from app.db.database import get_db
 from app.db.scheme.gym_staffs import Gym_Staff_Create, Gym_Staff_Delete
 from app.services import gym_staffs as service
 
-from app.core.auth import auth_get_admin_id
+from app.core.auth import auth_get_staff_role
 
 router = APIRouter(prefix="/gym_staffs", tags=["Gym_Staff"])
 
@@ -14,8 +14,8 @@ router = APIRouter(prefix="/gym_staffs", tags=["Gym_Staff"])
 @router.post("")
 async def routers_gym_staff_create(
     data: Gym_Staff_Create,
-    admin:int=Depends(auth_get_admin_id),
     db: Session = Depends(get_db),
+    staff_role: str = Depends(auth_get_staff_role)
 ):
 
     return await service.services_gym_staff_create(
@@ -29,20 +29,11 @@ async def routers_gym_staff_create(
 @router.delete("")
 async def routers_gym_staff_delete(
     data: Gym_Staff_Delete,
-    admin:int=Depends(auth_get_admin_id),
     db: Session = Depends(get_db),
+    staff_role: str = Depends(auth_get_staff_role)
 ):
     return await service.services_gym_staff_delete(
         db,
         data.g_id,
         data.u_id
     )
-
-
-# LIST
-@router.get("/{g_id}")
-async def routers_gym_staff_get(
-    g_id: int,
-    db: Session = Depends(get_db),
-):
-    return await service.services_gym_staff_get(db, g_id)
