@@ -12,7 +12,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        // 백엔드 쿠키가 있으면 유저 정보가 오고, 없으면 에러가 납니다.
         const response = await user_me();
         if (response.data) {
           setUser(response.data);
