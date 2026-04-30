@@ -4,11 +4,13 @@ import NaviBar from './components/NaviBar';
 import Home from './components/home/Home';
 import Login from './components/home/Login';
 import Gym from './components/gym/Gym';
-import Routine from './components/routine/Routine';
+import Routines_page from './components/routine/routines_page';
 import Log from './components/log/Log';
 import Board from './components/board/Board';
 import Profile from './components/profile/Profile';
+import UserEdit from './components/profile/UserEdit';
 import { useAuth } from './components/AuthContext';
+import routines_page from './components/routine/routines_page';
 
 
 const ProtectedRoute = ({ isLoggedIn }) => {
@@ -42,10 +44,12 @@ const App = () => {
             <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
               <Route path="/" element={<Home />} />
               <Route path="/gym" element={<Gym />} />
-              <Route path="/routine" element={<Routine />} />
+              <Route path="/routine" element={<Routines_page />} />
               <Route path="/log" element={<Log />} />
               <Route path="/board" element={<Board />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/edit" element={<UserEdit />} />
+              
             </Route>
 
 

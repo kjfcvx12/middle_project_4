@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy import func
 from sqlalchemy.orm import selectinload, joinedload
 from app.db.models.favorite_gyms import Favorite_Gym 
 from app.db.scheme.favorite_gyms import Favorite_Gym_Create, Favorite_Gym_Read
@@ -35,3 +36,11 @@ class Favorite_Gym_Crud:
                                  .order_by(Favorite_Gym.f_g_id.desc()))
         
         return db_data.scalars().all()
+    
+    @staticmethod
+    async def crud_favorite_gyms_count(db: AsyncSession, g_id: int) -> int:
+        result = await db.execute(
+            select(func.count(Favorite_Gym.f_g_id))
+            .where(Favorite_Gym.g_id == g_id)
+        )
+        return result.scalar() or 0

@@ -29,11 +29,12 @@ class Like_Gym_Crud:
 
     # 체육관 좋아요 개수
     @staticmethod
-    async def crud_like_gyms_count(db:AsyncSession, g_id:int)->int|None:
-        db_data=await db.execute(select(func.count(Like_Gym)).
-                                 filter(Like_Gym.g_id==g_id))
-        
-        return db_data.scalar()
+    async def crud_like_gyms_count(db: AsyncSession, g_id: int) -> int:
+        result = await db.execute(
+            select(func.count(Like_Gym.l_g_id))
+            .where(Like_Gym.g_id == g_id)
+        )
+        return result.scalar() or 0
     
 
     # 유저 좋아요 체육관 page 조회

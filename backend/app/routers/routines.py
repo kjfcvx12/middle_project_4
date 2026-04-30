@@ -15,9 +15,10 @@ async def routers_routines_create(
     db : AsyncSession=Depends(get_db),
     u_id: int = Depends(auth_get_u_id)
 ):
-    await Routine_Services.services_routines_create(db,data,u_id)
+    new_routine = await Routine_Services.services_routines_create(db,data,u_id)
 
-    return {"msg":"루틴 생성 완료"}
+    return {"msg":"루틴 생성 완료",
+            "r_id": new_routine.r_id}
 # 루틴 전체 조회 라우터
 @router.get("/")
 async def routers_routines_read_all(
