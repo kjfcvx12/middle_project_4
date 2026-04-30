@@ -77,6 +77,13 @@ const BoardDetail = () => {
     return <div style={{ paddingBottom: "80px" }}>로딩 중...</div>;
   }
 
+  const login_user_id = Number(localStorage.getItem("u_id"));
+  const is_writer = Number(board.u_id) === login_user_id;
+
+  console.log("board.u_id:", board.u_id);
+  console.log("localStorage u_id:", localStorage.getItem("u_id"));
+  console.log("login_user_id:", login_user_id);
+
   return (
     <div style={{ paddingBottom: "80px" }}>
       <h1>게시글 상세</h1>
@@ -99,7 +106,17 @@ const BoardDetail = () => {
       ) : (
         <div>
           <p>내용: {board.b_content}</p>
-          <button onClick={() => set_is_edit(true)}>수정</button>
+
+          {is_writer && (
+            <button
+              onClick={() => {
+                set_edit_content(board.b_content);
+                set_is_edit(true);
+              }}
+            >
+              수정
+            </button>
+          )}
         </div>
       )}
 
@@ -110,7 +127,7 @@ const BoardDetail = () => {
 
       <Comment b_id={id} />
 
-      <button onClick={handle_delete}>삭제</button>
+      {is_writer && <button onClick={handle_delete}>삭제</button>}
       <button onClick={() => navigate("/board")}>목록으로</button>
     </div>
   );

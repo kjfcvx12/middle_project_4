@@ -89,6 +89,7 @@ const Comments = ({ b_id }) => {
       alert("댓글 삭제 실패");
     }
   };
+  const login_user_id = Number(localStorage.getItem("u_id"));
 
   return (
     <div>
@@ -106,35 +107,47 @@ const Comments = ({ b_id }) => {
       {comments.length === 0 ? (
         <p>댓글이 없습니다.</p>
       ) : (
-        comments.map((comment) => (
-          <div key={comment.c_id}>
-            {edit_id === comment.c_id ? (
-              <div>
-                <input
-                  value={edit_content}
-                  onChange={(e) => set_edit_content(e.target.value)}
-                />
+        comments.map((comment) => {
+          const is_writer = Number(comment.u_id) === login_user_id;
 
-                <button onClick={() => handle_update_comment(comment.c_id)}>
-                  저장
-                </button>
+          return (
+            <div key={comment.c_id}>
+              {edit_id === comment.c_id ? (
+                <div>
+                  <input
+                    value={edit_content}
+                    onChange={(e) => set_edit_content(e.target.value)}
+                  />
 
-                <button onClick={() => set_edit_id(null)}>취소</button>
-              </div>
-            ) : (
-              <div>
-                <p>{comment.c_content}</p>
-                <small>작성자 ID: {comment.u_id}</small>
+                  <button onClick={() => handle_update_comment(comment.c_id)}>
+                    저장
+                  </button>
 
-                <button onClick={() => handle_start_edit(comment)}>수정</button>
+                  <button onClick={() => set_edit_id(null)}>취소</button>
+                </div>
+              ) : (
+                <div>
+                  <p>{comment.c_content}</p>
+                  <small>작성자 ID: {comment.u_id}</small>
 
-                <button onClick={() => handle_delete_comment(comment.c_id)}>
-                  삭제
-                </button>
-              </div>
-            )}
-          </div>
-        ))
+                  {is_writer && (
+                    <>
+                      <button onClick={() => handle_start_edit(comment)}>
+                        수정
+                      </button>
+
+                      <button
+                        onClick={() => handle_delete_comment(comment.c_id)}
+                      >
+                        삭제
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })
       )}
     </div>
   );
