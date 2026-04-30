@@ -8,7 +8,7 @@ from app.db.scheme.gym_machines import (
     Gym_Machine_Delete
 )
 from app.services import gym_machines as service
-from app.core.auth import auth_get_admin_id
+from app.core.auth import auth_get_staff_role
 
 
 router = APIRouter(
@@ -22,8 +22,8 @@ router = APIRouter(
 @router.post("")
 async def routers_gym_machine_create(
     data: Gym_Machine_Create,
-    #admin: int = Depends(auth_get_admin_id),
     db: AsyncSession = Depends(get_db),
+    staff_role: str = Depends(auth_get_staff_role)
 ):
     return await service.services_gym_machine_create(
         db,
@@ -37,8 +37,8 @@ async def routers_gym_machine_create(
 @router.put("")
 async def routers_gym_machine_update(
     data: Gym_Machine_Update,
-    #admin: int = Depends(auth_get_admin_id),
     db: AsyncSession = Depends(get_db),
+    staff_role: str = Depends(auth_get_staff_role)
 ):
     return await service.services_gym_machine_update(
         db,
@@ -52,8 +52,8 @@ async def routers_gym_machine_update(
 @router.delete("")
 async def routers_gym_machine_delete(
     data: Gym_Machine_Delete,
-    #admin: int = Depends(auth_get_admin_id),
     db: AsyncSession = Depends(get_db),
+    staff_role: str = Depends(auth_get_staff_role)
 ):
     return await service.services_gym_machine_delete(
         db,

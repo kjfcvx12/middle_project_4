@@ -6,7 +6,7 @@ from app.db.scheme.gyms import Gym_Create, Gym_Update, Gym_Response
 from app.services import gyms as gym_service
 from app.services import gym_staffs as gym_staffs_service
 from app.services import gym_machines as gym_machines_service
-from app.core.auth import auth_get_u_id, auth_get_admin_id
+from app.core.auth import auth_get_admin_id, auth_get_staff_role
 
 router = APIRouter(prefix="/gyms", tags=["Gyms"])
 
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/gyms", tags=["Gyms"])
 async def routers_gym_create(
     data: Gym_Create,
     db: AsyncSession = Depends(get_db),
-    # admin_id: int = Depends(auth_get_admin_id)
+    admin_id: int = Depends(auth_get_admin_id)
 ):
     return await gym_service.services_gym_create(db, data)
 
@@ -68,6 +68,7 @@ async def routers_gym_update(
     g_id: int,
     data: Gym_Update,
     db: AsyncSession = Depends(get_db),
+    staff_role: str = Depends(auth_get_staff_role)
 ):
     return await gym_service.services_gym_update(db, g_id, data)
 
@@ -77,7 +78,7 @@ async def routers_gym_update(
 async def routers_gym_delete(
     g_id: int,
     db: AsyncSession = Depends(get_db),
-    # admin_id: int = Depends(auth_get_admin_id)
+    admin_id: int = Depends(auth_get_admin_id)
 ):
     return await gym_service.services_gym_delete(db, g_id)
 
