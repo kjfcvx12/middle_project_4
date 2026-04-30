@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.database import get_db
 from app.db.scheme.boards import BoardCreate, BoardUpdate
 from app.services.boards import BoardService
+from app.core.auth import auth_get_u_id
 from fastapi import Query
 
 
@@ -11,9 +12,9 @@ router = APIRouter(prefix="/boards", tags=["Boards"])
 # 게시물 추가
 @router.post("/create")
 async def routers_boards_create(
-    u_id: int,
     board: BoardCreate,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    u_id : int = Depends(auth_get_u_id)
 ):
     new_board = await BoardService.services_boards_create(
         db=db,
@@ -69,8 +70,8 @@ async def get_board_read_detail(
 async def routers_boards_update(
     b_id: int,
     board_data: BoardUpdate,
-    u_id: int,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    u_id: int = Depends(auth_get_u_id)
 ):
     update_board = await BoardService.services_boards_update(
         db=db,
@@ -88,8 +89,8 @@ async def routers_boards_update(
 @router.delete("/{b_id}")
 async def routers_boards_delete(
     b_id: int,
-    u_id: int,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    u_id: int = Depends(auth_get_u_id)
 ):
     await BoardService.services_boards_delete(
         db=db,
