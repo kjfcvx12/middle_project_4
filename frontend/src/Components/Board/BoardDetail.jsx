@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { deleteBoard, getBoardDetail, updateBoard } from "../../api/board";
+import { useAuth } from "../AuthContext";
 import Comment from "./Comments";
 
 const BoardDetail = () => {
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -77,12 +79,12 @@ const BoardDetail = () => {
     return <div style={{ paddingBottom: "80px" }}>로딩 중...</div>;
   }
 
-  const login_user_id = Number(localStorage.getItem("u_id"));
-  const is_writer = Number(board.u_id) === login_user_id;
+  const login_user_id =
+    typeof user === "number"
+      ? user
+      : user?.u_id || user?.data?.u_id || user?.user?.u_id;
 
-  console.log("board.u_id:", board.u_id);
-  console.log("localStorage u_id:", localStorage.getItem("u_id"));
-  console.log("login_user_id:", login_user_id);
+  const is_writer = Number(board.u_id) === Number(login_user_id);
 
   return (
     <div style={{ paddingBottom: "80px" }}>

@@ -5,8 +5,10 @@ import {
   getComments,
   updateComment,
 } from "../../api/board";
+import { useAuth } from "../AuthContext";
 
 const Comments = ({ b_id }) => {
+  const { user } = useAuth();
   const [comments, set_comments] = useState([]);
   const [c_content, set_c_content] = useState("");
 
@@ -89,7 +91,10 @@ const Comments = ({ b_id }) => {
       alert("댓글 삭제 실패");
     }
   };
-  const login_user_id = Number(localStorage.getItem("u_id"));
+  const login_user_id =
+    typeof user === "number"
+      ? user
+      : user?.u_id || user?.data?.u_id || user?.user?.u_id;
 
   return (
     <div>
