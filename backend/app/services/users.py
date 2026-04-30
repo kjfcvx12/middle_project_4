@@ -213,94 +213,48 @@ class User_Service:
     # 유저 운동기록 조회
     @staticmethod
     async def services_user_get_logs_by_u_id(db: AsyncSession, u_id: int, page: int) -> list[Log_Read]:
-        result=await Log_Crud.crud_get_logs(db, u_id, page)
-
-        if not result:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='유저의 운동기록이 없습니다.')
-        
-        return result
-
+        return await Log_Crud.crud_get_logs(db, u_id, page)
 
 
     # 유저 체육관 즐겨찾기 목록 조회
     @staticmethod
     async def services_user_favorite_gyms_get_all(db:AsyncSession, u_id:int) -> list[Favorite_Gym_Read]:
-        result=await Favorite_Gym_Crud.crud_favorite_gyms_by_u_id(db, u_id)
+        return await Favorite_Gym_Crud.crud_favorite_gyms_by_u_id(db, u_id)
 
-        if not result:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='즐겨찾기한 체육관이 없습니다.')
-        
-        return result
 
     # 유저 운동기구 즐겨찾기 목록 조회
     @staticmethod
     async def services_user_favorite_machines_get_all(db:AsyncSession, u_id:int) -> list[Favorite_Machine_Read]:
-        result=await Favorite_Machine_Crud.crud_favorite_machines_by_u_id(db, u_id)
+        return await Favorite_Machine_Crud.crud_favorite_machines_by_u_id(db, u_id)
 
-        if not result:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='즐겨찾기한 운동기구가 없습니다.')
-        
-        return result
     
     # 유저 루틴 즐겨찾기 목록 조회
     @staticmethod
     async def services_user_favorite_routines_get_all(db:AsyncSession, u_id:int) -> list[Favorite_Routine_Read]:
-        result=await Favorite_Routine_Crud.crud_favorite_routines_by_u_id(db, u_id)
-
-        if not result:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='즐겨찾기한 루틴이 없습니다.')
-        
-        return result
+        return await Favorite_Routine_Crud.crud_favorite_routines_by_u_id(db, u_id)
 
     
     # 유저가 좋아요 누른 게시글
     @staticmethod
     async def services_user_like_boards_get_page(db:AsyncSession, u_id:int, page: int) -> list[Like_Board_Read]:
-        result=await Like_Board_Crud.crud_like_boards_page_by_u_id(db, u_id, page)
-
-        if not result:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='좋아요 한 게시글이 없습니다.')
-        
-        return result
+        return await Like_Board_Crud.crud_like_boards_page_by_u_id(db, u_id, page)
     
 
     # 유저가 좋아요 누른 댓글
     @staticmethod
     async def services_user_like_comments_get_page(db:AsyncSession, u_id:int, page: int) -> list[Like_Comment_Read]:
-        result=await Like_Comment_Crud.crud_like_comments_page_by_u_id(db, u_id, page)
-
-        if not result:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='좋아요 한 댓글이 없습니다.')
-        
-        return result
+        return await Like_Comment_Crud.crud_like_comments_page_by_u_id(db, u_id, page)
     
 
     # 유저가 좋아요 누른 운동기구
     @staticmethod
     async def services_user_like_machines_get_page(db:AsyncSession, u_id:int, page: int) -> list[Like_Machine_Read]:
-        result=await Like_Machine_Crud.crud_like_machines_page_by_u_id(db, u_id, page)
-
-        if not result:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='좋아요 한 운동기구가 없습니다.')
-        
-        return result
+        return await Like_Machine_Crud.crud_like_machines_page_by_u_id(db, u_id, page)
 
 
     # 유저가 좋아요 누른 체육관
     @staticmethod
     async def services_user_like_gyms_get_page(db:AsyncSession, u_id:int, page: int) -> list[Like_Gym_Read]:
-        result=await Like_Gym_Crud.crud_like_gyms_page_by_u_id(db, u_id, page)
+        return await Like_Gym_Crud.crud_like_gyms_page_by_u_id(db, u_id, page)
 
-        if not result:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='좋아요 한 체육관이 없습니다.')
-        
-        return result
     

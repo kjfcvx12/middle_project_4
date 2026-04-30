@@ -1,11 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { user_login, user_logout, user_me, user_signup } from "./../api/user";
+import { user_login, user_logout, user_me, user_signup, user_profile } from "./../api/user";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [userData, setUserData]=useState(null);
   const [loading, setLoading] = useState(true);
 
 
@@ -13,9 +14,14 @@ export const AuthProvider = ({ children }) => {
     const initAuth = async () => {
       try {
         const response = await user_me();
+        console.log(response.data)
         if (response.data) {
           setUser(response.data);
           setIsLoggedIn(true);
+
+          const current= await user_profile(response.data);
+          console.log(current.data)
+          setUserData(current.data)
         }
       } catch (error) {
         setIsLoggedIn(false);
@@ -68,7 +74,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user, login, logout, signup, loading }}>
+    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user, login, logout, signup, loading, userData}}>
       {!loading && children}
     </AuthContext.Provider>
   );

@@ -1,23 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../AuthContext';
-import { user_del, user_edit, user_me, user_profile } from '../../api/user';
+import { user_del, user_edit, user_get_favorite_gyms, user_me, user_profile } from '../../api/user';
 import { Link } from 'react-router-dom';
+import { user_get_favorite_machines } from './../../api/user';
 
 const Profile = () => {
-  const { logout, isLoggedIn, setIsLoggedIn, user } = useAuth();
-  const [ currentUser, setCurrentUser] = useState(null);
+  const { logout, isLoggedIn, setIsLoggedIn, user, userData} = useAuth();
+
+  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const [openFavorite, setOpenFavorite]=useState(false);
+  const [favGyms, setFavGyms] = useState([]);
+  const [favMachines, setFavMachines] = useState([]);
+  const [favRoutines, setFavRoutines] = useState([]);
+
+
   const [openBoard, setOpenBoard]=useState(false);
   const [openEdit, setOpenEdit]=useState(false);
+
+
 
 
   // 초기 실행
   useEffect(() => {
     const ProfileUserData = async () => {
       try {
-        const profile= await user_profile(user);
-        setCurrentUser(profile.data);
+        
+        setCurrentUser(userData); 
+        console.log(userData)    
       } catch (error) {
         console.error("사용자 정보를 불러오는데 실패했습니다.", error);
       } finally {
@@ -33,8 +44,26 @@ const Profile = () => {
   if (!currentUser) return <div>데이터가 없습니다.</div>;
 
   
-  const favoriteClick=()=>{
+  const favoriteClick=async ()=>{
     setOpenFavorite(!openFavorite);
+    setFavGyms([]);
+    setFavMachines([]);
+    setFavRoutines([]);
+    if (!openFavorite) {
+      try {
+        const FavGymsList = await user_get_favorite_gyms(user);
+        const FavMachineList = await user_get_favorite_machines(user);
+        const FavRoutineList = await user_get_favorite_routines(user);
+
+        setFavGyms(FavGymsList.data.length === 0 ? ['즐겨찾기한 체육관이 없습니다.'] : FavGymsList.data);
+        setFavMachines(FavMachineList.data.length === 0 ? ['즐겨찾기한 체육관이 없습니다.'] : FavMachineList.data);
+        setFavRoutines(FavRoutineList.data.length === 0 ? ['즐겨찾기한 체육관이 없습니다.'] : FavRoutineList.data);
+
+
+      } catch (error) {
+          console.error("데이터를 가져오는 중 오류 발생", error);
+      }
+    }
   }
 
   const boardClick=()=>{
@@ -85,9 +114,12 @@ const Profile = () => {
               <div onClick={()=>favoriteClick()}>즐겨찾기</div>
               {openFavorite&&(
                 <div>
-                  <ul>헬스장</ul>
-                  <ul>루틴</ul>
-                  <ul>기록</ul>
+                  <div>
+                    <div>헬스장</div>
+                    <div>{favGyms}</div>
+                  </div>
+                  <div>루틴</div>
+                  <div>기록</div>
                 </div>
               )}
           </div>
@@ -95,8 +127,8 @@ const Profile = () => {
               <div onClick={()=>boardClick()}>커뮤니티 기록</div>
               {openBoard&&(
                 <div>
-                  <ul>내 게시글</ul>
-                  <ul>내 댓글</ul>
+                  <div>내 게시글</div>
+                  <div>내 댓글</div>
                 </div>
               )}
           </div>
@@ -104,8 +136,8 @@ const Profile = () => {
               <div onClick={()=>profileEdit()}>정보수정</div>
               {openEdit&&(
                 <div>
-                  <Link to="/profile/edit"><button>내 정보 수정하기</button></Link>
-                  <button onClick={()=>userDelClick()}>탈퇴하기</button>
+                  <div><Link to="/profile/edit"><button>내 정보 수정하기</button></Link></div>
+                  <div><button onClick={()=>userDelClick()}>탈퇴하기</button></div>
                 </div>
               )}
           </div>
