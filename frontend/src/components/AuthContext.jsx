@@ -14,18 +14,18 @@ export const AuthProvider = ({ children }) => {
     const initAuth = async () => {
       try {
         const response = await user_me();
-        console.log(response.data)
         if (response.data) {
           setUser(response.data);
           setIsLoggedIn(true);
 
-          const current= await user_profile(response.data);
-          console.log(current.data)
-          setUserData(current.data)
+          const current= await user_profile();
+          setUserData(current.data);
+          console.log(current.data);
         }
       } catch (error) {
         setIsLoggedIn(false);
         setUser(null);
+        setUserData(null);
       } finally {
         setLoading(false);
       }
@@ -39,6 +39,10 @@ export const AuthProvider = ({ children }) => {
       const response = await user_login(data);
       setUser(response.data);
       setIsLoggedIn(true);
+
+      const current= await user_profile();
+      setUserData(current.data);
+
       return { success: true };
     } catch (error) {
       return {
@@ -57,6 +61,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setIsLoggedIn(false);
       setUser(null);
+      setUserData(null);
     }
   };
 

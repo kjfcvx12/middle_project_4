@@ -30,7 +30,7 @@ class Favorite_Routine_Crud:
     @staticmethod
     async def crud_favorite_routines_by_u_id(db:AsyncSession, u_id:int) -> list[Favorite_Routine_Read]:
         db_data=await db.execute(select(Favorite_Routine)
-                                 .options(joinedload(Favorite_Routine.routine))
+                                 .options(joinedload(Favorite_Routine.routines))
                                  .where(Favorite_Routine.u_id==u_id)
                                  .order_by(Favorite_Routine.f_r_id.desc()))
         

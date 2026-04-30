@@ -46,5 +46,15 @@ class User_Read(User_In_DB):
     pass
 
 
+class User_Public(BaseModel):
+    u_id: int
+    u_name: str
+    role: str
+    info: str | None = None
+    
+    class Config:
+        from_attributes = True
+
+
 
 

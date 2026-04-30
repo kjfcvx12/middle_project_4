@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, Response, status, HTTPException
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -6,7 +6,7 @@ from app.core.auth import set_auth_cookies, auth_get_u_id,  auth_get_admin_id
 
 from app.db.database import get_db
 
-from app.db.scheme.users import User_Read, User_Login, User_Create, User_Update
+from app.db.scheme.users import User_Read, User_Login, User_Create, User_Update, User_Public
 
 from app.services.users import User_Service
 
@@ -29,10 +29,25 @@ router=APIRouter(prefix='/users',tags=['User'])
 async def router_user_me(u_id: int = Depends(auth_get_u_id)):
     return u_id
 
-# Get 현재 사용자 정보
-@router.get("/profile", response_model=User_Read)
-async def router_user_profile(u_id: int = Depends(auth_get_u_id), db:AsyncSession=Depends(get_db)):
-    return await User_Service.services_user_get_u_id(db, u_id)
+# Get 사용자 정보
+@router.get("/profile")
+async def router_user_profile(
+    u_id: int | None = None,
+    current_u_id: int = Depends(auth_get_u_id), 
+    db: AsyncSession = Depends(get_db)
+):
+    target_id = u_id if u_id is not None else current_u_id
+
+    user_data = await User_Service.services_user_get_u_id(db, target_id)
+
+    if not user_data:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if target_id == current_u_id:
+        return User_Read.model_validate(user_data)
+    
+    return User_Public.model_validate(user_data)
+
 
 # POST 회원가입
 @router.post('/signup',response_model=User_Read)

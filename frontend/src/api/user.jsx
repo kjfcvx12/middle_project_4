@@ -48,9 +48,11 @@ export const user_admin_get_user = async (u_id) => {
   return response;
 };
 
-// Get 현재 사용자 정보
-export const user_profile = async (u_id) => {
-  const response = await api.get('/users/profile');
+// Get 사용자 정보
+export const user_profile = async (u_id = null) => {
+  const response = await api.get('/users/profile', {
+    params: u_id ? { u_id } : {}
+  });
   return response;
 };
 
