@@ -33,7 +33,7 @@ class Like_Machine_Crud:
         db_data=await db.execute(select(func.count(Like_Machine)).
                                  filter(Like_Machine.m_id==m_id))
         
-        return db_data.scalar()
+        return db_data.scalar() or 0
 
 
     # 유저 좋아요 운동기구 page 조회

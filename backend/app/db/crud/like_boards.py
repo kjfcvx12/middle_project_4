@@ -34,7 +34,7 @@ class Like_Board_Crud:
         db_data=await db.execute(select(func.count(Like_Board)).
                                  filter(Like_Board.b_id==b_id))
         
-        return db_data.scalar()
+        return db_data.scalar() or 0
 
 
     # 유저 좋아요 게시글 페이지 조회

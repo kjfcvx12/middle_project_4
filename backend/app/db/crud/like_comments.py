@@ -34,7 +34,7 @@ class Like_Comment_Crud:
         db_data=await db.execute(select(func.count(Like_Comment)).
                                  filter(Like_Comment.c_id==c_id))
         
-        return db_data.scalar()
+        return db_data.scalar() or 0
 
 
     # 유저 좋아요 댓글 페이지 조회
