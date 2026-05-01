@@ -20,15 +20,20 @@ async def routers_routine_details_create(
 @router.get("/{r_id}")
 async def routers_routine_details_read_by_r_id(
     r_id:int,
-    db:AsyncSession = Depends(get_db)
+    db:AsyncSession = Depends(get_db),
+    u_id:int = Depends(auth_get_u_id)
 ):
     read_routine_details = await Routine_Detail_Services.services_routine_details_read_by_id(
-        db,r_id
+        db,r_id,u_id   
     )
 
+    if not read_routine_details:
+        return {"data": []}
+    
     return{
         "data" : [
-            {
+            {   
+                "r_d_id": i.r_d_id,
                 "m_id" : i.m_id,
                 "m_name" : i.machine.m_name if i.machine else None,
                 "step" : i.step,
@@ -48,7 +53,7 @@ async def routers_routine_detail_read_by_r_d_id(
     db: AsyncSession=Depends(get_db),
     u_id : int = Depends(auth_get_u_id)
 ):
-    read_routine_detail = await Routine_Detail_Services.service_routine_detail_read_by_r_d_id(db,r_d_id)
+    read_routine_detail = await Routine_Detail_Services.service_routine_detail_read_by_r_d_id(db,r_d_id,u_id)
 
     return{
         "r_d_id" : read_routine_detail.r_d_id,
@@ -65,7 +70,7 @@ async def routers_routine_detail_read_by_r_d_id(
                     read_routine_detail.machine.part else None)
     }
 
-@router.put("{r_d_id}")
+@router.put("/{r_d_id}")
 async def routers_routines_details_update(
     r_d_id : int,
     data : Routine_Detail_Update,

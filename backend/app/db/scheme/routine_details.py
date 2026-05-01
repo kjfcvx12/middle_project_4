@@ -25,6 +25,7 @@ class Routine_Detail_Update(BaseModel):
     sets: int | None = None
     reps: int | None = None
     rest_time: int | None = None
+    weight: int | None = None 
 
 class Routine_Detail_Read(Routine_Detail_Base):
     r_d_id : int

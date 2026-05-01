@@ -38,12 +38,16 @@ class Routine_Services:
     # 루틴 아이디 기반 읽기
     async def services_routines_read_detail_by_id(
             db:AsyncSession,
-            r_id:int
+            r_id:int,
+            u_id: int
     ) -> Routine:
         read_routine = await Routine_CRUD.crud_routines_read_detail_by_id(db, r_id)
         
         if not read_routine:
-            return None
+            raise HTTPException(404, "루틴 없음")
+        
+        if read_routine.u_id != u_id:
+            raise HTTPException(403, "권한이 없습니다")
 
         return read_routine
 

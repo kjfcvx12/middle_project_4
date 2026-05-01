@@ -1,9 +1,9 @@
 import api from "./api";
 
 // 운동 추가
-export const routine_detail_create = ({r_id, m_id, step, sets, reps, rest_time})=>{
+export const routine_detail_create = ({r_id, m_id, step, sets, reps, rest_time, weight   })=>{
     return api.post("/routine_details", {
-        r_id, m_id, step, sets, reps, rest_time
+        r_id, m_id, step, sets, reps, rest_time, weight   
     });
 };
 
@@ -18,9 +18,9 @@ export const routine_detail_read_one = (r_d_id) => {
 }
 
 // 운동 수정
-export const routine_detail_update = (r_d_id, {step, sets, reps, rest_time}) =>{
+export const routine_detail_update = (r_d_id, {step, sets, reps, rest_time, weight   }) =>{
     return api.put(`/routine_details/${r_d_id}`,{
-        step, sets, reps, rest_time,
+        step, sets, reps, rest_time,weight   
     });
 };
 

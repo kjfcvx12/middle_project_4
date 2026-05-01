@@ -19,7 +19,8 @@ class Routine_Detail_CRUD :
     @staticmethod
     async def crud_routine_details_read_by_id(db:AsyncSession, r_id:int)->list[Routine_Detail]:
         query = (select(Routine_Detail)
-                .options(joinedload(Routine_Detail.machine).joinedload(Machine.part))
+                .options(joinedload(Routine_Detail.machine).joinedload(Machine.part),
+                         joinedload(Routine_Detail.routine))
                 .where(Routine_Detail.r_id==r_id)
                 .order_by(Routine_Detail.step)
         )

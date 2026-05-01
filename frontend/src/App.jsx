@@ -10,8 +10,7 @@ import Board from './components/board/Board';
 import Profile from './components/profile/Profile';
 import UserEdit from './components/profile/UserEdit';
 import { useAuth } from './components/AuthContext';
-import routines_page from './components/routine/routines_page';
-
+import Routine_details from './components/routine/Routine_details';
 
 const ProtectedRoute = ({ isLoggedIn }) => {
   return isLoggedIn ? <Outlet /> : <Navigate to="/login" replace />;
@@ -45,6 +44,7 @@ const App = () => {
               <Route path="/" element={<Home />} />
               <Route path="/gym" element={<Gym />} />
               <Route path="/routine" element={<Routines_page />} />
+              <Route path="/routine/:r_id" element={<Routine_details />} /> 
               <Route path="/log" element={<Log />} />
               <Route path="/board" element={<Board />} />
               <Route path="/profile" element={<Profile />} />

@@ -27,7 +27,7 @@ async def lifespan(app:FastAPI):
 
 app=FastAPI(lifespan=lifespan)
 
-
+app.add_middleware(RefreshTokenMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
@@ -40,7 +40,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.add_middleware(RefreshTokenMiddleware)
+
 
 @app.get("/")
 async def root():
