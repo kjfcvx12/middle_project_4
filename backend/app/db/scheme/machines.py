@@ -5,7 +5,6 @@ class MachineCreate(BaseModel):
     m_name:str
     dsc:str
     m_url:str | None = None
-    p_id:int
     
 
 #운동기구 수정

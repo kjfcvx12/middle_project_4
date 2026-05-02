@@ -8,6 +8,7 @@ class Routine_Detail_Base(BaseModel):
     sets : int
     reps : int
     rest_time : int | None = None
+    weight : int | None = None
 
 class Routine_Detail_Create(Routine_Detail_Base):
     r_id : int

@@ -17,6 +17,7 @@ class Routine_Detail(Base):
     sets:Mapped[int]=mapped_column(nullable=False)
     reps:Mapped[int]=mapped_column(nullable=False)
     rest_time: Mapped[Optional[int]] = mapped_column(nullable=True)
+    weight: Mapped[Optional[int]] = mapped_column(nullable=True)
 
     routine:Mapped["Routine"]=relationship("Routine", back_populates="routine_details")
     machine:Mapped["Machine"]=relationship("Machine", back_populates="routine_details")

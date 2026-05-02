@@ -4,7 +4,7 @@ import NaviBar from './components/NaviBar';
 import Home from './components/home/Home';
 import Login from './components/home/Login';
 import Gym from './components/gym/Gym';
-import Routine from './components/routine/Routine';
+import Routines_page from './components/routine/routines_page';
 import Log from './components/log/Log';
 import Board from './components/board/Board';
 import Profile from './components/profile/Profile';
@@ -12,9 +12,7 @@ import UserEdit from './components/profile/UserEdit';
 import { useAuth } from './components/AuthContext';
 import MachineList from './components/routine/machine/machine_list';
 import MachineDetail from './components/routine/machine/machine_detail';
-
-
-
+import MachineCreate from "./components/routine/machine/machine_create";
 
 const ProtectedRoute = ({ isLoggedIn }) => {
   return isLoggedIn ? <Outlet /> : <Navigate to="/login" replace />;
@@ -47,13 +45,15 @@ const App = () => {
             <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
               <Route path="/" element={<Home />} />
               <Route path="/gym" element={<Gym />} />
-              <Route path="/routine" element={<Routine />} />
+              <Route path="/routine" element={<Routines_page />} />
               <Route path="/log" element={<Log />} />
               <Route path="/board" element={<Board />} />
               <Route path="/profile" element={<Profile />} />
               {/* 머신 추가 */}
               <Route path="/machines" element={<MachineList />} />
               <Route path="/machines/:m_id" element={<MachineDetail />} />
+              <Route path="/machines/create" element={<MachineCreate />} />
+              <Route path="/machines/edit/:m_id" element={<MachineCreate />} />
             </Route>
 
 

@@ -37,33 +37,36 @@ class Machines_Service:
             }
 
         
-        except Exception:
+        except Exception as e:
             await db.rollback()
-            raise HTTPException(400,"등록중 오류 발생")
+            print('등록중 오류 발생',e)
+            raise HTTPException(400, str(e))
+
 
 
     #운동기구 수정
     @staticmethod
-    async def service_machines_update(db, m_id,machine_update,admin:int):
+    async def service_machines_update(db, m_id, machine_update, role:str):
+        # 매니저만 허용
+        if role != "manager":
+            raise HTTPException(403, "매니저 권한이 필요합니다.")
+
         try:
-            query=select(Machine).where(Machine.m_id==m_id)
-            result=await db.execute(query)
-            machine=result.scalar_one_or_none()
+            query = select(Machine).where(Machine.m_id == m_id)
+            result = await db.execute(query)
+            machine = result.scalar_one_or_none()
 
             if not machine:
-                raise HTTPException(400, "운동기구가 없습니다")
-            
-            await Machines_CRUD.crud_machines_update(db, machine, machine_update)
+                raise HTTPException(404, "운동기구가 없습니다")
 
+            await Machines_CRUD.crud_machines_update(db, machine, machine_update)
             await db.commit()
             await db.refresh(machine)
-            return{"msg":"성공적으로 수정되었습니다"}
-    
+            return {"msg": "성공적으로 수정되었습니다"}
 
-        
         except Exception:
             await db.rollback()
-            raise HTTPException(400,"수정중 오류 발생")
+            raise HTTPException(400, "수정중 오류 발생")
 
 
     #운동기구 삭제
@@ -141,7 +144,7 @@ class Machines_Service:
             "m_name":machine.m_name,
             "dsc":machine.dsc,
             "m_url":machine.m_url,
-            "p_name":machine.part.p_name
+            "p_name":machine.part.p_name if machine.part else None
         }
     
 

@@ -9,8 +9,7 @@ class Machines_CRUD:
         machine_query=Machine(
             m_name=machine_create.m_name,
             dsc=machine_create.dsc,
-            m_url=machine_create.m_url,
-            p_id=machine_create.p_id
+            m_url=machine_create.m_url
         )
         db.add(machine_query)
         await db.flush()

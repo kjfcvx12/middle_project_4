@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react';
 import { machines_read_detail } from '../../../api/api_machine';
 import { useParams } from 'react-router-dom';
-
+import { useAuth } from '../../AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const machine_detail = () => {
 
   const { m_id } = useParams()
+  const { userData } = useAuth()
+
+  const nav = useNavigate();
 
   const [machine, setMachine]=useState(null)
   const[loading, setLoading]=useState(true)
+
 
 
   useEffect(()=>{
@@ -38,6 +43,13 @@ const machine_detail = () => {
       <img src={machine.m_url} alt={machine.m_name} width="200" />
 
       <p>운동기구 설명: {machine.dsc}</p>
+
+      {(userData?.role === "manager") && (
+        <button onClick={() => nav(`/machines/edit/${machine.m_id}`)}>
+          수정
+        </button>
+      )}
+
 
     </div>
   );

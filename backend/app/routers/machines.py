@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.database import get_db
 from app.services.machines import Machines_Service
 from app.db.scheme.machines import MachineCreate, MachineUpdate
-from app.core.auth import auth_get_admin_id
+from app.core.auth import auth_get_staff_role, auth_get_admin_id
 
 router=APIRouter(prefix="/machines",tags=["Machine"])
 
@@ -43,21 +43,23 @@ async def router_machines_detail(m_id:int,
     return await Machines_Service.service_machines_detail(db, m_id)
 
 
-#운동기구 수정
+# 운동기구 수정 (매니저만)
 @router.put("/{m_id}")
 async def router_machines_update(
-    m_id:int,
-    machine_update:MachineUpdate,
-    admin:int = Depends(auth_get_admin_id),
-    db:AsyncSession=Depends(get_db)):
+    m_id: int,
+    machine_update: MachineUpdate,
+    role: str = Depends(auth_get_staff_role),  # 직원 역할 가져오기
+    db: AsyncSession = Depends(get_db)
+):
 
-    return await Machines_Service.service_machines_update(db, m_id, machine_update,admin=admin)
+    return await Machines_Service.service_machines_update(db, m_id, machine_update, role)
 
-#운동기구 삭제
+
+# 운동기구 삭제 (관리자만)
 @router.delete("/{m_id}")
 async def router_machines_delete(
-    m_id:int,
-    admin:int = Depends(auth_get_admin_id),
-    db:AsyncSession=Depends(get_db)):
-
+    m_id: int,
+    admin: int = Depends(auth_get_admin_id),
+    db: AsyncSession = Depends(get_db)
+):
     return await Machines_Service.service_machines_delete(db, m_id, admin=admin)

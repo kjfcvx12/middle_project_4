@@ -16,6 +16,12 @@ const Router=()=>{
         {/* 운동기구 디테일 */}
         <Route path="/machines/:m_id" element={<MachineDetail />} />
 
+        {/* 운동기구 생성 */}
+        <Route path="/machines/create" element={<MachineCreate />} />
+
+        {/* 운동기구 수정 */}
+        <Route path="/machines/edit/:m_id" element={<MachineCreate />} />
+
         </Routes>
     )
 }
