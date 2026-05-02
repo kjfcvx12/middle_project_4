@@ -70,3 +70,13 @@ async def routers_routines_delete(r_id:int,u_id:int = Depends(auth_get_u_id),db:
     await Routine_Services.services_routines_delete(db,r_id,u_id)
 
     return {"msg":"삭제 완료"}
+
+# 랜덤 루틴 생성
+@router.post("/random")
+async def router_rounines_radom(
+    p_name: str,
+    count : int,
+    db : AsyncSession = Depends(get_db),
+    u_id : int =Depends(auth_get_u_id)
+):
+    return await Routine_Services.services_routines_random_create(db,p_name,count,u_id)

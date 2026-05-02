@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { routines_read,routines_create,routines_delete } from '../../api/routines';
+import { routines_read,routines_create,routines_delete,routine_random_create  } from '../../api/routines';
 import { getParts } from '../../api/parts';
 import { routine_detail_create, routine_detail_read_all } from './../../api/routine_details';
 import { machines_read } from './../../api/machines';
@@ -29,6 +29,9 @@ const Routines_page = () => {
     const [machines, setMachines] = useState([]);
 
     const [fullList,setFullList]=useState([]);
+
+    const [selectedPart,setSelectedPart] = useState('');
+    const [count, setCount] = useState(3);
 
 
     // 최초 랜더링 시 루틴 가져오기
@@ -82,6 +85,25 @@ const Routines_page = () => {
             console.error(err.response?.data || err);
         }
         };
+
+
+
+    // 랜덤 루틴 생성
+    const handle_random = async ()=>{
+        if (!selectedPart){
+            alert ("부위를 선택하세요")
+            return ;
+        }
+
+        try{
+            await routine_random_create(selectedPart,count);
+
+            fetch_routines();
+        }catch(err){
+            console.error(err);
+        }
+    }    
+
 
     // 운동 추가
     const handle_add_detail = () =>{
@@ -212,6 +234,26 @@ const Routines_page = () => {
 
             </div>
         ))}
+
+
+        <h3>추천 루틴 생성</h3>
+
+        <select value={selectedPart} onChange={(e) => setSelectedPart(e.target.value)}>
+            <option value="">부위 선택</option>
+
+            {parts.map((p)=>(
+                <option key={p.p_id} value={p.p_name}>
+                    {p.p_name}
+                </option>
+            ))}
+        </select>
+
+        <input type="number" value={count} min={1} max={6} onChange={(e)=> setCount(Number(e.target.value))} />
+
+        <button onClick={handle_random}>추천 루틴 생성</button>
+
+
+
 
         <button onClick={()=> setOpen(true)}>나만의 루틴 만들기</button>
 

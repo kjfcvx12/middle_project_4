@@ -10,6 +10,7 @@ class Routine_Detail_CRUD :
     async def crud_routine_details_create(db:AsyncSession,data : dict) -> Routine_Detail :
         new_routine_detail = Routine_Detail(**data)
         db.add(new_routine_detail)
+        
 
         await db.flush()
 
@@ -46,7 +47,16 @@ class Routine_Detail_CRUD :
     # 루틴 디테일 업데이트 없는 작성하지 않은 매개변수들은 반영되지 않음
     @staticmethod
     async def crud_routine_details_update(db:AsyncSession,r_d_id :int,data: dict)-> Routine_Detail | None:
-        new_routine_detail = await db.get(Routine_Detail, r_d_id)
+        query = (
+            select(Routine_Detail)
+            .options(joinedload(Routine_Detail.routine))
+            .where(Routine_Detail.r_d_id == r_d_id)
+        )
+
+
+        result = await db.execute(query)
+       
+        new_routine_detail = result.scalars().first()
 
         if not new_routine_detail:
             return None
@@ -61,10 +71,21 @@ class Routine_Detail_CRUD :
     @staticmethod
     async def crud_routine_details_delete(db:AsyncSession,r_d_id:int) -> bool:
         
-        delete_routine_detail= await db.get(Routine_Detail, r_d_id)
+        query = (
+            select(Routine_Detail)
+            .options(joinedload(Routine_Detail.routine))
+            .where(Routine_Detail.r_d_id == r_d_id)
+        )
+
+        result = await db.execute(query)
+        delete_routine_detail = result.scalars().first()
+
 
         if not delete_routine_detail:
             return False
         
         await db.delete(delete_routine_detail)
         return True
+    @staticmethod
+    def crud_routine_details_create_sync(db, data: dict):
+        return Routine_Detail(**data)
