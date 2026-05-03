@@ -203,7 +203,7 @@ class Like_Service:
 
     # 운동기구 좋아요 추가
     @staticmethod
-    async def services_machines_create(db:AsyncSession, u_id:int, m_id:int) -> Like_Machine_Read:
+    async def services_like_machines_create(db:AsyncSession, u_id:int, m_id:int) -> Like_Machine_Read:
         try:
 
             query = select(Like_Machine).where(
