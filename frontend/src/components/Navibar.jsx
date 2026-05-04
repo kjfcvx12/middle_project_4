@@ -18,7 +18,7 @@ const NaviBar = () => {
               <Link to="/routine">루틴</Link>
             </td>
             <td>
-              <Link to="/log">기록</Link>
+              <Link to="/logs">기록</Link>
             </td>
             <td>
               <Link to="/board">커뮤니티</Link>

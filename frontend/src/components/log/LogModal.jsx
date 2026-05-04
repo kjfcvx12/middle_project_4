@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { createLog } from "../../api/logApi";
-import { getRoutines } from "../../api/routineApi";
-import { getMachines } from "../../api/machineApi";
+import { machines_read } from "../../api/machines";
+import { routines_read } from "../../api/routines";
 
 const LogModal = ({ isOpen, onClose, onSuccess }) => {
     const [mode, setMode] = useState("");
@@ -18,8 +18,8 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
     useEffect(() => {
         if (!isOpen) return;
 
-        getRoutines().then(setRoutines);
-        getMachines().then(setMachines);
+        routines_read().then(setRoutines);
+        machines_read().then(setMachines);
     }, [isOpen]);
 
     if (!isOpen) return null;

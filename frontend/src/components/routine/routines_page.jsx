@@ -6,7 +6,7 @@ import { routine_detail_create, routine_detail_read_all } from './../../api/rout
 import { machines_read } from './../../api/machines';
 
 const Routines_page = () => {
-    console.log("🔥 API 호출됨");
+    // console.log("🔥 API 호출됨");
     const nav = useNavigate();
 
     const [list, setList] = useState([]);

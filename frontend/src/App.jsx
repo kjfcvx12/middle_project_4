@@ -53,7 +53,7 @@ const App = () => {
               <Route path="/gym" element={<Gym />} />
               <Route path="/routine" element={<Routines_page />} />
               <Route path="/routine/:r_id" element={<Routine_details />} /> 
-              <Route path="/log" element={<Log />} />
+              <Route path="/logs" element={<Log />} />
               <Route path="/board" element={<Board />} />
               <Route path="/profile" element={<Profile />} />
               {/* 머신 추가 */}

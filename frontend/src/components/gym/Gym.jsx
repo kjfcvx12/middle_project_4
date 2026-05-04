@@ -296,5 +296,3 @@ export default function Gym() {
         </div>
     );
 }
-
-export default Gym;
