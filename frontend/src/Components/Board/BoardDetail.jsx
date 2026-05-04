@@ -19,6 +19,9 @@ const BoardDetail = () => {
     const fetch_board_detail = async () => {
       try {
         const result = await getBoardDetail(id);
+        console.log("상세 게시글 응답:", result);
+        console.log("상세 게시글 data:", result.data);
+        set_board(result.data);
         set_board(result.data);
       } catch (error) {
         console.error("게시글 상세 조회 실패:", error);
@@ -91,7 +94,16 @@ const BoardDetail = () => {
       <h1>게시글 상세</h1>
 
       <p>게시글 번호: {board.b_id}</p>
-      <p>작성자 ID: {board.u_id}</p>
+      <p>
+        작성자:{" "}
+        <button
+          type="button"
+          onClick={() => navigate(`/profile?u_id=${board.u_id}`)}
+          style={styles.userButton}
+        >
+          {board.u_name || `회원 ${board.u_id}`}
+        </button>
+      </p>
 
       {is_edit ? (
         <div>
@@ -133,6 +145,16 @@ const BoardDetail = () => {
       <button onClick={() => navigate("/board")}>목록으로</button>
     </div>
   );
+};
+
+const styles = {
+  userButton: {
+    border: "none",
+    background: "none",
+    color: "blue",
+    cursor: "pointer",
+    padding: 0,
+  },
 };
 
 export default BoardDetail;
