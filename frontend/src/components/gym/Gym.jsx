@@ -14,10 +14,12 @@ import {
 } from "lucide-react";
 
 import "./Gym.css";
-import { gyms_list, gyms_create, gyms_update, gyms_delete } from "../../api/gyms.jsx";
-import { user_me } from "../../api/user.jsx";
+import { gyms_list, gyms_delete } from "../../api/gyms.jsx";
+import { useNavigate } from "react-router-dom";
 
 export default function Gym() {
+    const navigate = useNavigate();
+
     const [gyms, setGyms] = useState([]);
     const [query, setQuery] = useState("");
     const [sortKey, setSortKey] = useState("g_name");
@@ -25,26 +27,20 @@ export default function Gym() {
     const [openId, setOpenId] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [isStaff, setIsStaff] = useState(false);
+    const [user, setUser] = useState(null);
+
+    const role = user?.role;
+    const isAdmin = role === "admin";
+    const isStaff = role === "admin" || role === "staff";
 
     useEffect(() => {
-        fetchUser();
+        const saved = localStorage.getItem("user");
+        setUser(saved ? JSON.parse(saved) : null);
+    }, []);
+
+    useEffect(() => {
         fetchGyms();
     }, [sortKey, sortOption]);
-
-    const fetchUser = async () => {
-        try {
-            const res = await user_me();
-            const role = res.data.role;
-
-            setIsAdmin(role === "admin");
-            setIsStaff(role === "admin" || role === "staff");
-        } catch {
-            setIsAdmin(false);
-            setIsStaff(false);
-        }
-    };
 
     const fetchGyms = async () => {
         try {
@@ -78,7 +74,7 @@ export default function Gym() {
 
             setGyms(data);
         } catch (err) {
-            console.error("헬스장 불러오기 실패", err);
+            console.error(err);
             setGyms([]);
         } finally {
             setLoading(false);
@@ -97,35 +93,24 @@ export default function Gym() {
         setOpenId(openId === id ? null : id);
     };
 
-    const handleCreate = () => {
-        alert("헬스장 생성 모달 연결 예정");
-    };
-
-    const handleEdit = (gym) => {
-        alert(`${gym.g_name} 수정 모달 연결 예정`);
-    };
-
     const handleDelete = async (id) => {
-        if (!window.confirm("정말 삭제하시겠습니까?")) return;
-
+        // UI 유지 + 기능만 보강
         try {
             await gyms_delete(id);
             fetchGyms();
-        } catch {
-            alert("삭제 실패");
+        } catch (err) {
+            console.error(err);
         }
     };
 
-    const isTrue = (value) =>
-        value === true || value === 1 || value === "1" || value === "true";
+    const isTrue = (v) =>
+        v === true || v === 1 || v === "1" || v === "true";
 
     const getFacilities = (gym) => {
         const list = [];
-
         if (isTrue(gym.shower)) list.push("샤워실");
         if (isTrue(gym.parking)) list.push("주차장");
         if (isTrue(gym.elev)) list.push("엘리베이터");
-
         return list;
     };
 
@@ -135,49 +120,45 @@ export default function Gym() {
 
                 <h1 className="gym-title">헬스장 찾기</h1>
 
-                {/* ✅ 관리자 생성 버튼 (우측 영역) */}
+                {/* ================= 생성 버튼 (UI 그대로) ================= */}
                 {isAdmin && (
-                    <div style={{ textAlign: "right", marginBottom: "10px" }}>
-                        <button onClick={handleCreate}>
+                    <div className="gym-top-actions">
+                        <button
+                            className="gym-create-btn"
+                            onClick={() => navigate("/gym/create")}
+                        >
                             <Plus size={16} />
                             생성
                         </button>
                     </div>
                 )}
 
-                {/* 검색 */}
+                {/* 검색 (UI 그대로) */}
                 <div className="gym-search">
                     <Search size={20} />
                     <input
-                        type="text"
                         placeholder="헬스장 이름 / 주소 검색"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                     />
                 </div>
 
-                {/* 정렬 */}
+                {/* 정렬 (UI 그대로) */}
                 <div className="gym-sort-row">
-                    <select
-                        value={sortKey}
-                        onChange={(e) => setSortKey(e.target.value)}
-                    >
+                    <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
                         <option value="g_name">이름순</option>
                         <option value="g_addr">주소순</option>
                         <option value="g_id">등록순</option>
                     </select>
 
-                    <select
-                        value={sortOption}
-                        onChange={(e) => setSortOption(e.target.value)}
-                    >
+                    <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
                         <option value="distance">거리순</option>
                         <option value="rating">별점순</option>
                         <option value="review">리뷰순</option>
                     </select>
                 </div>
 
-                {/* 목록 */}
+                {/* 목록 (UI 그대로 유지) */}
                 {loading ? (
                     <div className="gym-loading">불러오는 중...</div>
                 ) : filtered.length === 0 ? (
@@ -189,6 +170,7 @@ export default function Gym() {
 
                         return (
                             <div className="gym-card" key={gym.g_id}>
+
                                 <div className="gym-card-top">
 
                                     <div className="gym-left">
@@ -224,32 +206,35 @@ export default function Gym() {
                                         </button>
                                     </div>
 
-                                    {/* 카드 우측 버튼 영역 */}
+                                    {/* ================= 기능만 추가 ================= */}
+                                    <div className="gym-actions">
+
+                                        {isStaff && (
+                                            <button
+                                                className="icon-btn"
+                                                onClick={() => navigate(`/gym/edit/${gym.g_id}`)}
+                                            >
+                                                <Pencil size={16} />
+                                            </button>
+                                        )}
+
+                                        {isAdmin && (
+                                            <button
+                                                className="icon-btn danger"
+                                                onClick={() => handleDelete(gym.g_id)}
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        )}
+
+                                    </div>
+
                                     <Heart className="card-heart" size={34} />
-
-                                    {(isAdmin || isStaff) && (
-                                        <div style={{ display: "flex", gap: "6px" }}>
-
-                                            {(isAdmin || isStaff) && (
-                                                <button onClick={() => handleEdit(gym)}>
-                                                    <Pencil size={16} />
-                                                </button>
-                                            )}
-
-                                            {isAdmin && (
-                                                <button onClick={() => handleDelete(gym.g_id)}>
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            )}
-
-                                        </div>
-                                    )}
                                 </div>
 
-                                {/* 상세 */}
+                                {/* 상세 UI 그대로 */}
                                 {opened && (
                                     <div className="gym-detail">
-
                                         <div className="detail-row">
                                             <Phone size={17} />
                                             {gym.g_tel}
@@ -281,6 +266,7 @@ export default function Gym() {
                                         </div>
                                     </div>
                                 )}
+
                             </div>
                         );
                     })
