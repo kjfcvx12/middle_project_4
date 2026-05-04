@@ -22,8 +22,10 @@ class Log_Detail(Base):
     reps: Mapped[int] = mapped_column(nullable=False)
     weight: Mapped[int] = mapped_column(Integer, default=0)   # kg
     duration: Mapped[int] = mapped_column(Integer, default=0) # 초
+    m_id: Mapped[int] = mapped_column(ForeignKey("machines.m_id"))
 
     fail_memo: Mapped[str | None] = mapped_column(String(100))
     memo: Mapped[str] = mapped_column(String(300), nullable=False)
 
     log: Mapped["Log"] = relationship(back_populates="details")
+    machine: Mapped["Machine"] = relationship("Machine")

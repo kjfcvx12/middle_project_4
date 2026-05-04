@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 class LogDetailCreate(BaseModel):
+    m_id: int
     sets: int
     reps: int
     weight: int = 0          # 추가
@@ -10,6 +11,7 @@ class LogDetailCreate(BaseModel):
     memo: str
 
 class Log_Detail_Read(BaseModel):
+    m_id: int 
     sets: int
     reps: int
     weight: int = 0          # 추가
