@@ -11,11 +11,12 @@ import Profile from './components/profile/Profile';
 import UserEdit from './components/profile/UserEdit';
 import { useAuth } from './components/AuthContext';
 import Routine_details from './components/routine/Routine_details';
+import { useEffect } from "react";
 
 const ProtectedRoute = ({ isLoggedIn }) => {
   return isLoggedIn ? <Outlet /> : <Navigate to="/login" replace />;
 };
-
+const API = "http://192.168.0.21:8081";
 const App = () => {
   const { isLoggedIn} = useAuth();
 
@@ -33,6 +34,12 @@ const App = () => {
     zIndex: 1000
   };
 
+  useEffect(() => {
+  console.log("🔥 useEffect 실행됨");
+  fetch(API)
+    .then(res => res.json())
+    .then(data => console.log(data));
+}, []);
   return (
     <Router>
       <div style={{ paddingBottom: '60px' }}>

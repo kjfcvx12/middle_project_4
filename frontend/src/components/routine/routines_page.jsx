@@ -240,7 +240,7 @@ const Routines_page = () => {
 
         <select value={selectedPart} onChange={(e) => setSelectedPart(e.target.value)}>
             <option value="">부위 선택</option>
-
+            
             {parts.map((p)=>(
                 <option key={p.p_id} value={p.p_name}>
                     {p.p_name}
@@ -253,7 +253,7 @@ const Routines_page = () => {
         <button onClick={handle_random}>추천 루틴 생성</button>
 
 
-
+        <br />
 
         <button onClick={()=> setOpen(true)}>나만의 루틴 만들기</button>
 
