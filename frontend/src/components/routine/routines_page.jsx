@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { data, useNavigate } from 'react-router-dom';
-import { routines_read,routines_create,routines_delete } from '../../api/routines';
+import { useNavigate } from 'react-router-dom';
+import { routines_read,routines_create,routines_delete,routine_random_create  } from '../../api/routines';
 import { getParts } from '../../api/parts';
-import { routine_detail_create } from './../../api/routine_details';
+import { routine_detail_create, routine_detail_read_all } from './../../api/routine_details';
 import { machines_read } from './../../api/machines';
 
 const Routines_page = () => {
-
+    console.log("🔥 API 호출됨");
     const nav = useNavigate();
 
     const [list, setList] = useState([]);
@@ -28,6 +28,11 @@ const Routines_page = () => {
 
     const [machines, setMachines] = useState([]);
 
+    const [fullList,setFullList]=useState([]);
+
+    const [selectedPart,setSelectedPart] = useState('');
+    const [count, setCount] = useState(3);
+
 
     // 최초 랜더링 시 루틴 가져오기
     useEffect(()=>{
@@ -40,6 +45,32 @@ const Routines_page = () => {
         try{
             const response = await routines_read();
             setList(response.data.data);
+
+            const result = await Promise.all(
+                response.data.data.map(async (r)=>{
+
+                    const detailRes = await routine_detail_read_all(r.r_id);
+                    const details = detailRes.data.data || [];
+
+                    const totalVolume = details.reduce((acc,d) =>{
+                        return acc + (d.sets * d.reps * (d.weight || 0));
+                    }, 0)
+
+                    return{
+                        ...r,
+                        details,
+                        totalVolume,
+                        count : details.length,
+                    }
+                })
+            );
+            
+            setFullList(result)
+
+
+
+
+
         }catch (err){
             console.error(err.response?.data || err);
         }
@@ -55,6 +86,25 @@ const Routines_page = () => {
         }
         };
 
+
+
+    // 랜덤 루틴 생성
+    const handle_random = async ()=>{
+        if (!selectedPart){
+            alert ("부위를 선택하세요")
+            return ;
+        }
+
+        try{
+            await routine_random_create(selectedPart,count);
+
+            fetch_routines();
+        }catch(err){
+            console.error(err);
+        }
+    }    
+
+
     // 운동 추가
     const handle_add_detail = () =>{
         setDetails([
@@ -69,18 +119,23 @@ const Routines_page = () => {
         ])
     }
 
-    const handle_detail_change = (index, field, value) =>{
-        const newDetails = [...details];
-        newDetails[index][field] = value;
-        setDetails(newDetails);
-    };
+    const handle_detail_change = (index, key, value) => {
+    setDetails(prev =>
+        prev.map((item, i) =>
+            i === index
+                ? { ...item, [key]: value }
+                : item
+        )
+    );
+};
 
     // 루틴/디테일 생성
     const handle_create = async()=>{
         if(!name || !p_id){
             alert('루틴 이름과 부위를 설정하세요')
+            return;
         } 
-        return ;
+        
     
         try{
             // 루틴 생성
@@ -93,18 +148,25 @@ const Routines_page = () => {
             const r_id = response.data.r_id;
 
             // 루틴 디테일 생성
-            for (let d of details) {
+            for (let i = 0; i < details.length; i++) {
+                const d = details[i];
+
+
+                if (!d.m_id || !d.sets || !d.reps || !d.rest_time) {
+                    alert("운동 / 세트 / 횟수 / 휴식 전부 숫자만 입력해야 합니다");
+                    return;
+                }
+
                 await routine_detail_create({
                     r_id: r_id,
                     m_id: Number(d.m_id),
-                    step: Number(d.step),
-                    sets: Number(d.sets),
-                    reps: Number(d.reps),
-                    rest_time: Number(d.rest_time),
-                    weight: Number(d.weight),
+                    step: i + 1, 
+                    sets: Number(d.sets || 0),
+                    reps: Number(d.reps || 0),
+                    rest_time: Number(d.rest_time || 0),
+                    weight: Number(d.weight || 0),
                 });
             }
-
             setOpen(false);
 
             setName('');
@@ -142,6 +204,56 @@ const Routines_page = () => {
   return (
     <div>
         <h1>루틴 관리</h1>
+
+        
+
+        {fullList.map((r)=>(
+            <div key={r.r_id}>
+
+                <h2 onClick={()=> nav(`/routine/${r.r_id}`)}>
+                    {r.r_name}
+                </h2>
+
+                <p>총 볼륨 : {r.totalVolume.toLocaleString()} kg</p>
+
+                <p>{r.count}개 운동</p>
+                <button onClick={()=>handle_delete(r.r_id)}>삭제</button>
+                <hr />
+
+                {r.details.map((d,i)=>(
+                    <div key={`${d.m_id}-${i}`}>
+                        <strong>{d.m_name}</strong>
+                        <div>
+                            {d.sets}세트 x {d.reps}회 x {d.weight || 0}kg
+                        </div>
+                        
+                    </div>
+                ))}
+
+
+
+            </div>
+        ))}
+
+
+        <h3>추천 루틴 생성</h3>
+
+        <select value={selectedPart} onChange={(e) => setSelectedPart(e.target.value)}>
+            <option value="">부위 선택</option>
+
+            {parts.map((p)=>(
+                <option key={p.p_id} value={p.p_name}>
+                    {p.p_name}
+                </option>
+            ))}
+        </select>
+
+        <input type="number" value={count} min={1} max={6} onChange={(e)=> setCount(Number(e.target.value))} />
+
+        <button onClick={handle_random}>추천 루틴 생성</button>
+
+
+
 
         <button onClick={()=> setOpen(true)}>나만의 루틴 만들기</button>
 
@@ -196,7 +308,7 @@ const Routines_page = () => {
                                     handle_detail_change(i, "m_id", e.target.value)
                                 }
                             >
-                                <option value="">운동 선택</option>
+                                운동 선택 : <option value="">운동 선택</option>
 
                                 {Array.isArray(machines) && machines.map((m) => (
                                     <option key={String(m.m_id)} value={m.m_id}>
@@ -204,19 +316,19 @@ const Routines_page = () => {
                                     </option>
                                 ))}
                             </select>
-
-                        <input value={d.sets} placeholder='세트'
+                                <br />
+                        세트 수: <input value={d.sets} placeholder='세트'
                         onChange={(e)=>handle_detail_change(i,"sets",e.target.value)} />
-
-                        <input value={d.reps} placeholder='횟수'
-                        onChange={(e)=>handle_detail_change} />
-
-                        <input value={d.weight} placeholder='무게'
+                        <br />
+                        반복 횟수 :<input value={d.reps} placeholder='횟수'
+                        onChange={(e)=>handle_detail_change(i,"reps",e.target.value)} />
+                        <br />
+                        중량 :<input value={d.weight} placeholder='무게'
                         onChange={(e)=>handle_detail_change(i,"weight",e.target.value)} />
-
-                        <input value={d.rest_time} placeholder='휴식'
+                        <br />
+                        휴식 시간:<input value={d.rest_time} placeholder='휴식'
                         onChange={(e)=>handle_detail_change(i,'rest_time',e.target.value)} />
-
+                        <br />
                     </div>
                 ))}
 
@@ -228,24 +340,6 @@ const Routines_page = () => {
                 <button onClick={()=> setOpen(false)}>닫기</button>
             </div>
         )}
-
-
-        {/* 루틴 리스트 띄우기 */}
-        {
-            list.map((routines)=>(
-                <div key={String(routines.r_id)}>
-                    {/* 루틴 클릭하면 루틴 상세 */}
-                    <div onClick={()=> nav(`/routine/${routines.r_id}`)}>
-                        <h3>{routines.r_name}</h3>
-                        <p>{routines.p_name}</p>
-                    </div>
-                    {/* 삭제 버튼 */}
-                    <button onClick={()=> handle_delete(routines.r_id)} >삭제</button>
-                </div>
-            ))
-        }
-
-
     </div>
   )
 }

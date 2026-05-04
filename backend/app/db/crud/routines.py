@@ -39,12 +39,14 @@ class Routine_CRUD :
                                       u_id:int |None=None):
         query = (select(Routine).options(joinedload(Routine.part)))
 
+        if u_id is not None:
+            query = query.where(Routine.u_id == u_id)
+
         if name:
             query = query.where(Routine.r_name.contains(name))
         if p_id:
             query = query.where(Routine.p_id == p_id)
-        if u_id:
-            query = query.where(Routine.u_id == u_id)
+
 
         result = await db.execute(query)
         
