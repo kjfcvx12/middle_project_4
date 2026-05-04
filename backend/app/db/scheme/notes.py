@@ -33,6 +33,8 @@ class Note_In_DB(Note_Base):
 class Note_Read(Note_In_DB):
     send_id:int
 
+    send_email: str | None = None
+    rece_email: str | None = None
 
 
 

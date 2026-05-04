@@ -63,7 +63,7 @@ const App = () => {
               <Route path="/machines/edit/:m_id" element={<MachineCreate />} />
               <Route path="/profile/edit" element={<UserEdit />} />
               <Route path="/note/create" element={<NoteCreate />} />
-              <Route path="/note/detail" element={<NoteDetail />} />
+              <Route path="/note/:n_id" element={<NoteDetail />} />
               <Route path="/note" element={<NoteBox />} />
               
               

@@ -42,10 +42,10 @@ const NoteBox = () => {
 
 
             <div>
-                <button onClick={() => setTab('outbox')}>
+                <button onClick={() => setTab('inbox')}>
                     받은 쪽지
                 </button>
-                <button onClick={() => setTab('inbox')}>
+                <button onClick={() => setTab('outbox')}>
                     보낸 쪽지
                 </button>
             </div>
@@ -56,7 +56,7 @@ const NoteBox = () => {
                 <table>
                     <thead>
                         <tr>
-                            <th>{tab === 'inbox' ? '보낸 사람' : '받는 사람'}</th>
+                            <th>{tab === 'inbox' ? ' 보낸 사람' : '받는 사람'}</th>
                             <th>제목</th>
                             <th>날짜</th>
                         </tr>
@@ -67,7 +67,9 @@ const NoteBox = () => {
                                 <tr key={note.n_id} 
                                     onClick={() => navigate(`/note/${note.n_id}`)}>
                                     <td>
-                                        {tab === 'inbox' ? note.send_id : note.rece_id}
+                                        {tab === 'inbox' 
+                                        ? (note.send_id === 1 ? '관리자' : note.send_email) 
+                                        : (note.rece_id === 1 ? '관리자' : note.rece_email) }
                                     </td>
                                     <td>
                                         {note.title}

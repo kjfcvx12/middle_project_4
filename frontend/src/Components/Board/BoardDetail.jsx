@@ -19,8 +19,6 @@ const BoardDetail = () => {
     const fetch_board_detail = async () => {
       try {
         const result = await getBoardDetail(id);
-        console.log("상세 게시글 응답:", result);
-        console.log("상세 게시글 data:", result.data);
         set_board(result.data);
         set_board(result.data);
       } catch (error) {

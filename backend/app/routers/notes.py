@@ -16,14 +16,14 @@ router=APIRouter(prefix='/notes',tags=['Note'])
 
 
 # 본인 보낸쪽지함 조회
-@router.get('/inbox', response_model=list[Note_Read])
+@router.get('/outbox', response_model=list[Note_Read])
 async def router_note_get_send_me_all(u_id: int = Depends(auth_get_u_id),
                                       db:AsyncSession=Depends(get_db)):
     return await Note_Service.services_note_get_send_me_all(db, u_id)
     
 
 # 본인 받은쪽지함 조회
-@router.get('/outbox', response_model=list[Note_Read])
+@router.get('/inbox', response_model=list[Note_Read])
 async def router_note_get_rece_me_all(u_id: int = Depends(auth_get_u_id),
                                       db:AsyncSession=Depends(get_db)):
     return await Note_Service.services_note_get_rece_me_all(db, u_id)

@@ -33,10 +33,7 @@ async def service_get_logs(db: AsyncSession, u_id : int):
     logs = await Log_Crud.crud_get_logs(db, u_id)
 
     if not logs:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="로그가 없습니다."
-        )
+        logs=[]
 
     return logs
 
