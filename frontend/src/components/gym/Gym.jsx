@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 import "./Gym.css";
-import { gyms_list, gyms_delete } from "../../api/gyms.jsx";
+import { gyms_list, gyms_delete, gyms_toggle_like } from "../../api/gyms.jsx";
 import { useNavigate } from "react-router-dom";
 
 export default function Gym() {
@@ -94,10 +94,32 @@ export default function Gym() {
     };
 
     const handleDelete = async (id) => {
-        // UI 유지 + 기능만 보강
         try {
             await gyms_delete(id);
             fetchGyms();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    // 🔥 핵심 수정 (좋아요 동기화)
+    const handleLike = async (gym) => {
+        try {
+            await gyms_toggle_like(gym.g_id);
+
+            setGyms((prev) =>
+                prev.map((g) =>
+                    g.g_id === gym.g_id
+                        ? {
+                            ...g,
+                            like_yn: !g.like_yn,
+                            like_count: g.like_yn
+                                ? (g.like_count ?? 1) - 1
+                                : (g.like_count ?? 0) + 1,
+                        }
+                        : g
+                )
+            );
         } catch (err) {
             console.error(err);
         }
@@ -120,20 +142,6 @@ export default function Gym() {
 
                 <h1 className="gym-title">헬스장 찾기</h1>
 
-                {/* ================= 생성 버튼 (UI 그대로) ================= */}
-                {isAdmin && (
-                    <div className="gym-top-actions">
-                        <button
-                            className="gym-create-btn"
-                            onClick={() => navigate("/gym/create")}
-                        >
-                            <Plus size={16} />
-                            생성
-                        </button>
-                    </div>
-                )}
-
-                {/* 검색 (UI 그대로) */}
                 <div className="gym-search">
                     <Search size={20} />
                     <input
@@ -143,7 +151,6 @@ export default function Gym() {
                     />
                 </div>
 
-                {/* 정렬 (UI 그대로) */}
                 <div className="gym-sort-row">
                     <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
                         <option value="g_name">이름순</option>
@@ -158,7 +165,6 @@ export default function Gym() {
                     </select>
                 </div>
 
-                {/* 목록 (UI 그대로 유지) */}
                 {loading ? (
                     <div className="gym-loading">불러오는 중...</div>
                 ) : filtered.length === 0 ? (
@@ -206,9 +212,8 @@ export default function Gym() {
                                         </button>
                                     </div>
 
-                                    {/* ================= 기능만 추가 ================= */}
+                                    {/* 수정/삭제 유지 */}
                                     <div className="gym-actions">
-
                                         {isStaff && (
                                             <button
                                                 className="icon-btn"
@@ -226,13 +231,18 @@ export default function Gym() {
                                                 <Trash2 size={16} />
                                             </button>
                                         )}
-
                                     </div>
 
-                                    <Heart className="card-heart" size={34} />
+                                    {/* 🔥 하트 수정 핵심 */}
+                                    <Heart
+                                        className="card-heart"
+                                        size={34}
+                                        onClick={() => handleLike(gym)}
+                                        fill={gym.like_yn ? "#ff4d6d" : "none"}
+                                        stroke={gym.like_yn ? "#ff4d6d" : "#8e93aa"}
+                                    />
                                 </div>
 
-                                {/* 상세 UI 그대로 */}
                                 {opened && (
                                     <div className="gym-detail">
                                         <div className="detail-row">
