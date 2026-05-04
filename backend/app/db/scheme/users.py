@@ -46,5 +46,17 @@ class User_Read(User_In_DB):
     pass
 
 
+class User_Public(BaseModel):
+    u_id: int
+    email: EmailStr
+    u_name: str
+    role: str
+    signup_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    info: str | None = None
+    
+    class Config:
+        from_attributes = True
+
+
 
 

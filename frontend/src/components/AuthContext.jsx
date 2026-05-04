@@ -1,11 +1,13 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { user_login, user_logout, user_me, user_signup } from "./../api/user";
+import { user_login, user_logout, user_me, user_signup, user_profile } from "./../api/user";
+import { useNavigate, useParams } from "react-router-dom";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [userData, setUserData]=useState(null);
   const [loading, setLoading] = useState(true);
 
 
@@ -16,10 +18,14 @@ export const AuthProvider = ({ children }) => {
         if (response.data) {
           setUser(response.data);
           setIsLoggedIn(true);
+
+          const current= await user_profile();
+          setUserData(current.data);
         }
       } catch (error) {
         setIsLoggedIn(false);
         setUser(null);
+        setUserData(null);
       } finally {
         setLoading(false);
       }
@@ -33,6 +39,10 @@ export const AuthProvider = ({ children }) => {
       const response = await user_login(data);
       setUser(response.data);
       setIsLoggedIn(true);
+
+      const current= await user_profile();
+      setUserData(current.data);
+
       return { success: true };
     } catch (error) {
       return {
@@ -51,6 +61,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setIsLoggedIn(false);
       setUser(null);
+      setUserData(null);
     }
   };
 
@@ -68,7 +79,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user, login, logout, signup, loading }}>
+    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user, login, logout, signup, loading, userData}}>
       {!loading && children}
     </AuthContext.Provider>
   );

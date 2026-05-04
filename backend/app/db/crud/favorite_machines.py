@@ -17,12 +17,12 @@ class Favorite_Machine_Crud:
 
     # 운동기구 즐겨찾기 취소
     @staticmethod
-    async def crud_favorite_machines_delete(db:AsyncSession , f_m_id:int)->str|None:
+    async def crud_favorite_machines_delete(db:AsyncSession , f_m_id:int)->Favorite_Machine|None:
         db_data = await db.get(Favorite_Machine, f_m_id)
         if db_data:
             await db.delete(db_data)
             await db.flush()
-            return '운동기구 즐겨찾기 취소'
+            return db_data
         return None
     
 
