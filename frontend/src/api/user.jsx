@@ -35,10 +35,17 @@ export const user_admin_get_all = async () => {
 };
 
 
+// Get 유저 email로 id 조회
+export const user_email_get_id = async (email) =>{
+  const response = await api.get('/users/email_get_id',  {params: {email}});
+  return response.data
+}
+
+
 // GET 잊은 email 조회
 export const user_find_email = async ({u_name, phone}) => {
   const response = await api.get('/users/find_email', {params: {u_name, phone}});
-  return response;
+  return response.data;
 };
 
 
@@ -79,7 +86,7 @@ export const user_get_logs = async (u_id, page=1) => {
 };
 
 
-// 유저 체육관 즐겨찾기 목록 조회
+// 유저 헬스장 즐겨찾기 목록 조회
 export const user_get_favorite_gyms = async (u_id) => {
   const response = await api.get(`/users/favorite_gyms/${u_id}`);
   return response;
@@ -120,7 +127,7 @@ export const user_get_like_machines = async (u_id, page) => {
 };
 
 
-// 유저가 좋아요 누른 체육관
+// 유저가 좋아요 누른 헬스장
 export const user_get_like_gyms = async (u_id, page) => {
   const response = await api.get(`/users/like_gyms/${u_id}`, {params: {page}});
   return response;

@@ -7,27 +7,27 @@ from app.db.scheme.like_gyms import Like_Gym_Create
 
 
 class Like_Gym_Crud:
-    # 체육관 좋아요
+    # 헬스장 좋아요
     @staticmethod
     async def crud_like_gyms_create(db:AsyncSession, lg: Like_Gym_Create) -> str:          
         db_data=Like_Gym(**lg.model_dump())
         db.add(db_data)
         await db.flush()
-        return '체육관 좋아요'
+        return '헬스장 좋아요'
     
 
-    # 체육관 좋아요 취소
+    # 헬스장 좋아요 취소
     @staticmethod
     async def crud_like_gyms_delete(db:AsyncSession , l_g_id:int)->str|None:
         db_data = await db.get(Like_Gym, l_g_id)
         if db_data:
             await db.delete(db_data)
             await db.flush()
-            return '체육관 좋아요 취소'
+            return '헬스장 좋아요 취소'
         return None
     
 
-    # 체육관 좋아요 개수
+    # 헬스장 좋아요 개수
     @staticmethod
     async def crud_like_gyms_count(db: AsyncSession, g_id: int) -> int:
         result = await db.execute(
@@ -37,7 +37,7 @@ class Like_Gym_Crud:
         return result.scalar() or 0
     
 
-    # 유저 좋아요 체육관 page 조회
+    # 유저 좋아요 헬스장 page 조회
     @staticmethod
     async def crud_like_gyms_page_by_u_id(db:AsyncSession, u_id:int, page: int = 1)->list[Like_Gym]:
         size=10
