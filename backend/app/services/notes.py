@@ -11,23 +11,29 @@ class Note_Service:
     # 본인 보낸쪽지함 조회
     @staticmethod
     async def services_note_get_send_me_all(db:AsyncSession, u_id:int):
-        note=await Note_Crud.crud_note_get_send_me_all(db, u_id)
+        notes=await Note_Crud.crud_note_get_send_me_all(db, u_id)
 
-        if not note:
+        if not notes:
             return []
         
-        return note
+        for note in notes:
+            note.rece_email = await User_Crud.crud_user_get_email_by_u_id(db, note.rece_id)
+        
+        return notes
     
 
     # 본인 받은쪽지함 조회
     @staticmethod
     async def services_note_get_rece_me_all(db:AsyncSession, u_id:int):
-        note=await Note_Crud.crud_note_get_rece_me_all(db, u_id)
+        notes=await Note_Crud.crud_note_get_rece_me_all(db, u_id)
 
-        if not note:
+        if not notes:
             return []
         
-        return note
+        for note in notes:
+            note.send_email = await User_Crud.crud_user_get_email_by_u_id(db, note.send_id)
+        
+        return notes
     
     # 쪽지 상세
     @staticmethod
@@ -35,7 +41,10 @@ class Note_Service:
         note=await Note_Crud.crud_note_get_by_n_id(db, n_id)
 
         if not note:
-            return []
+            return None
+        
+        note.rece_email = await User_Crud.crud_user_get_email_by_u_id(db, note.rece_id)
+        note.send_email = await User_Crud.crud_user_get_email_by_u_id(db, note.send_id)
         
         return note
 

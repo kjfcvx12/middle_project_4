@@ -26,7 +26,6 @@ const BoardList = () => {
     const fetch_boards = async () => {
       try {
         const result = await getBoards(page, size, search_keyword);
-        console.log("게시글 응답:", result);
 
         const boards_with_user = await Promise.all(
           (result.data || []).map(async (board) => {
@@ -142,7 +141,7 @@ const BoardList = () => {
       {boards.map((board) => (
         <div key={board.b_id}>
           <Link to={`/board?mode=detail&id=${board.b_id}`}>
-            게시글 번호 {board.b_id}
+            {board.b_id}
           </Link>
 
           <p>{board.b_content}</p>

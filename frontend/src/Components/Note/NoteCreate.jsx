@@ -31,45 +31,49 @@ const NoteCreate = () => {
         if (loading) return;
             setLoading(true);
 
-    try {
-        let currentReceId = 0;
+        try {
+            let currentReceId = 0;
 
-        if (!locData.type && noteData.email) {
-            
+            if (locData.replyTo) {
+                    currentReceId = locData.replyTo;
+                } 
+                // 2. 관리자 문의인 경우
+                else if (locData.type === 'admin') {
+                    currentReceId = 1;
+                } 
+                // 3. 직접 이메일을 입력해서 보내는 경우
+                else if (noteData.email) {
+                    const receId = await user_email_get_id(noteData.email);
+                    if (!receId) {
+                        alert("존재하지 않는 사용자 이메일입니다.");
+                        setLoading(false);
+                        return;
+                    }
+                    currentReceId = receId.u_id;
+                }
 
-            const receId = await user_email_get_id(noteData.email);
-
-            
-
-            if (!receId) {
-                alert("존재하지 않는 사용자 이메일입니다.");
+            if (!currentReceId) {
+                alert("수신자 정보가 없습니다.");
                 setLoading(false);
                 return;
             }
 
-            currentReceId=receId.u_id;
 
-        } else if (locData.type == 'admin') {
-            currentReceId = 1;
-        }
+            const payload = { 
+                rece_id: Number(currentReceId),
+                title: noteData.title,
+                content: noteData.content 
+            };
+            
+            const result = await note_create(payload);
 
-
-        const payload = { 
-            rece_id: Number(currentReceId),
-            title: noteData.title,
-            content: noteData.content 
-        };
-        
-        console.log(payload)
-        const result = await note_create(payload);
-
-        if (result.status === 200 || result.status === 201) {
-            alert(result.data);
-            navigate('/note')
-        } else {
-            const errorMsg = error.result?.data?.detail || "쪽지 전송에 실패했습니다.";
-            alert(errorMsg);
-        }
+            if (result.status === 200 || result.status === 201) {
+                alert(result.data);
+                navigate('/note')
+            } else {
+                const errorMsg = error.result?.data?.detail || "쪽지 전송에 실패했습니다.";
+                alert(errorMsg);
+            }
 
         } catch (error) {
             console.error("전송 오류:", error);
@@ -84,11 +88,11 @@ const NoteCreate = () => {
     return (
         <div>
             <div>
-                <h2>{locData?.title || '쪽지 작성'}</h2>
+                <h2>{locData?.replyTo ? '답장 쓰기' : (locData?.title || '쪽지 작성')}</h2>
             </div>
             <form onSubmit={handleSubmit}>
-                {locData.type? (<div>문의 내용</div>) :
-                (<div>
+                {!(locData.replyTo || locData.type) && (
+                <div>
                     <label htmlFor="email">받는 사람:</label>
                     <input type="email" 
                             id="email" 
