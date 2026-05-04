@@ -35,10 +35,17 @@ export const user_admin_get_all = async () => {
 };
 
 
+// Get 유저 email로 id 조회
+export const user_email_get_id = async (email) =>{
+  const response = await api.get('/users/email_get_id',  {params: {email}});
+  return response.data
+}
+
+
 // GET 잊은 email 조회
 export const user_find_email = async ({u_name, phone}) => {
   const response = await api.get('/users/find_email', {params: {u_name, phone}});
-  return response;
+  return response.data;
 };
 
 

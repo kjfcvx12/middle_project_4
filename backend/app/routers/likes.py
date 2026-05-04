@@ -79,11 +79,11 @@ async def router_like_machines_create(m_id:int,
     return await Like_Service.services_like_machines_create(db, u_id, m_id)
 
 # delete 운동기구 좋아요 해제
-@router.delete("/_del", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/machines_del", status_code=status.HTTP_204_NO_CONTENT)
 async def router_like_machines_delete(l_m_id:int, db:AsyncSession=Depends(get_db)):
     return await Like_Service.services_like_machines_delete(db, l_m_id)
 
 # get 운동기구 좋아요 개수
-@router.get("/_count")
+@router.get("/machines_count")
 async def router_like_machines_count(m_id:int, db:AsyncSession=Depends(get_db)):
     return await Like_Service.services_like_machines_count(db, m_id)

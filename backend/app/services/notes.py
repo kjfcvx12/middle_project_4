@@ -14,8 +14,7 @@ class Note_Service:
         note=await Note_Crud.crud_note_get_send_me_all(db, u_id)
 
         if not note:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='보내신 쪽지가 없습니다.')
+            return []
         
         return note
     
@@ -26,8 +25,7 @@ class Note_Service:
         note=await Note_Crud.crud_note_get_rece_me_all(db, u_id)
 
         if not note:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='받으신 쪽지가 없습니다.')
+            return []
         
         return note
     
@@ -37,8 +35,7 @@ class Note_Service:
         note=await Note_Crud.crud_note_get_by_n_id(db, n_id)
 
         if not note:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='해당 쪽지가 없습니다.')
+            return []
         
         return note
 

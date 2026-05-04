@@ -78,6 +78,11 @@ async def router_user_get_user_all(admin:int=Depends(auth_get_admin_id), db: Asy
     return await User_Service.services_user_get_all(db)
 
 
+# GET 유저 email 조회
+@router.get('/email_get_id', response_model=User_Read)
+async def router_user_email_get_u_id(email:str, db: AsyncSession = Depends(get_db)):
+    return await User_Service.services_user_get_email(db, email)
+
 # GET 잊은 email 조회
 @router.get('/find_email', response_model=str)
 async def router_user_get_user_name_phone(u_name: str, phone: str, db: AsyncSession = Depends(get_db)):

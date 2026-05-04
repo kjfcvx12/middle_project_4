@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }) => {
 
           const current= await user_profile();
           setUserData(current.data);
-          console.log(current.data);
         }
       } catch (error) {
         setIsLoggedIn(false);

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../AuthContext';
 import { user_del, user_edit, user_me, user_profile } from '../../api/user';
-import { Link } from 'react-router-dom';
+import { Link, data } from 'react-router-dom';
 import { user_get_favorite_gyms, user_get_favorite_machines, user_get_favorite_routines } from './../../api/user';
+import { note_create } from '../../api/notes';
 
 const Profile = () => {
   const { logout, userData} = useAuth();
@@ -21,7 +22,6 @@ const Profile = () => {
   const [myComment, setMyComment]=useState([]);
 
   const [openEdit, setOpenEdit]=useState(false);
-
 
 
 
@@ -79,6 +79,7 @@ const Profile = () => {
       alert("탈퇴가 완료되었습니다.");
     }
   }
+
 
   return (
     <div>
@@ -141,6 +142,13 @@ const Profile = () => {
               )}
           </div>
           <div>
+            <div>
+              <Link to={"/note"}>
+                <button>쪽지함</button>
+              </Link>
+            </div>
+          </div>
+          <div>
               <div onClick={()=>profileEdit()}>정보수정</div>
               {openEdit&&(
                 <div>
@@ -151,7 +159,11 @@ const Profile = () => {
           </div>
       </div>
       <div>
-        <button>SNS 연결</button>
+        <div>
+          <Link to={"/note/create"} state={{ type: "admin", title: "관리자 문의사항" }}>
+            <button>관리자 문의사항</button>
+          </Link>
+        </div>
       </div>
       <div>
         <button onClick={logout}>로그아웃</button>
