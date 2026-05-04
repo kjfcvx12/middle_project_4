@@ -11,6 +11,9 @@ import Profile from './components/profile/Profile';
 import UserEdit from './components/profile/UserEdit';
 import { useAuth } from './components/AuthContext';
 import routines_page from './components/routine/routines_page';
+import NoteCreate from './components/Note/NoteCreate';
+import NoteDetail from './components/Note/NoteDetail';
+import NoteBox from './components/Note/NoteBox';
 
 
 const ProtectedRoute = ({ isLoggedIn }) => {
@@ -49,6 +52,10 @@ const App = () => {
               <Route path="/board" element={<Board />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/profile/edit" element={<UserEdit />} />
+              <Route path="/note/create" element={<NoteCreate />} />
+              <Route path="/note/detail" element={<NoteDetail />} />
+              <Route path="/note" element={<NoteBox />} />
+              
               
             </Route>
 

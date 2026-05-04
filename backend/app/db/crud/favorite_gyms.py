@@ -27,7 +27,7 @@ class Favorite_Gym_Crud:
         return None
     
 
-    # 유저 체육관 즐겨찾기 목록 조회
+    # 유저 헬스장 즐겨찾기 목록 조회
     @staticmethod
     async def crud_favorite_gyms_by_u_id(db:AsyncSession, u_id:int) -> list[Favorite_Gym_Read]:
         db_data=await db.execute(select(Favorite_Gym)
@@ -38,7 +38,7 @@ class Favorite_Gym_Crud:
         return db_data.scalars().all()
     
 
-    # 유저 체육관 즐겨찾기 수 반환
+    # 유저 헬스장 즐겨찾기 수 반환
     @staticmethod
     async def crud_favorite_gyms_count(db: AsyncSession, g_id: int) -> int:
         result = await db.execute(
