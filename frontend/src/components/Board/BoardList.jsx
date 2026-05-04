@@ -17,12 +17,15 @@ const BoardList = () => {
 
   const total_pages = Math.ceil(total_count / size);
 
+  const [keyword, set_keyword] = useState("");
+  const [search_keyword, set_search_keyword] = useState("");
+
   useEffect(() => {
     if (mode === "create") return;
 
     const fetch_boards = async () => {
       try {
-        const result = await getBoards(page, size);
+        const result = await getBoards(page, size, search_keyword);
         console.log("게시글 응답:", result);
 
         const boards_with_user = await Promise.all(
@@ -57,7 +60,7 @@ const BoardList = () => {
     };
 
     fetch_boards();
-  }, [page, size, mode]);
+  }, [page, size, mode, search_keyword]);
 
   const handle_submit = async (e) => {
     e.preventDefault();
@@ -100,6 +103,7 @@ const BoardList = () => {
       </div>
     );
   }
+
   if (mode === "detail") {
     return <BoardDetail />;
   }
@@ -109,6 +113,31 @@ const BoardList = () => {
       <h1>게시판</h1>
 
       <Link to="/board?mode=create">글쓰기</Link>
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          set_page(1);
+          set_search_keyword(keyword);
+        }}
+      >
+        <input
+          value={keyword}
+          onChange={(e) => set_keyword(e.target.value)}
+          placeholder="게시글 검색"
+        />
+        <button type="submit">검색</button>
+        <button
+          type="button"
+          onClick={() => {
+            set_keyword("");
+            set_search_keyword("");
+            set_page(1);
+          }}
+        >
+          초기화
+        </button>
+      </form>
 
       {boards.map((board) => (
         <div key={board.b_id}>
