@@ -3,12 +3,10 @@ import {
     Search,
     MapPin,
     Heart,
-    Star,
     ChevronDown,
     ChevronUp,
     Phone,
     Clock,
-    Plus,
     Pencil,
     Trash2
 } from "lucide-react";
@@ -23,10 +21,9 @@ export default function Gym() {
     const [gyms, setGyms] = useState([]);
     const [query, setQuery] = useState("");
     const [sortKey, setSortKey] = useState("g_name");
-    const [sortOption, setSortOption] = useState("distance");
+    const [sortOption, setSortOption] = useState("like_count,desc");
     const [openId, setOpenId] = useState(null);
     const [loading, setLoading] = useState(true);
-
     const [user, setUser] = useState(null);
 
     const role = user?.role;
@@ -46,30 +43,44 @@ export default function Gym() {
         try {
             setLoading(true);
 
+            let sortValue = "g_name,asc";
+
+            // 왼쪽 select가 바뀐 경우
+            if (sortKey === "g_id") {
+                sortValue = "g_id,desc";
+            }
+
+            // 오른쪽 select가 바뀐 경우만 우선 적용
+            if (sortOption === "like_count,desc") {
+                sortValue = "like_count,desc";
+            }
+
+            if (sortOption === "favorite_count,desc") {
+                sortValue = "favorite_count,desc";
+            }
+
+            // 이름순 / 등록순 직접 선택 시 오른쪽 정렬 초기화 추천
+            if (sortKey === "g_name" && sortOption === "") {
+                sortValue = "g_name,asc";
+            }
+
+            if (sortKey === "g_id" && sortOption === "") {
+                sortValue = "g_id,desc";
+            }
+
             const res = await gyms_list({
                 page: 1,
                 size: 100,
-                sort: `${sortKey},asc`,
+                sort: sortValue,
+                name: query || undefined,
             });
 
             let data = [];
 
-            if (Array.isArray(res?.data)) data = res.data;
-            else if (Array.isArray(res?.data?.data)) data = res.data.data;
-
-            data = data.map((gym, index) => ({
-                ...gym,
-                rating: 4.2 + (index % 5) * 0.15,
-                review_count: 35 + index * 28,
-                distance: 0.8 + index * 0.7,
-            }));
-
-            if (sortOption === "distance") {
-                data.sort((a, b) => a.distance - b.distance);
-            } else if (sortOption === "rating") {
-                data.sort((a, b) => b.rating - a.rating);
-            } else if (sortOption === "review") {
-                data.sort((a, b) => b.review_count - a.review_count);
+            if (Array.isArray(res?.data?.data)) {
+                data = res.data.data;
+            } else if (Array.isArray(res?.data)) {
+                data = res.data;
             }
 
             setGyms(data);
@@ -81,13 +92,7 @@ export default function Gym() {
         }
     };
 
-    const filtered = useMemo(() => {
-        return gyms.filter((gym) =>
-            `${gym.g_name || ""} ${gym.g_addr || ""}`
-                .toLowerCase()
-                .includes(query.toLowerCase())
-        );
-    }, [gyms, query]);
+    const filtered = useMemo(() => gyms, [gyms]);
 
     const toggleOpen = (id) => {
         setOpenId(openId === id ? null : id);
@@ -102,7 +107,6 @@ export default function Gym() {
         }
     };
 
-    // 🔥 핵심 수정 (좋아요 동기화)
     const handleLike = async (gym) => {
         try {
             await gyms_toggle_like(gym.g_id);
@@ -114,7 +118,7 @@ export default function Gym() {
                             ...g,
                             like_yn: !g.like_yn,
                             like_count: g.like_yn
-                                ? (g.like_count ?? 1) - 1
+                                ? Math.max((g.like_count ?? 1) - 1, 0)
                                 : (g.like_count ?? 0) + 1,
                         }
                         : g
@@ -139,29 +143,37 @@ export default function Gym() {
     return (
         <div className="gym-page">
             <div className="gym-wrap">
-
                 <h1 className="gym-title">헬스장 찾기</h1>
 
                 <div className="gym-search">
                     <Search size={20} />
                     <input
-                        placeholder="헬스장 이름 / 주소 검색"
+                        placeholder="헬스장 이름 검색"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") fetchGyms();
+                        }}
                     />
                 </div>
 
                 <div className="gym-sort-row">
-                    <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
+                    <select
+                        value={sortKey}
+                        onChange={(e) => setSortKey(e.target.value)}
+                    >
                         <option value="g_name">이름순</option>
-                        <option value="g_addr">주소순</option>
                         <option value="g_id">등록순</option>
                     </select>
 
-                    <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
-                        <option value="distance">거리순</option>
-                        <option value="rating">별점순</option>
-                        <option value="review">리뷰순</option>
+                    <select
+                        value={sortOption}
+                        onChange={(e) => setSortOption(e.target.value)}
+                    >
+                        <option value="like_count,desc">좋아요순</option>
+                        <option value="favorite_count,desc">
+                            즐겨찾기순
+                        </option>
                     </select>
                 </div>
 
@@ -176,9 +188,7 @@ export default function Gym() {
 
                         return (
                             <div className="gym-card" key={gym.g_id}>
-
                                 <div className="gym-card-top">
-
                                     <div className="gym-left">
                                         <h2>{gym.g_name}</h2>
 
@@ -188,36 +198,44 @@ export default function Gym() {
                                         </p>
 
                                         <div className="gym-meta">
-                                            <span className="rating">
-                                                <Star size={15} fill="currentColor" />
-                                                {gym.rating.toFixed(1)}
-                                            </span>
-
                                             <span className="likes">
-                                                <Heart size={15} />
+                                                <Heart
+                                                    size={15}
+                                                    fill={(gym.like_count ?? 0) > 0 ? "#ff4d6d" : "none"}
+                                                    stroke={(gym.like_count ?? 0) > 0 ? "#ff4d6d" : "#8e93aa"}
+                                                />
                                                 {gym.like_count ?? 0}
                                             </span>
 
-                                            <span>
-                                                {gym.distance.toFixed(1)}km
+                                            <span className="likes">
+                                                ⭐ {gym.favorite_count ?? 0}
                                             </span>
                                         </div>
 
                                         <button
                                             className="detail-btn"
-                                            onClick={() => toggleOpen(gym.g_id)}
+                                            onClick={() =>
+                                                toggleOpen(gym.g_id)
+                                            }
                                         >
                                             {opened ? "접기" : "상세보기"}
-                                            {opened ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                            {opened ? (
+                                                <ChevronUp size={16} />
+                                            ) : (
+                                                <ChevronDown size={16} />
+                                            )}
                                         </button>
                                     </div>
 
-                                    {/* 수정/삭제 유지 */}
                                     <div className="gym-actions">
                                         {isStaff && (
                                             <button
                                                 className="icon-btn"
-                                                onClick={() => navigate(`/gym/edit/${gym.g_id}`)}
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/gym/edit/${gym.g_id}`
+                                                    )
+                                                }
                                             >
                                                 <Pencil size={16} />
                                             </button>
@@ -226,20 +244,29 @@ export default function Gym() {
                                         {isAdmin && (
                                             <button
                                                 className="icon-btn danger"
-                                                onClick={() => handleDelete(gym.g_id)}
+                                                onClick={() =>
+                                                    handleDelete(gym.g_id)
+                                                }
                                             >
                                                 <Trash2 size={16} />
                                             </button>
                                         )}
                                     </div>
 
-                                    {/* 🔥 하트 수정 핵심 */}
                                     <Heart
                                         className="card-heart"
                                         size={34}
                                         onClick={() => handleLike(gym)}
-                                        fill={gym.like_yn ? "#ff4d6d" : "none"}
-                                        stroke={gym.like_yn ? "#ff4d6d" : "#8e93aa"}
+                                        fill={
+                                            gym.like_yn
+                                                ? "#ff4d6d"
+                                                : "none"
+                                        }
+                                        stroke={
+                                            gym.like_yn
+                                                ? "#ff4d6d"
+                                                : "#8e93aa"
+                                        }
                                     />
                                 </div>
 
@@ -259,11 +286,16 @@ export default function Gym() {
 
                                         <div className="facility-wrap">
                                             {facilities.length > 0 ? (
-                                                facilities.map((item, idx) => (
-                                                    <span key={idx} className="facility-chip">
-                                                        {item}
-                                                    </span>
-                                                ))
+                                                facilities.map(
+                                                    (item, idx) => (
+                                                        <span
+                                                            key={idx}
+                                                            className="facility-chip"
+                                                        >
+                                                            {item}
+                                                        </span>
+                                                    )
+                                                )
                                             ) : (
                                                 <span className="facility-none">
                                                     시설 정보 없음
@@ -272,11 +304,11 @@ export default function Gym() {
                                         </div>
 
                                         <div className="detail-bottom">
-                                            리뷰 {gym.review_count}개 | 즐겨찾기 {gym.favorite_count ?? 0}명
+                                            즐겨찾기{" "}
+                                            {gym.favorite_count ?? 0}명
                                         </div>
                                     </div>
                                 )}
-
                             </div>
                         );
                     })
