@@ -15,6 +15,7 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
 
     const [details, setDetails] = useState([]);
 
+
     // 데이터 로딩
     useEffect(() => {
         if (!isOpen) return;
@@ -126,8 +127,9 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
     return (
         <div style={overlay}>
             <div style={modal}>
+                <button onClick={onClose} style={{ float: 'right' }}>X</button>
                 <h3>운동 기록</h3>
-
+                
                 {/* 모드 선택 */}
                 {!mode && (
                     <div style={modeBox}>
