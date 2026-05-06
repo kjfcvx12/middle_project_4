@@ -3,13 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
+
 class Log_Crud:
     # 로그 생성 (detail 제외)
     async def crud_create_log(db: AsyncSession, u_id, data):
         log = Log(
             u_id=u_id,
             r_id=data.r_id,
-            m_id=data.m_id,
             attend=data.attend
         )
         db.add(log)
