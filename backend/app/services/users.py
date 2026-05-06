@@ -66,7 +66,7 @@ class User_Service:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail='해당 email의 사용자가 없습니다')
         
-        return user.email
+        return user
     
 
     # 잊어버린 이메일 이름과 전화번호로 찾기

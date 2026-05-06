@@ -55,11 +55,15 @@ async def services_gym_list(
         result = []
 
         for gym in gyms:
-            # 🔥 dict 기반
             result.append({
                 "g_id": gym["g_id"],
                 "g_name": gym["g_name"],
                 "g_addr": gym["g_addr"],
+                "g_tel": gym["g_tel"],
+                "shower": gym["shower"],
+                "parking": gym["parking"],
+                "elev": gym["elev"],
+                "open_time": gym["open_time"],
                 "like_count": gym["like_count"],
                 "favorite_count": gym["favorite_count"]
             })

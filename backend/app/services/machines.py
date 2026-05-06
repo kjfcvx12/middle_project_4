@@ -10,6 +10,7 @@ from fastapi import HTTPException
 from sqlalchemy import select, func
 from app.db.models.machines import Machine
 from app.db.crud.machines import Machines_CRUD
+from app.db.models.parts import Part
 
 
 
@@ -150,4 +151,16 @@ class Machines_Service:
         }
     
 
+    # 랜덤 루틴 생성용 
+    @staticmethod
+    async def service_machines_get_by_p_name(db, p_name: str):
+        query = (
+            select(Machine)
+            .join(Part, Machine.p_id == Part.p_id)
+            .where(func.trim(func.lower(Part.p_name)) == p_name.strip().lower())
+        )
 
+        result = await db.execute(query)
+        machines = result.scalars().all()
+
+        return machines

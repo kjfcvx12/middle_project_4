@@ -11,7 +11,7 @@ async_engine=create_async_engine(settings.db_url, echo=False)
 
 # 비동기 엔진과 연결된 세션사용하려고
 AsyncSessionLocal = sessionmaker(
-    autocommit=False, autoflush=False, bind=async_engine, class_=AsyncSession
+    autocommit=False, autoflush=False, bind=async_engine, class_=AsyncSession, expire_on_commit=False
 )
 
 # 동기 db연결 생성하는 함수 (동기적으로 db와 연결한다)

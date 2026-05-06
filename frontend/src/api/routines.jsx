@@ -26,3 +26,8 @@ export const routines_update = (r_id, {r_name,p_id}) =>{
 export const routines_delete = (r_id) =>{
     return api.delete(`/routines/${r_id}`);
 };
+
+// 추천 루틴 생성
+export const routine_random_create  = (p_name,count) =>{
+    return api.post(`/routines/random?p_name=${p_name}&count=${count}`);
+};

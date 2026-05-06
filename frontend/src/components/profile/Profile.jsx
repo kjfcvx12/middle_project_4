@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../AuthContext';
-import { user_del, user_edit, user_get_favorite_gyms, user_me, user_profile } from '../../api/user';
-import { Link } from 'react-router-dom';
-import { user_get_favorite_machines } from './../../api/user';
+import { user_del, user_edit, user_me, user_profile } from '../../api/user';
+import { Link, data } from 'react-router-dom';
+import { user_get_favorite_gyms, user_get_favorite_machines, user_get_favorite_routines } from './../../api/user';
+import { note_create } from '../../api/notes';
 
 const Profile = () => {
-  const { logout, isLoggedIn, setIsLoggedIn, user, userData} = useAuth();
+  const { logout, userData} = useAuth();
 
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,28 +18,20 @@ const Profile = () => {
 
 
   const [openBoard, setOpenBoard]=useState(false);
+  const [myBoard, setMyBoard]=useState([]);
+  const [myComment, setMyComment]=useState([]);
+
   const [openEdit, setOpenEdit]=useState(false);
 
 
 
-
-  // 초기 실행
+  // 현재 사용자 업데이트
   useEffect(() => {
-    const ProfileUserData = async () => {
-      try {
-        
-        setCurrentUser(userData); 
-        console.log(userData)    
-      } catch (error) {
-        console.error("사용자 정보를 불러오는데 실패했습니다.", error);
-      } finally {
-        setLoading(false);
-        console(profile.data)
-      }
-    };
-
-    ProfileUserData();
-  }, []);
+    if (userData) {
+      setCurrentUser(userData);
+      setLoading(false);
+    }
+  }, [userData]);
 
 
   if (loading) return <div>로딩 중...</div>;
@@ -52,13 +45,15 @@ const Profile = () => {
     setFavRoutines([]);
     if (!openFavorite) {
       try {
-        const FavGymsList = await user_get_favorite_gyms(user);
-        const FavMachineList = await user_get_favorite_machines(user);
-        const FavRoutineList = await user_get_favorite_routines(user);
+        const currentId = currentUser.u_id; 
 
-        setFavGyms(FavGymsList.data.length === 0 ? ['즐겨찾기한 체육관이 없습니다.'] : FavGymsList.data);
-        setFavMachines(FavMachineList.data.length === 0 ? ['즐겨찾기한 체육관이 없습니다.'] : FavMachineList.data);
-        setFavRoutines(FavRoutineList.data.length === 0 ? ['즐겨찾기한 체육관이 없습니다.'] : FavRoutineList.data);
+        const FavGymsList = await user_get_favorite_gyms(currentId);
+        const FavMachineList = await user_get_favorite_machines(currentId);
+        const FavRoutineList = await user_get_favorite_routines(currentId);
+
+        setFavGyms(FavGymsList.data.length === 0 ? ['즐겨찾기한 헬스장이 없습니다.'] : FavGymsList.data);
+        setFavMachines(FavMachineList.data.length === 0 ? ['즐겨찾기한 운동기구가 없습니다.'] : FavMachineList.data);
+        setFavRoutines(FavRoutineList.data.length === 0 ? ['즐겨찾기한 루틴이 없습니다.'] : FavRoutineList.data);
 
 
       } catch (error) {
@@ -84,6 +79,7 @@ const Profile = () => {
       alert("탈퇴가 완료되었습니다.");
     }
   }
+
 
   return (
     <div>
@@ -117,10 +113,22 @@ const Profile = () => {
                 <div>
                   <div>
                     <div>헬스장</div>
-                    <div>{favGyms}</div>
+                    {favGyms.map((gym, i) => (
+                      <div key={i}>{gym.g_name || gym}</div> 
+                    ))}
                   </div>
-                  <div>루틴</div>
-                  <div>기록</div>
+                  <div>
+                    <div>루틴</div>
+                    {favMachines.map((machine, i) => (
+                      <div key={i}>{machine.m_name || machine}</div>
+                    ))}
+                  </div>
+                  <div>
+                    <div>기록</div>
+                    {favRoutines.map((Routine, i) => (
+                      <div key={i}>{Routine.r_name || Routine}</div>
+                    ))}
+                  </div>
                 </div>
               )}
           </div>
@@ -134,6 +142,13 @@ const Profile = () => {
               )}
           </div>
           <div>
+            <div>
+              <Link to={"/note"}>
+                <button>쪽지함</button>
+              </Link>
+            </div>
+          </div>
+          <div>
               <div onClick={()=>profileEdit()}>정보수정</div>
               {openEdit&&(
                 <div>
@@ -144,7 +159,11 @@ const Profile = () => {
           </div>
       </div>
       <div>
-        <button>SNS 연결</button>
+        <div>
+          <Link to={"/note/create"} state={{ type: "admin", title: "관리자 문의사항" }}>
+            <button>관리자 문의사항</button>
+          </Link>
+        </div>
       </div>
       <div>
         <button onClick={logout}>로그아웃</button>
