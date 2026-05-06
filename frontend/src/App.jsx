@@ -5,10 +5,11 @@ import Home from './components/home/Home';
 import Login from './components/home/Login';
 import Gym from './components/gym/Gym';
 import Routines_page from './components/routine/routines_page';
+import GymCreate from "./components/gym/GymCreate";
+import GymEdit from "./components/gym/GymEdit";
 import Log from './components/log/Log';
 import Board from './components/board/Board';
 import Profile from './components/profile/Profile';
-import UserEdit from './components/profile/UserEdit';
 import { useAuth } from './components/AuthContext';
 import MachineList from './components/routine/machine/machine_list';
 import MachineDetail from './components/routine/machine/machine_detail';
@@ -18,6 +19,7 @@ import routines_page from './components/routine/routines_page';
 import NoteCreate from './components/Note/NoteCreate';
 import NoteDetail from './components/Note/NoteDetail';
 import NoteBox from './components/Note/NoteBox';
+import UserEdit from './components/profile/UserEdit'
 
 
 const ProtectedRoute = ({ isLoggedIn }) => {
@@ -25,7 +27,7 @@ const ProtectedRoute = ({ isLoggedIn }) => {
 };
 
 const App = () => {
-  const { isLoggedIn} = useAuth();
+  const { isLoggedIn } = useAuth();
 
   const navStyle = {
     position: 'fixed',
@@ -45,15 +47,18 @@ const App = () => {
     <Router>
       <div style={{ paddingBottom: '60px' }}>
         <section>
-          <Routes>{(!isLoggedIn&&
+          <Routes>{(!isLoggedIn &&
             <Route path="/" element={<Login />} />)}
-            
+
             <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
               <Route path="/" element={<Home />} />
               <Route path="/gym" element={<Gym />} />
               <Route path="/routine" element={<Routines_page />} />
               <Route path="/routine/:r_id" element={<Routine_details />} /> 
               <Route path="/logs" element={<Log />} />
+              <Route path="/gym/create" element={<GymCreate />} />
+              <Route path="/gym/edit/:id" element={<GymEdit />} />
+              <Route path="/log" element={<Log />} />
               <Route path="/board" element={<Board />} />
               <Route path="/profile" element={<Profile />} />
               {/* 머신 추가 */}

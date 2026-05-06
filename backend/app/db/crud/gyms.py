@@ -47,8 +47,6 @@ async def crud_gyms_gets(
     address: str | None = None,
     sort: str | None = None
 ):
-
-    # 좋아요 집계
     like_sub = (
         select(
             Like_Gym.g_id,
@@ -58,7 +56,6 @@ async def crud_gyms_gets(
         .subquery()
     )
 
-    # 즐겨찾기 집계
     fav_sub = (
         select(
             Favorite_Gym.g_id,
@@ -78,7 +75,6 @@ async def crud_gyms_gets(
             Gym.parking,
             Gym.elev,
             Gym.open_time,
-
             func.coalesce(like_sub.c.like_count, 0).label("like_count"),
             func.coalesce(fav_sub.c.favorite_count, 0).label("favorite_count"),
         )
@@ -86,26 +82,34 @@ async def crud_gyms_gets(
         .outerjoin(fav_sub, Gym.g_id == fav_sub.c.g_id)
     )
 
-    # 검색
     if name:
         query = query.where(Gym.g_name.contains(name))
 
     if address:
         query = query.where(Gym.g_addr.contains(address))
 
-    # 정렬
-    if sort == "distance":
-        query = query.order_by(Gym.g_id.asc())   # 임시 거리순
-    elif sort == "rating":
-        query = query.order_by(func.coalesce(like_sub.c.like_count, 0).desc())
-    elif sort == "review":
-        query = query.order_by(func.coalesce(fav_sub.c.favorite_count, 0).desc())
-    else:
+    if sort == "g_name,asc":
+        query = query.order_by(Gym.g_name.asc())
+
+    elif sort == "g_id,desc":
         query = query.order_by(Gym.g_id.desc())
 
-    # 전체 개수
-    count_query = select(func.count()).select_from(Gym)
+    elif sort == "like_count,desc":
+        query = query.order_by(
+            func.coalesce(like_sub.c.like_count, 0).desc(),
+            Gym.g_id.desc()
+        )
 
+    elif sort == "favorite_count,desc":
+        query = query.order_by(
+            func.coalesce(fav_sub.c.favorite_count, 0).desc(),
+            Gym.g_id.desc()
+        )
+
+    else:
+        query = query.order_by(Gym.g_name.asc())
+
+    count_query = select(func.count()).select_from(Gym)
     total = (await db.execute(count_query)).scalar_one()
 
     result = await db.execute(
@@ -113,17 +117,3 @@ async def crud_gyms_gets(
     )
 
     return result.mappings().all(), total
-
-
-# SEARCH
-async def crud_gyms_search(db: AsyncSession, name: str | None, address: str | None):
-    query = select(Gym)
-
-    if name:
-        query = query.where(Gym.g_name.contains(name))
-
-    if address:
-        query = query.where(Gym.g_addr.contains(address))
-
-    result = await db.execute(query)
-    return result.scalars().all()

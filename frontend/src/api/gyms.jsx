@@ -43,3 +43,8 @@ export const gyms_get_staffs = async (g_id) => {
 export const gyms_get_machines = async (g_id) => {
     return await api.get(`/gyms/${g_id}/machines`);
 };
+
+// LIKE TOGGLE
+export const gyms_toggle_like = async (g_id) => {
+    return await api.post(`/gyms/${g_id}/like`);
+};
