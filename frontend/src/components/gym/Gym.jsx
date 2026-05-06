@@ -339,7 +339,7 @@ export default function Gym() {
                         );
                     })
                 )}
-                <button onClick={()=>nav("/machines")}>
+                <button onClick={()=>navigate("/machines")}>
                     운동기구 목록 보기
                 </button>
             </div>
