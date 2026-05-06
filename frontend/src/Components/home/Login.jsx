@@ -61,6 +61,21 @@ const Login = () => {
       {isOpen && (
         <div>
           <div>
+            <p style={{
+                  color: 'black',
+                  fontSize: '40px',
+                  fontWeight: 'bold',
+                  WebkitTextStroke: '1px yellow',
+                  textAlign: "center"
+              }}>
+                  FitChick
+            </p>
+            <img src={fitChickLogo} style={{ 
+              maxWidth: "40%", 
+              height: "auto", 
+              display: "block", 
+              margin: "0 auto" 
+            }}></img>
             <h2>로그인</h2>
             <form onSubmit={handleSubmit} style={formStyle}>
               <input
