@@ -29,4 +29,4 @@ class Log_Detail(Base):
     memo: Mapped[str] = mapped_column(String(300), nullable=False)
 
     log: Mapped["Log"] = relationship(back_populates="details")
-    machine: Mapped["Machine"] = relationship("Machine")
+    machine: Mapped["Machine"] = relationship("Machine", back_populates="log_details")
