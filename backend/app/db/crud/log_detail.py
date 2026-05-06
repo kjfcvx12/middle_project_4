@@ -5,9 +5,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 async def crud_create_log_details(db: AsyncSession, log_id, details):
     for d in details:
         detail = Log_Detail(
+            m_id=d.m_id,
             log_id=log_id,
             sets=d.sets,
             reps=d.reps,
+            weight=getattr(d, "weight", 0) or 0,
+            duration=getattr(d, "duration", 0) or 0,
             fail_memo=d.fail_memo,
             memo=d.memo
         )

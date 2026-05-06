@@ -19,6 +19,7 @@ const BoardDetail = () => {
     const fetch_board_detail = async () => {
       try {
         const result = await getBoardDetail(id);
+
         set_board(result.data);
         set_board(result.data);
       } catch (error) {

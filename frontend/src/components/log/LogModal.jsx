@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { createLog } from "../../api/logApi";
 import { machines_read } from "../../api/machines";
 import { routines_read } from "../../api/routines";
+import { routine_detail_read_all } from "../../api/routine_details";
 
 const LogModal = ({ isOpen, onClose, onSuccess }) => {
     const [mode, setMode] = useState("");
@@ -18,8 +19,15 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
     useEffect(() => {
         if (!isOpen) return;
 
-        routines_read().then(setRoutines);
-        machines_read().then(setMachines);
+        routines_read().then(res => {
+        console.log("routines:", res.data.data);
+        setRoutines(res.data.data); 
+    });
+
+        machines_read().then(res => {
+            console.log("machines 응답:", res);
+            setMachines(res.data.data); 
+        });
     }, [isOpen]);
 
     if (!isOpen) return null;
@@ -27,24 +35,35 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
     // =========================
     // 루틴 선택 → 자동 채움
     // =========================
-    const handleRoutineChange = (value) => {
-        const selected = routines.find(r => r.r_id === Number(value));
-        setRId(Number(value));
+    const handleRoutineChange = async (value) => {
+    const selected = routines.find(r => r.r_id === Number(value));
+    setRId(Number(value));
 
-        if (!selected) return;
+    if (!selected) return;
 
-        const newDetails = selected.details.map(d => ({
+    try {
+        
+        const res = await routine_detail_read_all(selected.r_id);
+        console.log("detail 응답:", res);
+
+        const detailList = res.data.data; 
+
+        const newDetails = detailList.map(d => ({
             m_id: d.m_id,
             sets: d.sets,
             reps: d.reps,
             weight: 0,
             duration: 60,
             fail_memo: "",
-            memo: "",
+            memo: "기록",
         }));
 
         setDetails(newDetails);
-    };
+
+    } catch (e) {
+        console.log("detail 불러오기 실패", e);
+    }
+};
 
     // =========================
     // detail 수정
@@ -68,7 +87,7 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
                 weight: 0,
                 duration: 60,
                 fail_memo: "",
-                memo: "",
+                memo: "기록"
             },
         ]);
     };
@@ -80,11 +99,21 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
         try {
             const payload = {
                 r_id: mode === "routine" ? r_id : 1,
-                m_id: mode === "manual" ? m_id : 1,
                 attend: true,
-                details,
+                details: details.map(d => ({
+                    m_id: d.m_id,
+                    
+                    sets: Number(d.sets),
+                    reps: Number(d.reps),
+                    weight: Number(d.weight) || 0,
+                    duration: Number(d.duration) || 0,
+                    fail_memo: d.fail_memo || "",
+                    memo: d.memo || "기록"
+                })),
+            
+                
             };
-
+            console.log("🔥 payload:", payload);
             await createLog(payload);
 
             onSuccess();
@@ -115,7 +144,7 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
                                     weight: 0,
                                     duration: 60,
                                     fail_memo: "",
-                                    memo: "",
+                                    memo:  "기록" ,
                                 }
                             ]);
                         }}>
@@ -130,10 +159,10 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
                         <select onChange={(e) => handleRoutineChange(e.target.value)}>
                             <option>루틴 선택</option>
                             {routines.map(r => (
-                                <option key={r.r_id} value={r.r_id}>
-                                    {r.name}
-                                </option>
-                            ))}
+                            <option key={r.r_id} value={r.r_id}>
+                                {r.r_name}
+                            </option>
+                        ))}
                         </select>
                     </>
                 )}
@@ -149,7 +178,7 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
                         >
                             {machines.map(m => (
                                 <option key={m.m_id} value={m.m_id}>
-                                    {m.name}
+                                    {m.m_name}
                                 </option>
                             ))}
                         </select>
