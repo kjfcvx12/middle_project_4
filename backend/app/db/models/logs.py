@@ -18,7 +18,7 @@ class Log(Base):
     # cascade 추가
     u_id: Mapped[int] = mapped_column(ForeignKey("users.u_id", ondelete="CASCADE"))
     r_id: Mapped[int] = mapped_column(ForeignKey("routines.r_id", ondelete="CASCADE"))
-    m_id: Mapped[int] = mapped_column(ForeignKey("machines.m_id", ondelete="CASCADE"))
+    
 
     log_date: Mapped[DateTime] = mapped_column(
         DateTime, server_default=func.now()
@@ -34,4 +34,4 @@ class Log(Base):
 
     user: Mapped["User"] = relationship("User", back_populates="logs")
     routine: Mapped["Routine"] = relationship("Routine", back_populates="log")
-    machine: Mapped["Machine"] = relationship("Machine", back_populates="log")
+    

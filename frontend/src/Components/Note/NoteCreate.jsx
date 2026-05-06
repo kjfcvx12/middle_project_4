@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
-import { user_email_get_id } from '../../api/user';
+import { user_email_get_id, user_profile } from '../../api/user';
 import { note_create } from '../../api/notes';
 
 const NoteCreate = () => {
+    const [searchParams] = useSearchParams();
+    const u_id = searchParams.get("u_id");
+    const email= searchParams.get("email");
+
     const location = useLocation();
     const locData = location.state ||{};
     const navigate = useNavigate();
@@ -12,12 +16,13 @@ const NoteCreate = () => {
     
 
     const [noteData, setNoteData] = useState({
-        email: "",
-        title: "",
+        email: email || "",
+        title: locData.defaultTitle || "",
         content: ""
     });
 
     const [loading, setLoading] = useState(false);
+
 
     // 입력값 변경 핸들러
     const handleChange = (e) => {
@@ -36,6 +41,7 @@ const NoteCreate = () => {
 
             if (locData.replyTo) {
                     currentReceId = locData.replyTo;
+                    
                 } 
                 // 2. 관리자 문의인 경우
                 else if (locData.type === 'admin') {
@@ -57,7 +63,7 @@ const NoteCreate = () => {
                 setLoading(false);
                 return;
             }
-
+            
 
             const payload = { 
                 rece_id: Number(currentReceId),
@@ -105,7 +111,7 @@ const NoteCreate = () => {
                 <input type="text" 
                        id="title" 
                        name="title"
-                       value={noteData.title} 
+                       value={noteData.title || ""} 
                        onChange={handleChange} 
                        required placeholder="제목을 입력하세요"/>
 
