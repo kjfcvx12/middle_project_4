@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../AuthContext";
+import fitChickLogo from '../../image/FitChick.png';
 
 const Login = () => {
   const { login, logout, signup } = useAuth();
