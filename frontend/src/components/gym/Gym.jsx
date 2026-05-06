@@ -31,6 +31,7 @@ export default function Gym() {
     const [openId, setOpenId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
+    
 
     useEffect(() => {
         loadMe();
@@ -335,15 +336,18 @@ export default function Gym() {
                                                 </span>
                                             )}
                                         </div>
+                                                        <button onClick={()=>nav(`/gym_machines/${gym.g_id}`)}>
+                                                            운동기구 목록 보기
+                                                        </button>
                                     </div>
                                 )}
                             </div>
                         );
                     })
                 )}
-                <button onClick={()=>nav("/machines")}>
+                {/* <button onClick={()=>nav(`/machines?g_id=${gym.g_id}`)}>
                     운동기구 목록 보기
-                </button>
+                </button> */}
             </div>
         </div>
     );
