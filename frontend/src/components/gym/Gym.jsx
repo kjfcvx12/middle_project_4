@@ -201,9 +201,9 @@ export default function Gym() {
                     </select>
                 </div>
 
-                {!isStaff && (
+                {isStaff && (
                     <div style={{ marginBottom: "12px", color: "#999" }}>
-                        현재 권한: 일반회원
+                        현재 권한: {role}
                     </div>
                 )}
 
