@@ -96,7 +96,7 @@ const BoardDetail = () => {
         작성자:{" "}
         <button
           type="button"
-          onClick={() => navigate(`/profile?u_id=${board.u_id}`)}
+          onClick={() => navigate(`/board?mode=profile&u_id=${board.u_id}`)}
           style={styles.userButton}
         >
           {board.u_name || `회원 ${board.u_id}`}
