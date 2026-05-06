@@ -88,9 +88,11 @@ class Machines_Service:
         
 
 
-        except Exception:
+        except Exception as e:
             await db.rollback()
-            raise HTTPException(500,"루틴에 사용중인 머신은 삭제할 수 없습니다")
+            import traceback
+            traceback.print_exc()
+            raise HTTPException(500, detail=str(e))
 
 
 
