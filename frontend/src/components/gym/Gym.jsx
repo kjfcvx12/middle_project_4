@@ -3,16 +3,22 @@ import {
     Search,
     MapPin,
     Heart,
-    ChevronDown,
-    ChevronUp,
     Phone,
     Clock,
     Pencil,
-    Trash2
+    Trash2,
+    Plus
 } from "lucide-react";
 
 import "./Gym.css";
-import { gyms_list, gyms_delete, gyms_toggle_like } from "../../api/gyms.jsx";
+import {
+    gyms_list,
+    gyms_delete,
+    gyms_toggle_like
+} from "../../api/gyms.jsx";
+
+import api from "../../api/api";
+import { user_me } from "../../api/user.jsx";
 import { useNavigate } from "react-router-dom";
 
 export default function Gym() {
@@ -26,14 +32,36 @@ export default function Gym() {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
 
-    const role = user?.role;
-    const isAdmin = role === "admin";
-    const isStaff = role === "admin" || role === "staff";
-
     useEffect(() => {
-        const saved = localStorage.getItem("user");
-        setUser(saved ? JSON.parse(saved) : null);
+        loadMe();
     }, []);
+
+    const loadMe = async () => {
+        try {
+            await user_me();
+            const profileRes = await api.get("/users/profile");
+            setUser(profileRes.data);
+        } catch (err) {
+            console.error(err);
+            setUser(null);
+        }
+    };
+
+    const role = (
+        user?.role ||
+        user?.u_role ||
+        user?.user_role ||
+        ""
+    ).toString().trim().toLowerCase();
+
+    const isAdmin = role === "admin";
+
+    const isStaff = [
+        "admin",
+        "staff",
+        "manager",
+        "trainer"
+    ].includes(role);
 
     useEffect(() => {
         fetchGyms();
@@ -45,43 +73,21 @@ export default function Gym() {
 
             let sortValue = "g_name,asc";
 
-            // 왼쪽 select가 바뀐 경우
-            if (sortKey === "g_id") {
-                sortValue = "g_id,desc";
-            }
-
-            // 오른쪽 select가 바뀐 경우만 우선 적용
-            if (sortOption === "like_count,desc") {
-                sortValue = "like_count,desc";
-            }
-
-            if (sortOption === "favorite_count,desc") {
-                sortValue = "favorite_count,desc";
-            }
-
-            // 이름순 / 등록순 직접 선택 시 오른쪽 정렬 초기화 추천
-            if (sortKey === "g_name" && sortOption === "") {
-                sortValue = "g_name,asc";
-            }
-
-            if (sortKey === "g_id" && sortOption === "") {
-                sortValue = "g_id,desc";
-            }
+            if (sortKey === "g_id") sortValue = "g_id,desc";
+            if (sortOption === "like_count,desc") sortValue = "like_count,desc";
+            if (sortOption === "favorite_count,desc") sortValue = "favorite_count,desc";
 
             const res = await gyms_list({
                 page: 1,
                 size: 100,
                 sort: sortValue,
-                name: query || undefined,
+                name: query || undefined
             });
 
             let data = [];
 
-            if (Array.isArray(res?.data?.data)) {
-                data = res.data.data;
-            } else if (Array.isArray(res?.data)) {
-                data = res.data;
-            }
+            if (Array.isArray(res?.data?.data)) data = res.data.data;
+            else if (Array.isArray(res?.data)) data = res.data;
 
             setGyms(data);
         } catch (err) {
@@ -119,7 +125,7 @@ export default function Gym() {
                             like_yn: !g.like_yn,
                             like_count: g.like_yn
                                 ? Math.max((g.like_count ?? 1) - 1, 0)
-                                : (g.like_count ?? 0) + 1,
+                                : (g.like_count ?? 0) + 1
                         }
                         : g
                 )
@@ -143,7 +149,25 @@ export default function Gym() {
     return (
         <div className="gym-page">
             <div className="gym-wrap">
-                <h1 className="gym-title">헬스장 찾기</h1>
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center"
+                    }}
+                >
+                    <h1 className="gym-title">헬스장 찾기</h1>
+
+                    {isStaff && (
+                        <button
+                            className="detail-btn"
+                            onClick={() => navigate("/gym/create")}
+                        >
+                            <Plus size={16} />
+                            등록
+                        </button>
+                    )}
+                </div>
 
                 <div className="gym-search">
                     <Search size={20} />
@@ -177,6 +201,12 @@ export default function Gym() {
                     </select>
                 </div>
 
+                {!isStaff && (
+                    <div style={{ marginBottom: "12px", color: "#999" }}>
+                        현재 권한: 일반회원
+                    </div>
+                )}
+
                 {loading ? (
                     <div className="gym-loading">불러오는 중...</div>
                 ) : filtered.length === 0 ? (
@@ -199,11 +229,7 @@ export default function Gym() {
 
                                         <div className="gym-meta">
                                             <span className="likes">
-                                                <Heart
-                                                    size={15}
-                                                    fill={(gym.like_count ?? 0) > 0 ? "#ff4d6d" : "none"}
-                                                    stroke={(gym.like_count ?? 0) > 0 ? "#ff4d6d" : "#8e93aa"}
-                                                />
+                                                <Heart size={15} />
                                                 {gym.like_count ?? 0}
                                             </span>
 
@@ -219,11 +245,6 @@ export default function Gym() {
                                             }
                                         >
                                             {opened ? "접기" : "상세보기"}
-                                            {opened ? (
-                                                <ChevronUp size={16} />
-                                            ) : (
-                                                <ChevronDown size={16} />
-                                            )}
                                         </button>
                                     </div>
 
@@ -232,9 +253,7 @@ export default function Gym() {
                                             <button
                                                 className="icon-btn"
                                                 onClick={() =>
-                                                    navigate(
-                                                        `/gym/edit/${gym.g_id}`
-                                                    )
+                                                    navigate(`/gym/edit/${gym.g_id}`)
                                                 }
                                             >
                                                 <Pencil size={16} />
@@ -257,16 +276,6 @@ export default function Gym() {
                                         className="card-heart"
                                         size={34}
                                         onClick={() => handleLike(gym)}
-                                        fill={
-                                            gym.like_yn
-                                                ? "#ff4d6d"
-                                                : "none"
-                                        }
-                                        stroke={
-                                            gym.like_yn
-                                                ? "#ff4d6d"
-                                                : "#8e93aa"
-                                        }
                                     />
                                 </div>
 
@@ -286,26 +295,19 @@ export default function Gym() {
 
                                         <div className="facility-wrap">
                                             {facilities.length > 0 ? (
-                                                facilities.map(
-                                                    (item, idx) => (
-                                                        <span
-                                                            key={idx}
-                                                            className="facility-chip"
-                                                        >
-                                                            {item}
-                                                        </span>
-                                                    )
-                                                )
+                                                facilities.map((item, idx) => (
+                                                    <span
+                                                        key={idx}
+                                                        className="facility-chip"
+                                                    >
+                                                        {item}
+                                                    </span>
+                                                ))
                                             ) : (
                                                 <span className="facility-none">
                                                     시설 정보 없음
                                                 </span>
                                             )}
-                                        </div>
-
-                                        <div className="detail-bottom">
-                                            즐겨찾기{" "}
-                                            {gym.favorite_count ?? 0}명
                                         </div>
                                     </div>
                                 )}
