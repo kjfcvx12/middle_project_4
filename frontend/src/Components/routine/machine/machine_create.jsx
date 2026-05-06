@@ -30,18 +30,6 @@ const machine_create = () => {
 
     const [loading, setLoading]=useState(false)
 
-    if (authLoading || !userData) {return <div>로딩중...</div>}
-    if (loading) return <div>로딩중...</div>
-
-    //생성 권한(관리자)
-    if (!isEdit && userData.role !== "admin"){
-        return <div>생성 권한이 없습니다</div>
-    }
-
-    //수정 권한
-    if (isEdit && userData?.role !== "manager") {
-        return <div>수정 권한 없음</div>
-    }
 
     useEffect(()=>{
         if(!isEdit){
@@ -63,7 +51,21 @@ const machine_create = () => {
         }
 
         fetch_machine()
-    },[m_id])
+    },[m_id])    
+
+    if (authLoading || !userData) {return <div>로딩중...</div>}
+    if (loading) return <div>로딩중...</div>
+
+    //생성 권한(관리자)
+    if (!isEdit && userData.role !== "admin"){
+        return <div>생성 권한이 없습니다</div>
+    }
+
+    //수정 권한
+    if (isEdit && userData?.role !== "manager") {
+        return <div>수정 권한 없습니다</div>
+    }
+
 
 
   const handleChange=(e)=>{
@@ -128,9 +130,12 @@ const machine_create = () => {
                 onChange={handleChange}/>
 
                 <button type="submit">{isEdit ? "수정":"생성"}</button>
+
                 <button type='button' onClick={()=>nav(-1)}>취소</button>
 
-
+                <button type="button" onClick={()=>nav(`/gyms/${g_id}/machines`)}>
+                    기구 목록으로
+                </button>
             </form>
 
         </div>

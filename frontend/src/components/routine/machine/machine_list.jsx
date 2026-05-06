@@ -7,6 +7,7 @@ import { machines_delete } from '../../../api/api_machine';
 import { useSearchParams } from "react-router-dom";
 import { gym_machines_get } from '../../../api/gym_machines';
 import { gyms_get_machines } from '../../../api/gyms';
+import api from "../../../api/api";
 
 const machine_list = () => {
 
@@ -51,21 +52,17 @@ const machine_list = () => {
 
     const handleDelete = async (m_id) => {
 
-      if (!confirm("정말 삭제하시겠습니까?")) {
+      if (!confirm("정말 삭제하시겠습니까?")){
         alert("삭제가 취소되었습니다.");
         return;
       }
 
       try {
-        await fetch("/gym_machines", {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+        await api.delete('/gym_machines/', {
+          data: {
             g_id: Number(g_id),
-            m_id: m_id,
-          }),
+            m_id: m_id
+          }
         });
 
         alert("삭제가 완료되었습니다.");
