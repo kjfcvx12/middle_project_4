@@ -44,7 +44,7 @@ async def router_note_create(note:Note_Create, u_id:int=Depends(auth_get_u_id),
 
 
 # 본인 보낸쪽지함 삭제 변경
-@router.put("/inbox/{n_id}")
+@router.put("/outbox/{n_id}")
 async def router_note_send_del(n_id:int, 
                                u_id:int=Depends(auth_get_u_id), 
                                db:AsyncSession=Depends(get_db)):
@@ -52,7 +52,7 @@ async def router_note_send_del(n_id:int,
 
 
 # 본인 받은쪽지함 삭제 변경
-@router.put("/outbox/{n_id}")
+@router.put("/inbox/{n_id}")
 async def router_note_rece_del(n_id:int, 
                                u_id:int=Depends(auth_get_u_id), 
                                db:AsyncSession=Depends(get_db)):
