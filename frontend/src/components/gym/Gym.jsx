@@ -1,8 +1,11 @@
+// Gym.jsx
+
 import React, { useEffect, useMemo, useState } from "react";
 import {
     Search,
     MapPin,
     Heart,
+    Star,
     Phone,
     Clock,
     Pencil,
@@ -14,7 +17,8 @@ import "./Gym.css";
 import {
     gyms_list,
     gyms_delete,
-    gyms_toggle_like
+    gyms_toggle_like,
+    gyms_toggle_favorite
 } from "../../api/gyms.jsx";
 
 import api from "../../api/api";
@@ -46,7 +50,6 @@ export default function Gym() {
             const profileRes = await api.get("/users/profile");
             setUser(profileRes.data);
         } catch (err) {
-            console.error(err);
             setUser(null);
         }
     };
@@ -90,9 +93,6 @@ export default function Gym() {
             else if (Array.isArray(res?.data)) data = res.data;
 
             setGyms(data);
-        } catch (err) {
-            console.error(err);
-            setGyms([]);
         } finally {
             setLoading(false);
         }
@@ -105,27 +105,41 @@ export default function Gym() {
     };
 
     const handleDelete = async (id) => {
-        try {
-            await gyms_delete(id);
-            fetchGyms();
-        } catch (err) {
-            console.error(err);
-        }
+        await gyms_delete(id);
+        fetchGyms();
     };
 
     const handleLike = async (gym) => {
+        await gyms_toggle_like(gym.g_id);
+
+        setGyms((prev) =>
+            prev.map((g) =>
+                g.g_id === gym.g_id
+                    ? {
+                        ...g,
+                        like_yn: !g.like_yn,
+                        like_count: g.like_yn
+                            ? Math.max((g.like_count ?? 1) - 1, 0)
+                            : (g.like_count ?? 0) + 1
+                    }
+                    : g
+            )
+        );
+    };
+
+    const handleFavorite = async (gym) => {
         try {
-            await gyms_toggle_like(gym.g_id);
+            await gyms_toggle_favorite(gym.g_id);
 
             setGyms((prev) =>
                 prev.map((g) =>
                     g.g_id === gym.g_id
                         ? {
                             ...g,
-                            like_yn: !g.like_yn,
-                            like_count: g.like_yn
-                                ? Math.max((g.like_count ?? 1) - 1, 0)
-                                : (g.like_count ?? 0) + 1
+                            favorite_yn: !g.favorite_yn,
+                            favorite_count: g.favorite_yn
+                                ? Math.max((g.favorite_count ?? 1) - 1, 0)
+                                : (g.favorite_count ?? 0) + 1
                         }
                         : g
                 )
@@ -149,13 +163,7 @@ export default function Gym() {
     return (
         <div className="gym-page">
             <div className="gym-wrap">
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center"
-                    }}
-                >
+                <div className="gym-header">
                     <h1 className="gym-title">헬스장 찾기</h1>
 
                     {isStaff && (
@@ -195,17 +203,9 @@ export default function Gym() {
                         onChange={(e) => setSortOption(e.target.value)}
                     >
                         <option value="like_count,desc">좋아요순</option>
-                        <option value="favorite_count,desc">
-                            즐겨찾기순
-                        </option>
+                        <option value="favorite_count,desc">즐겨찾기순</option>
                     </select>
                 </div>
-
-                {!isStaff && (
-                    <div style={{ marginBottom: "12px", color: "#999" }}>
-                        현재 권한: 일반회원
-                    </div>
-                )}
 
                 {loading ? (
                     <div className="gym-loading">불러오는 중...</div>
@@ -231,30 +231,25 @@ export default function Gym() {
                                             <span className="likes">
                                                 <Heart
                                                     size={15}
-                                                    fill={
-                                                        gym.like_yn
-                                                            ? "#ff4d6d"
-                                                            : "none"
-                                                    }
-                                                    color={
-                                                        gym.like_yn
-                                                            ? "#ff4d6d"
-                                                            : "#8e93aa"
-                                                    }
+                                                    fill={gym.like_yn ? "#ff4d6d" : "none"}
+                                                    color={gym.like_yn ? "#ff4d6d" : "#8e93aa"}
                                                 />
                                                 {gym.like_count ?? 0}
                                             </span>
 
                                             <span className="likes">
-                                                ⭐ {gym.favorite_count ?? 0}
+                                                <Star
+                                                    size={15}
+                                                    fill={gym.favorite_yn ? "#ffd43b" : "none"}
+                                                    color="#ffd43b"
+                                                />
+                                                {gym.favorite_count ?? 0}
                                             </span>
                                         </div>
 
                                         <button
                                             className="detail-btn"
-                                            onClick={() =>
-                                                toggleOpen(gym.g_id)
-                                            }
+                                            onClick={() => toggleOpen(gym.g_id)}
                                         >
                                             {opened ? "접기" : "상세보기"}
                                         </button>
@@ -284,23 +279,25 @@ export default function Gym() {
                                         )}
                                     </div>
 
-                                    <Heart
-                                        size={34}
-                                        className={`card-heart ${gym.like_yn ? "liked" : ""
-                                            }`}
-                                        fill={
-                                            gym.like_yn
-                                                ? "#ff4d6d"
-                                                : "rgba(0,0,0,0.15)"
-                                        }
-                                        color={
-                                            gym.like_yn
-                                                ? "#ff4d6d"
-                                                : "#ffffff"
-                                        }
-                                        strokeWidth={2.3}
-                                        onClick={() => handleLike(gym)}
-                                    />
+                                    <div className="card-icons">
+                                        <Heart
+                                            size={32}
+                                            className={`card-heart ${gym.like_yn ? "liked" : ""}`}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleLike(gym);
+                                            }}
+                                        />
+
+                                        <Star
+                                            size={30}
+                                            className={`card-star ${gym.favorite_yn ? "favorited" : ""}`}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleFavorite(gym);
+                                            }}
+                                        />
+                                    </div>
                                 </div>
 
                                 {opened && (
