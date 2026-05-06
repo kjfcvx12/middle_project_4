@@ -36,6 +36,10 @@ export default function Gym() {
         loadMe();
     }, []);
 
+    useEffect(() => {
+        fetchGyms();
+    }, [sortKey, sortOption]);
+
     const loadMe = async () => {
         try {
             await user_me();
@@ -62,10 +66,6 @@ export default function Gym() {
         "manager",
         "trainer"
     ].includes(role);
-
-    useEffect(() => {
-        fetchGyms();
-    }, [sortKey, sortOption]);
 
     const fetchGyms = async () => {
         try {
@@ -229,7 +229,19 @@ export default function Gym() {
 
                                         <div className="gym-meta">
                                             <span className="likes">
-                                                <Heart size={15} />
+                                                <Heart
+                                                    size={15}
+                                                    fill={
+                                                        gym.like_yn
+                                                            ? "#ff4d6d"
+                                                            : "none"
+                                                    }
+                                                    color={
+                                                        gym.like_yn
+                                                            ? "#ff4d6d"
+                                                            : "#8e93aa"
+                                                    }
+                                                />
                                                 {gym.like_count ?? 0}
                                             </span>
 
@@ -273,8 +285,20 @@ export default function Gym() {
                                     </div>
 
                                     <Heart
-                                        className="card-heart"
                                         size={34}
+                                        className={`card-heart ${gym.like_yn ? "liked" : ""
+                                            }`}
+                                        fill={
+                                            gym.like_yn
+                                                ? "#ff4d6d"
+                                                : "rgba(0,0,0,0.15)"
+                                        }
+                                        color={
+                                            gym.like_yn
+                                                ? "#ff4d6d"
+                                                : "#ffffff"
+                                        }
+                                        strokeWidth={2.3}
                                         onClick={() => handleLike(gym)}
                                     />
                                 </div>
