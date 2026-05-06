@@ -1,7 +1,6 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const NaviBar = () => {
-  const navigator = useNavigate();
 
   return (
     <nav>
