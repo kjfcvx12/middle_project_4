@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createBoard } from "../../api/board";
+import "./BoardCreate.css";
 
 const BoardCreate = () => {
   const navigate = useNavigate();
@@ -28,19 +29,24 @@ const BoardCreate = () => {
   };
 
   return (
-    <div style={{ paddingBottom: "80px" }}>
-      <h1>글쓰기</h1>
+    <div className="board-create-card">
+      <h1 className="board-create-title">글쓰기</h1>
 
-      <form onSubmit={handle_submit}>
+      <form className="board-create-form" onSubmit={handle_submit}>
         <textarea
+          className="board-create-textarea"
           value={b_content}
           onChange={(e) => set_b_content(e.target.value)}
           placeholder="내용을 입력하세요"
           rows={10}
-          style={{ width: "100%" }}
         />
 
-        <button type="submit">등록</button>
+        <div className="board-create-buttons">
+          <button type="submit">등록</button>
+          <button type="button" onClick={() => navigate("/board")}>
+            취소
+          </button>
+        </div>
       </form>
     </div>
   );
