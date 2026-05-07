@@ -1,0 +1,212 @@
+/* Routine_details.css */
+
+body{
+
+    margin: 0;
+
+    background: #07070d;
+
+    font-family: Pretendard, sans-serif;
+
+    color: white;
+}
+
+.routine-detail-page{
+
+    padding: 20px 16px 120px;
+
+    min-height: 100vh;
+
+    background: #07070d;
+}
+
+/* 제목 */
+h1{
+
+    font-size: 30px;
+
+    font-weight: 800;
+
+    margin-bottom: 24px;
+
+    text-align: center;
+}
+
+/* 카드 */
+.detail-card{
+
+    background:
+    linear-gradient(
+        180deg,
+        rgba(20,20,30,0.96),
+        rgba(12,12,18,0.96)
+    );
+
+    border:
+    1px solid rgba(255,120,40,0.14);
+
+    border-radius: 24px;
+
+    padding: 20px;
+
+    margin-bottom: 18px;
+
+    box-shadow:
+    0 10px 24px rgba(0,0,0,0.35);
+}
+
+.detail-card h3{
+
+    font-size: 22px;
+
+    margin-bottom: 10px;
+}
+
+/* 루틴 정보 */
+.detail-info{
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    color: #d8d8e2;
+
+    margin-bottom: 18px;
+}
+
+/* 수정 영역 */
+.edit-box{
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    margin-bottom: 14px;
+}
+
+/* input */
+input,
+select{
+
+    width: 100%;
+
+    padding: 14px;
+
+    margin-bottom: 12px;
+
+    border-radius: 14px;
+
+    border: 1px solid #2b2b38;
+
+    background: #171722;
+
+    color: white;
+
+    font-size: 14px;
+
+    outline: none;
+
+    box-sizing: border-box;
+}
+
+/* 버튼 공통 */
+button{
+
+    border: none;
+
+    border-radius: 14px;
+
+    padding: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+/* 버튼 묶음 */
+.button-wrap{
+
+    display: flex;
+
+    gap: 8px;
+
+    margin-top: 14px;
+}
+
+/* 수정 버튼 */
+.edit-btn{
+
+    flex: 1;
+
+    background:
+    linear-gradient(
+        135deg,
+        #ff7a1a,
+        #ff4d00
+    );
+
+    color: white;
+}
+
+/* 삭제 버튼 */
+.button-wrap .delete-btn{
+
+    flex: 1;
+
+    margin-top: 0;
+
+    background: #23232f;
+
+    color: white;
+}
+
+/* 이동 버튼 */
+.button-wrap .move-btn{
+
+    width: 44px;
+
+    min-width: 44px;
+
+    background: #1c1c28;
+
+    color: white;
+
+    padding: 0;
+}
+
+/* 저장/생성 */
+.save-btn,
+.create-btn{
+
+    width: 100%;
+
+    background:
+    linear-gradient(
+        135deg,
+        #ff7a1a,
+        #ff4d00
+    );
+
+    color: white;
+
+    box-shadow:
+    0 8px 20px rgba(255,90,0,0.22);
+}
+
+/* 모달 */
+.modal-box{
+
+    margin-top: 24px;
+
+    background:
+    rgba(18,18,28,0.98);
+
+    border:
+    1px solid rgba(255,120,40,0.16);
+
+    border-radius: 24px;
+
+    padding: 20px;
+}

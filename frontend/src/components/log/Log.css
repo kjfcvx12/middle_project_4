@@ -1,0 +1,114 @@
+/* 전체 페이지 */
+.log-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  background: #000000;
+  color: white;
+  font-family: 'Pretendard', sans-serif;
+}
+
+/* 제목 */
+.log-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+/* 기록 카드 */
+.log-item {
+  background: #1C1C1E;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 15px;
+  transition: 0.2s;
+}
+
+.log-item:hover {
+  background: #2C2C2E;
+}
+
+.log-summary {
+  cursor: pointer;
+}
+
+/* 날짜 */
+.log-date {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+/* 통계 */
+.log-stats {
+  display: flex;
+  gap: 10px;
+}
+
+.log-stat-box {
+  flex: 1;
+  background: #2C2C2E;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.log-stat-label {
+  font-size: 0.8rem;
+  color: #8E8E93;
+}
+
+.log-stat-value {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+/* 상세 운동 */
+.detail-box {
+  margin-top: 15px;
+  border-top: 1px solid #3A3A3C;
+  padding-top: 15px;
+}
+
+.detail-item {
+  background: #2C2C2E;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.detail-machine {
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.detail-info {
+  font-size: 0.9rem;
+  color: #D1D1D6;
+}
+
+/* 기록 없을 때 */
+.empty-log {
+  text-align: center;
+  color: #8E8E93;
+  margin-top: 50px;
+}
+
+/* 버튼 */
+.log-btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  background: #C14B2E;
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.log-btn:hover {
+  background: #d75a3a;
+}

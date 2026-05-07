@@ -4,6 +4,8 @@ import { routines_read,routines_create,routines_delete,routine_random_create  } 
 import { getParts } from '../../api/parts';
 import { routine_detail_create, routine_detail_read_all } from './../../api/routine_details';
 import { machines_read } from './../../api/machines';
+import './Routines_page.css';
+
 
 const Routines_page = () => {
     // console.log("🔥 API 호출됨");
@@ -202,13 +204,13 @@ const Routines_page = () => {
 
 
   return (
-    <div>
+    <div className='routine-page'>
         <h1>루틴 관리</h1>
 
         
 
         {fullList.map((r)=>(
-            <div key={r.r_id}>
+            <div key={r.r_id} className='routine-card'>
 
                 <h2 onClick={()=> nav(`/routine/${r.r_id}`)}>
                     {r.r_name}
@@ -217,11 +219,15 @@ const Routines_page = () => {
                 <p>총 볼륨 : {r.totalVolume.toLocaleString()} kg</p>
 
                 <p>{r.count}개 운동</p>
-                <button onClick={()=>handle_delete(r.r_id)}>삭제</button>
+
+                <button className='delete-btn' onClick={()=>handle_delete(r.r_id)}>
+                    삭제
+                </button>
+
                 <hr />
 
                 {r.details.map((d,i)=>(
-                    <div key={`${d.m_id}-${i}`}>
+                    <div key={`${d.m_id}-${i}`} className='exercise-item'>
                         <strong>{d.m_name}</strong>
                         <div>
                             {d.sets}세트 x {d.reps}회 x {d.weight || 0}kg
@@ -238,29 +244,70 @@ const Routines_page = () => {
 
         <h3>추천 루틴 생성</h3>
 
-        <select value={selectedPart} onChange={(e) => setSelectedPart(e.target.value)}>
-            <option value="">부위 선택</option>
-            
-            {parts.map((p)=>(
-                <option key={p.p_id} value={p.p_name}>
-                    {p.p_name}
-                </option>
-            ))}
-        </select>
+        <div className='recommend-box'>
 
-        <input type="number" value={count} min={1} max={6} onChange={(e)=> setCount(Number(e.target.value))} />
+            <select
+                value={selectedPart}
+                onChange={(e) => setSelectedPart(e.target.value)}
+            >
+                <option value="">부위 선택</option>
+                
+                {parts.map((p)=>(
+                    <option key={p.p_id} value={p.p_name}>
+                        {p.p_name}
+                    </option>
+                ))}
+            </select>
 
-        <button onClick={handle_random}>추천 루틴 생성</button>
+            <div className='count-wrap'>
+
+    <span>운동 갯수</span>
+
+    <input
+    className='count-input'
+    type="number"
+    value={count}
+    min={1}
+    max={6}
+
+    style={{
+    width:'110px',
+    minWidth:'110px',
+    maxWidth:'110px',
+    height:'44px',
+    padding:'0 12px',
+    margin:'0 auto',
+    display:'block',
+    textAlign:'center',
+    boxSizing:'border-box',
+    borderRadius:'14px'
+}}
+
+    onChange={(e)=> setCount(Number(e.target.value))}
+/>
+
+</div>
+
+            <button
+                className='recommend-btn'
+                onClick={handle_random}
+            >
+                추천 루틴 생성
+            </button>
+
+        </div>
 
 
         <br />
 
-        <button onClick={()=> setOpen(true)}>나만의 루틴 만들기</button>
+        <button className='create-btn' onClick={()=> setOpen(true)}>
+            + 나만의 루틴 만들기
+        </button>
 
         {/* 모달 */}
         {open && (
             
-            <div>
+            <div className='modal-box'>
                 <h2>루틴 만들기</h2>
                 {/* 루틴 이름 */}
                 <input value={name} onChange={(e)=> setName(e.target.value)}
@@ -299,7 +346,7 @@ const Routines_page = () => {
                 </select>
 
                 {details.map((d,i) =>(
-                    <div key={`${i}-${d.step}`}>
+                    <div key={`${i}-${d.step}`} className='detail-card'>
                         <h4>{i+1}번 운동</h4>
                             
                             <select
@@ -333,11 +380,17 @@ const Routines_page = () => {
                 ))}
 
 
-                <button onClick={handle_add_detail}>운동 추가</button>
+                <button className='add-btn' onClick={handle_add_detail}>
+                    운동 추가
+                </button>
 
-                <button onClick={handle_create}>루틴 생성</button>
+                <button className='submit-btn' onClick={handle_create}>
+                    루틴 생성
+                </button>
 
-                <button onClick={()=> setOpen(false)}>닫기</button>
+                <button className='close-btn' onClick={()=> setOpen(false)}>
+                    닫기
+                </button>
             </div>
         )}
     </div>

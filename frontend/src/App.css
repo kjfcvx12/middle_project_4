@@ -2,7 +2,8 @@
   position: fixed;   /* 화면상 위치 고정 */
   bottom: 0;         /* 바닥에 딱 붙임 */
   left: 0;           /* 왼쪽 끝 */
-  width: 100%;       /* 가로 꽉 채우기 */
+  right:0;
+  /* width: 100%;       가로 꽉 채우기 */
   
   height: 60px;      /* 네비바 높이 */
   background-color: #1a1a1a; /* 배경색 (화면이 어두우니 맞춰서 설정) */
