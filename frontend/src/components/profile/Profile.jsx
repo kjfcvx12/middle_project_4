@@ -204,7 +204,7 @@ const Profile = () => {
 
 
           <div>
-              <div onClick={()=>profileEdit()}>정보수정</div>
+              <div onClick={()=>profileEdit()} className="menu-item-div">정보수정</div>
               {openEdit&&(
                 <div>
                   <div><Link to="/profile/edit"><button>내 정보 수정하기</button></Link></div>
