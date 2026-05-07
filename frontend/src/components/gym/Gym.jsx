@@ -37,8 +37,6 @@ export default function Gym() {
         loadMe();
     }, []);
 
-    const nav = useNavigate();
-
     useEffect(() => {
         fetchGyms();
     }, [sortKey, sortOption]);
@@ -204,9 +202,9 @@ export default function Gym() {
                     </select>
                 </div>
 
-                {!isStaff && (
+                {isStaff && (
                     <div style={{ marginBottom: "12px", color: "#999" }}>
-                        현재 권한: 일반회원
+                        현재 권한: {role}
                     </div>
                 )}
 
@@ -345,6 +343,7 @@ export default function Gym() {
                         );
                     })
                 )}
+                <button onClick={()=>navigate("/machines")}>
                 {/* <button onClick={()=>nav(`/machines?g_id=${gym.g_id}`)}>
                     운동기구 목록 보기
                 </button> */}

@@ -159,11 +159,22 @@ const Profile = () => {
           </div>
       </div>
       <div>
+        {userData.u_id!==1&&(
         <div>
           <Link to={"/note/create"} state={{ type: "admin", title: "관리자 문의사항" }}>
             <button>관리자 문의사항</button>
           </Link>
         </div>
+        )}
+      </div>
+      <div>
+        {userData.u_id==1&&(
+        <div>
+          <Link to={"/parts/create"}>
+            <button>부위 추가</button>
+          </Link>
+        </div>
+        )}
       </div>
       <div>
         <button onClick={logout}>로그아웃</button>

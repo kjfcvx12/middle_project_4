@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.database import Base
 from typing import Optional, TYPE_CHECKING
@@ -19,3 +19,7 @@ class Like_Board(Base):
 
     user: Mapped["User"] = relationship(back_populates="like_boards")
     board: Mapped["Board"] = relationship(back_populates="like_boards")
+
+    __table_args__ = (
+        UniqueConstraint("u_id", "b_id", name="uq_user_board_like"),
+    )

@@ -8,31 +8,36 @@ from app.db.scheme.like_comments import Like_Comment_Create
 
 
 class Like_Comment_Crud:
-    # 댓글 좋아요
+    # 댓글 좋아요 토글
     @staticmethod
-    async def crud_like_comments_create(db:AsyncSession, lc: Like_Comment_Create) -> str:          
-        db_data=Like_Comment(**lc.model_dump())
-        db.add(db_data)
-        await db.flush()
-        return '댓글 좋아요'
-    
+    async def crud_like_comments_toggle(db: AsyncSession, u_id: int, c_id: int) -> dict:
+        # 기존 좋아요 확인
+        query = select(Like_Comment).where(Like_Comment.u_id == u_id, Like_Comment.c_id == c_id)
+        existing_like = await db.scalar(query)
 
-    # 댓글 좋아요 취소
-    @staticmethod
-    async def crud_like_comments_delete(db:AsyncSession , l_c_id:int)->str|None:
-        db_data = await db.get(Like_Comment, l_c_id)
-        if db_data:
-            await db.delete(db_data)
-            await db.flush()
-            return '댓글 좋아요 취소'
-        return None
+        if existing_like:
+            await db.delete(existing_like)
+            status = "unliked"
+        else:
+            new_like = Like_Comment(u_id=u_id, c_id=c_id)
+            db.add(new_like)
+            status = "liked"
+
+        await db.flush()
+        
+        return {"status": status}
     
 
     # 댓글 좋아요 개수
     @staticmethod
     async def crud_like_comments_count(db:AsyncSession, c_id:int)->int|None:
-        db_data=await db.execute(select(func.count(Like_Comment)).
-                                 filter(Like_Comment.c_id==c_id))
+        query = (
+        select(func.count())
+        .select_from(Like_Comment)
+        .filter(Like_Comment.c_id == c_id)
+        )   
+
+        db_data = await db.execute(query)
         
         return db_data.scalar() or 0
 

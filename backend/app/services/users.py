@@ -73,12 +73,13 @@ class User_Service:
     @staticmethod
     async def services_user_get_email_by_name_phone(db: AsyncSession, u_name:str, phone:str) -> str:
         try:
-            user = await User_Crud.crud_user_get_by_email(db, u_name, phone)
+            user = await User_Crud.crud_user_get_by_name_phone(db, u_name, phone)
 
             if not user:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                    detail='해당 email의 사용자가 없습니다')
-            
+                return "등록된 정보가 없습니다."
+        
+            if not user.email or "@" not in user.email:
+                return "이메일 형식이 올바르지 않습니다."
 
             u_id, domain = user.email.split("@")
             
@@ -87,7 +88,7 @@ class User_Service:
             else:
                 masked_id = u_id[:3] + "*" * (len(u_id) - 3)
                 
-            return f"{masked_id}@{domain}"
+            return f"{masked_id}@{domain} 입니다."
         
         except HTTPException:
             raise

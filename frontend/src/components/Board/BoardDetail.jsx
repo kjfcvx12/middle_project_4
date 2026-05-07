@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { deleteBoard, getBoardDetail, updateBoard } from "../../api/board";
+import { user_profile } from "../../api/user";
 import { useAuth } from "../AuthContext";
 import Comment from "./Comments";
 
@@ -19,8 +20,28 @@ const BoardDetail = () => {
     const fetch_board_detail = async () => {
       try {
         const result = await getBoardDetail(id);
-        set_board(result.data);
-        set_board(result.data);
+        const boardData = result.data;
+
+        const writer_id =
+          boardData.u_id ?? boardData.user_id ?? boardData.user?.u_id;
+
+        try {
+          const userResult = await user_profile(writer_id);
+
+          set_board({
+            ...boardData,
+            u_id: writer_id,
+            u_name: userResult.data.u_name,
+          });
+        } catch (error) {
+          console.error("작성자 정보 조회 실패:", error);
+
+          set_board({
+            ...boardData,
+            u_id: writer_id,
+            u_name: "알 수 없음",
+          });
+        }
       } catch (error) {
         console.error("게시글 상세 조회 실패:", error);
       }
@@ -99,7 +120,7 @@ const BoardDetail = () => {
           onClick={() => navigate(`/board?mode=profile&u_id=${board.u_id}`)}
           style={styles.userButton}
         >
-          {board.u_name || `회원 ${board.u_id}`}
+          {board.u_name?.trim() ? board.u_name : "알 수 없음"}
         </button>
       </p>
 

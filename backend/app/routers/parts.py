@@ -8,7 +8,7 @@ from app.core.auth import auth_get_admin_id
 router=APIRouter(prefix="/parts",tags=["Part"])
 
 #부위 생성
-@router.post("")
+@router.post("/create")
 async def router_parts_create(
     created_part:PartCreate,
     admin:int = Depends(auth_get_admin_id),
@@ -16,7 +16,7 @@ async def router_parts_create(
     return await Parts_service.service_parts_create(db, created_part, admin)
 
 #부위 삭제
-@router.delete("{p_id}")
+@router.delete("/del/{p_id}")
 async def router_parts_delete(
     p_id:int,
     admin:int = Depends(auth_get_admin_id),

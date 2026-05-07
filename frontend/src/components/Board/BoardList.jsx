@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { createBoard, getBoards } from "../../api/board";
 import { user_profile } from "../../api/user";
 import BoardDetail from "./BoardDetail";
+import { like_boards_count, like_boards_toggle } from "../../api/likes";
 
 const BoardList = () => {
   const [searchParams] = useSearchParams();
@@ -20,37 +21,37 @@ const BoardList = () => {
   const [keyword, set_keyword] = useState("");
   const [search_keyword, set_search_keyword] = useState("");
 
-  useEffect(() => {
+   useEffect(() => {
     if (mode === "create") return;
 
     const fetch_boards = async () => {
       try {
         const result = await getBoards(page, size, search_keyword);
-
-        const boards_with_user = await Promise.all(
+        
+        const boards_with_info = await Promise.all(
           (result.data || []).map(async (board) => {
             const writer_id = board.u_id || board.user_id || board.user?.u_id;
 
             try {
-              const userResult = await user_profile(writer_id);
+              const [userResult, likeCount] = await Promise.all([
+                user_profile(writer_id),
+                like_boards_count(board.b_id)
+              ]);
 
               return {
                 ...board,
                 u_id: writer_id,
                 u_name: userResult.data.u_name,
+                like_count: likeCount,
               };
             } catch (error) {
-              console.error("작성자 정보 조회 실패:", error);
-              return {
-                ...board,
-                u_id: writer_id,
-                u_name: "알 수 없음",
-              };
+              console.error("추가 정보 조회 실패:", error);
+              return { ...board, u_id: writer_id, u_name: "알 수 없음", like_count: 0 };
             }
           }),
         );
 
-        set_boards(boards_with_user);
+        set_boards(boards_with_info);
         set_total_count(result.total_count || 0);
       } catch (error) {
         console.error("게시글 조회 실패:", error);
@@ -60,6 +61,7 @@ const BoardList = () => {
 
     fetch_boards();
   }, [page, size, mode, search_keyword]);
+
 
   const handle_submit = async (e) => {
     e.preventDefault();
@@ -107,6 +109,28 @@ const BoardList = () => {
     return <BoardDetail />;
   }
 
+  const handle_like_toggle = async (b_id) => {
+    try {
+      const result = await like_boards_toggle(b_id);
+      
+      set_boards((prev) =>
+        prev.map((board) =>
+          board.b_id === b_id
+            ? {
+                ...board,
+                like_count: result.status === "liked" 
+                  ? board.like_count + 1 
+                  : board.like_count - 1,
+              }
+            : board
+        )
+      );
+    } catch (error) {
+      console.error("좋아요 토글 실패:", error);
+      alert("로그인이 필요하거나 요청이 중복되었습니다.");
+    }
+  };
+
   return (
     <div style={{ paddingBottom: "80px" }}>
       <h1>게시판</h1>
@@ -141,10 +165,14 @@ const BoardList = () => {
       {boards.map((board) => (
         <div key={board.b_id}>
           <Link to={`/board?mode=detail&id=${board.b_id}`}>
-            {board.b_id}
+            게시글 번호 {board.b_id}
           </Link>
 
           <p>{board.b_content}</p>
+
+          <button onClick={() => handle_like_toggle(board.b_id)}>
+            ❤️ {board.like_count || 0}
+          </button>
 
           <p>
             작성자:{" "}
@@ -206,6 +234,7 @@ const styles = {
     cursor: "pointer",
     padding: 0,
   },
+  
 };
 
 export default BoardList;

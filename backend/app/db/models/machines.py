@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from .favorite_machines import Favorite_Machine
     from .like_machines import Like_Machine
     from .gym_machines import Gym_Machine
-    from .logs import Log
+    from .log_details import Log_Detail
 
 class Machine(Base):
     __tablename__ = "machines"
@@ -25,4 +25,4 @@ class Machine(Base):
     favorite_machines: Mapped[list["Favorite_Machine"]] = relationship("Favorite_Machine", back_populates="machine")
     gym_machines: Mapped[list["Gym_Machine"]] = relationship("Gym_Machine", back_populates="machine")
     like_machines: Mapped[list["Like_Machine"]] = relationship("Like_Machine", back_populates="machine")
-    log: Mapped["Log"] = relationship("Log", back_populates="machine")
+    log_details: Mapped[list["Log_Detail"]] = relationship("Log_Detail", back_populates="machine")

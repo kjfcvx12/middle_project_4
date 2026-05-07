@@ -21,6 +21,8 @@ import UserEdit from './components/profile/UserEdit';
 import GymCreate from './Components/gym/GymCreate'
 import GymEdit from './Components/gym/GymEdit'
 import Routine from './Components/routine/routines_page'
+import UserEdit from './components/profile/UserEdit'
+import PartCreate from './components/Part/PartCreate'
 
 
 const ProtectedRoute = ({ isLoggedIn }) => {
@@ -57,6 +59,9 @@ const App = () => {
               <Route path="/routine" element={<Routines_page />} />
               <Route path="/routine/:r_id" element={<Routine_details />} /> 
               <Route path="/logs" element={<Log />} />
+              <Route path="/gym/create" element={<GymCreate />} />
+              <Route path="/gym/edit/:id" element={<GymEdit />} />
+              <Route path="/log" element={<Log />} />
               <Route path="/board" element={<Board />} />
               <Route path="/profile" element={<Profile />} />
               {/* 머신 추가 */}
@@ -70,14 +75,10 @@ const App = () => {
               <Route path="/note/create" element={<NoteCreate />} />
               <Route path="/note/:n_id" element={<NoteDetail />} />
               <Route path="/note" element={<NoteBox />} />
+
+              <Route path="/parts/create" element={<PartCreate/>}/>
               
               
-              <Route path="/gym/create" element={<GymCreate />} />
-              <Route path="/gym/edit/:id" element={<GymEdit />} />
-              <Route path="/routine" element={<Routine />} />
-              <Route path="/log" element={<Log />} />
-              <Route path="/board" element={<Board />} />
-              <Route path="/profile" element={<Profile />} />
             </Route>
 
 

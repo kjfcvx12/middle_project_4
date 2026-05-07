@@ -28,6 +28,7 @@ const BoardProfile = () => {
   if (!u_id) return <div>유저 ID가 없습니다.</div>;
   if (!profile) return <div>로딩 중...</div>;
 
+
   return (
     <div>
       <h1>유저 정보</h1>
@@ -36,7 +37,7 @@ const BoardProfile = () => {
       <p>이메일: {profile.email}</p>
       <p>가입일: {profile.signup_date}</p>
 
-      <button onClick={() => navigate(`/message?u_id=${u_id}`)}>
+      <button onClick={() => navigate(`/note/create?u_id=${u_id}&email=${profile.email}`)}>
         메시지 보내기
       </button>
 

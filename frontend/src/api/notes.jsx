@@ -36,7 +36,7 @@ export const note_send_del = async (n_id) => {
 };
 
 
-// PUT	현재 id 사용자 수정
+// PUT	본인 받은쪽지함 삭제 변경
 export const note_rece_del = async (n_id) => {
   const response = await api.put(`/notes/inbox/${n_id}`);
   return response;
