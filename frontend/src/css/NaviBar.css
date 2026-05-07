@@ -1,0 +1,53 @@
+/* 전체 내비게이션 바 스타일 */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #121212; /* 배경을 어둡게 */
+  border-top: 1px solid #222;
+  padding: 8px 0;
+  z-index: 1000;
+}
+
+/* 컨테이너: 아이콘들을 가로로 고르게 배치 */
+.nav-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  max-width: 600px; /* 너무 넓어지지 않게 제한 (선택사항) */
+  margin: 0 auto;
+}
+
+/* 개별 링크 항목 스타일 */
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #888; /* 기본 아이콘/글자 색상은 회색 */
+  transition: color 0.2s ease;
+  gap: 4px;
+}
+
+/* 아이콘 크기 및 스타일 */
+.nav-item svg {
+  transition: transform 0.2s ease;
+}
+
+/* 텍스트 스타일 */
+.nav-item span {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* 마우스를 올렸을 때나 활성화(Active) 되었을 때 */
+.nav-item:hover, 
+.nav-item.active {
+  color: #FF6B35; /* 스크린샷의 주황색 포인트 컬러 */
+}
+
+/* 활성화 시 아이콘 살짝 커지는 효과 (선택) */
+.nav-item.active svg {
+  transform: scale(1.1);
+}

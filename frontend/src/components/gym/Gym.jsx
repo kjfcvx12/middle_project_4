@@ -187,7 +187,9 @@ export default function Gym() {
                         onKeyDown={(e) => {
                             if (e.key === "Enter") fetchGyms();
                         }}
+                        
                     />
+                    <button onClick={()=>{fetchGyms()}}><Search size={20} /></button>
                 </div>
 
                 <div className="gym-sort-row">
@@ -337,16 +339,16 @@ export default function Gym() {
                                                 </span>
                                             )}
                                         </div>
-                                                        <button onClick={()=>nav(`/gym_machines/${gym.g_id}`)}>
-                                                            운동기구 목록 보기
-                                                        </button>
+                                            <button onClick={()=>navigate(`/gym_machines/${gym.g_id}`)}>
+                                                운동기구 목록 보기
+                                            </button>
                                     </div>
                                 )}
                             </div>
                         );
                     })
                 )}
-                {/* <button onClick={()=>navigate("/machines")}> */}
+                {/* <button onClick={()=>navigate("/machines")}>전체 운동기구 목록</button> */}
                 {/* <button onClick={()=>nav(`/machines?g_id=${gym.g_id}`)}>
                     운동기구 목록 보기
                 </button> */}
