@@ -127,6 +127,24 @@ const BoardDetail = () => {
           </button>
         </p>
 
+        {is_edit ? (
+          <div>
+            <textarea
+              className="board-detail-edit-textarea"
+              value={edit_content}
+              onChange={(e) => set_edit_content(e.target.value)}
+              rows={10}
+            />
+
+            <div className="board-detail-buttons">
+              <button onClick={handle_update}>수정 완료</button>
+              <button onClick={handle_cancel_edit}>취소</button>
+            </div>
+          </div>
+        ) : (
+          <p className="board-detail-content">{board.b_content}</p>
+        )}
+
         <p className="board-time">작성일: {board.created_at}</p>
         <p className="board-time">수정일: {board.updated_at}</p>
       </div>

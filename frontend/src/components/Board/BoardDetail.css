@@ -65,3 +65,26 @@
 .board-detail-back-button {
   margin-left: auto;
 }
+
+.board-detail-edit-textarea {
+  width: 100%;
+  min-height: 180px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--board-line);
+  background: var(--board-card-2);
+  color: var(--board-text);
+  outline: none;
+  resize: vertical;
+  box-sizing: border-box;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.board-detail-edit-textarea:focus {
+  border-color: var(--board-orange);
+}
+
+.board-detail-edit-textarea::placeholder {
+  color: var(--board-sub);
+}
