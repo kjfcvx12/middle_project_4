@@ -8,31 +8,36 @@ from app.db.scheme.like_boards import Like_Board_Create
 
 
 class Like_Board_Crud:
-    # 게시글 좋아요
+    # 게시글 좋아요 토글
     @staticmethod
-    async def crud_like_boards_create(db:AsyncSession, lb: Like_Board_Create) -> str:          
-        db_data=Like_Board(**lb.model_dump())
-        db.add(db_data)
-        await db.flush()
-        return '게시글 좋아요'
-    
+    async def crud_like_boards_toggle(db: AsyncSession, u_id: int, b_id: int) -> dict:
+        # 기존 좋아요 확인
+        query = select(Like_Board).where(Like_Board.u_id == u_id, Like_Board.b_id == b_id)
+        existing_like = await db.scalar(query)
 
-    # 게시글 좋아요 취소
-    @staticmethod
-    async def crud_like_boards_delete(db:AsyncSession , l_b_id:int)->str|None:
-        db_data = await db.get(Like_Board, l_b_id)
-        if db_data:
-            await db.delete(db_data)
-            await db.flush()
-            return '게시글 좋아요 취소'
-        return None
-    
+        if existing_like:
+            await db.delete(existing_like)
+            status = "unliked"
+        else:
+            new_like = Like_Board(u_id=u_id, b_id=b_id)
+            db.add(new_like)
+            status = "liked"
+
+        await db.flush()
+        
+        return {"status": status}
+
 
     # 게시글 좋아요 개수
     @staticmethod
     async def crud_like_boards_count(db:AsyncSession, b_id:int)->int|None:
-        db_data=await db.execute(select(func.count(Like_Board)).
-                                 filter(Like_Board.b_id==b_id))
+        query = (
+        select(func.count())
+        .select_from(Like_Board)
+        .filter(Like_Board.b_id == b_id)
+        )   
+
+        db_data = await db.execute(query)
         
         return db_data.scalar() or 0
 

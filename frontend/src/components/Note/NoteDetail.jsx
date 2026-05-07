@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { note_detail, note_rece_del, note_send_del } from '../../api/notes';
 import { useAuth } from '../AuthContext';
 import { user_profile } from '../../api/user';
@@ -8,6 +8,7 @@ const NoteDetail = () => {
     const { n_id } = useParams();
     const navigate = useNavigate();
     const { userData } = useAuth();
+    const location = useLocation();
     
     const [note, setNote] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -74,7 +75,7 @@ const NoteDetail = () => {
             </div>
 
             <div>
-                <button onClick={() => navigate('/note')}>목록</button>
+                <button onClick={() => navigate('/note', { state: { activeTab: location.state?.fromTab } })}>목록</button>
                 
                 {isReceiver && (
                     <button onClick={() => navigate('/note/create', 

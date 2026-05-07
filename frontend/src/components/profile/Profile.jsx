@@ -168,6 +168,15 @@ const Profile = () => {
         )}
       </div>
       <div>
+        {userData.u_id==1&&(
+        <div>
+          <Link to={"/parts/create"}>
+            <button>부위 추가</button>
+          </Link>
+        </div>
+        )}
+      </div>
+      <div>
         <button onClick={logout}>로그아웃</button>
       </div>
     </div>

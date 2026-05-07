@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 
 from app.db.models.like_boards import Like_Board
 from app.db.models.like_comments import Like_Comment
@@ -18,61 +19,40 @@ from app.db.crud.like_comments import Like_Comment_Crud
 from app.db.crud.like_gyms import Like_Gym_Crud
 from app.db.crud.like_machines import Like_Machine_Crud
 
+from app.db.models.boards import Board
+from app.db.models.comments import Comment
+from app.db.models.gyms import Gym
+from app.db.models.machines import Machine
+
 
 class Like_Service:
-
-    # 게시글 좋아요 추가
+    # 게시글 좋아요 토글
     @staticmethod
-    async def services_like_boards_create(db:AsyncSession, u_id:int, b_id:int) -> Like_Board_Read:
+    async def services_like_boards_toggle(db: AsyncSession, u_id: int, b_id: int) -> dict:
+        # 1. 게시글 존재 여부 확인
+        db_data = await db.get(Board, b_id)
+        if not db_data:
+            raise HTTPException(status_code=404, detail="게시글을 찾을 수 없습니다.")
+
         try:
+            # 2. CRUD 토글 로직 호출
+            result = await Like_Board_Crud.crud_like_boards_toggle(db, u_id, b_id)
 
-            query = select(Like_Board).where(
-                Like_Board.u_id==u_id, 
-                Like_Board.b_id==b_id)
-            
-            check= await db.scalar(query)
-
-            if check:
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                    detail="이미 좋아요한 게시글입니다.")
-
-            db_data = Like_Board_Create(u_id=u_id, b_id=b_id)
-
-            new_db=await Like_Board_Crud.crud_like_boards_create(db, db_data)
-            
+            # 모든 작업이 성공하면 커밋
             await db.commit()
-            await db.refresh(new_db)
-            
-            return new_db
-        
-        except HTTPException:
-            raise
-        except Exception as e:
+            return result
+
+        except IntegrityError:
+            # 중복된 좋아요 요청이 들어왔을 경우 (Race Condition)
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"게시글 좋아요 실패 :{e}")
-
-
-    # 게시글 좋아요 해제
-    @staticmethod
-    async def services_like_boards_delete(db: AsyncSession, l_b_id: int) -> dict:
-        try: 
-            db_data = await Like_Board_Crud.crud_like_boards_delete(db, l_b_id)
-        
-            if not db_data:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-                                    detail='해제할 좋아요가 없습니다')
-
-            await db.commit()
-            return {'message':'게시글 좋아요 해제'}
-        
-        except HTTPException:
-            raise
-
+            raise HTTPException(
+                status_code=400, 
+                detail="이미 처리 중이거나 변경된 요청입니다. 잠시 후 다시 시도해주세요."
+            )
         except Exception as e:
+            # 기타 예상치 못한 에러 처리
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"게시글 좋아요 해제 실패 :{e}")
+            raise e
 
 
     # 게시글 좋아요 개수
@@ -81,58 +61,33 @@ class Like_Service:
         return await Like_Board_Crud.crud_like_boards_count(db, b_id)
 
 
-    # 댓글 좋아요 추가
+    # 댓글 좋아요 토글
     @staticmethod
-    async def services_like_comments_create(db:AsyncSession, u_id:int, c_id:int) -> Like_Comment_Read:
+    async def services_like_comments_toggle(db: AsyncSession, u_id: int, c_id: int) -> dict:
+        # 1. 댓글 존재 여부 확인
+        db_data = await db.get(Comment, c_id)
+        if not db_data:
+            raise HTTPException(status_code=404, detail="댓글을 찾을 수 없습니다.")
+
         try:
+            # 2. CRUD 토글 로직 호출
+            result = await Like_Comment_Crud.crud_like_comments_toggle(db, u_id, c_id)
 
-            query = select(Like_Comment).where(
-                Like_Comment.u_id==u_id, 
-                Like_Comment.c_id==c_id)
-            
-            check= await db.scalar(query)
-
-            if check:
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                    detail="이미 좋아요한 댓글입니다.")
-
-            db_data = Like_Comment_Create(u_id=u_id, c_id=c_id)
-
-            new_db=await Like_Comment_Crud.crud_like_comments_create(db, db_data)
-            
+            # 모든 작업이 성공하면 커밋
             await db.commit()
-            await db.refresh(new_db)
-            
-            return new_db
-        
-        except HTTPException:
-            raise
-        except Exception as e:
+            return result
+
+        except IntegrityError:
+            # 중복된 좋아요 요청이 들어왔을 경우 (Race Condition)
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"댓글 좋아요 실패 :{e}")
-
-
-    # 댓글 좋아요 해제
-    @staticmethod
-    async def services_like_comments_delete(db: AsyncSession, l_c_id: int) -> dict:
-        try: 
-            db_data = await Like_Comment_Crud.crud_like_comments_delete(db, l_c_id)
-        
-            if not db_data:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-                                    detail='해제할 좋아요가 없습니다')
-
-            await db.commit()
-            return {'message':'댓글 좋아요 해제'}
-        
-        except HTTPException:
-            raise
-
+            raise HTTPException(
+                status_code=400, 
+                detail="이미 처리 중이거나 변경된 요청입니다. 잠시 후 다시 시도해주세요."
+            )
         except Exception as e:
+            # 기타 예상치 못한 에러 처리
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"댓글 좋아요 해제 실패 :{e}")
+            raise e
         
 
 
@@ -142,58 +97,34 @@ class Like_Service:
         return await Like_Comment_Crud.crud_like_comments_count(db, c_id)
 
     
-    # 헬스장 좋아요 추가
+    # 헬스장 좋아요 토글
     @staticmethod
-    async def services_like_gyms_create(db:AsyncSession, u_id:int, g_id:int) -> Like_Gym_Read:
+    async def services_like_gyms_toggle(db: AsyncSession, u_id: int, g_id: int) -> dict:
+        # 1. 헬스장 존재 여부 확인
+        db_data = await db.get(Gym, g_id)
+        if not db_data:
+            raise HTTPException(status_code=404, detail="헬스장을 찾을 수 없습니다.")
+
         try:
+            # 2. CRUD 토글 로직 호출
+            result = await Like_Gym_Crud.crud_like_gyms_toggle(db, u_id, g_id)
 
-            query = select(Like_Gym).where(
-                Like_Gym.u_id==u_id, 
-                Like_Gym.g_id==g_id)
-            
-            check= await db.scalar(query)
-
-            if check:
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                    detail="이미 좋아요한 헬스장입니다.")
-
-            db_data = Like_Gym_Create(u_id=u_id, g_id=g_id)
-
-            new_db=await Like_Gym_Crud.crud_like_gyms_create(db, db_data)
-            
+            # 모든 작업이 성공하면 커밋
             await db.commit()
-            await db.refresh(new_db)
-            
-            return new_db
-        
-        except HTTPException:
-            raise
-        except Exception as e:
+            return result
+
+        except IntegrityError:
+            # 중복된 좋아요 요청이 들어왔을 경우 (Race Condition)
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"헬스장 좋아요 실패 :{e}")
-
-
-    # 헬스장 좋아요 해제
-    @staticmethod
-    async def services_like_gyms_delete(db: AsyncSession, l_g_id: int) -> dict:
-        try: 
-            db_data = await Like_Gym_Crud.crud_like_gyms_delete(db, l_g_id)
-        
-            if not db_data:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-                                    detail='해제할 좋아요가 없습니다')
-
-            await db.commit()
-            return {'message':'헬스장 좋아요 해제'}
-        
-        except HTTPException:
-            raise
-
+            raise HTTPException(
+                status_code=400, 
+                detail="이미 처리 중이거나 변경된 요청입니다. 잠시 후 다시 시도해주세요."
+            )
         except Exception as e:
+            # 기타 예상치 못한 에러 처리
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"헬스장 좋아요 해제 실패 :{e}")
+            raise e
+        
     
     # 헬스장 좋아요 개수
     @staticmethod
@@ -201,58 +132,33 @@ class Like_Service:
         return await Like_Gym_Crud.crud_like_gyms_count(db, g_id)
 
 
-    # 운동기구 좋아요 추가
+    # 운동기구 좋아요 토글
     @staticmethod
-    async def services_like_machines_create(db:AsyncSession, u_id:int, m_id:int) -> Like_Machine_Read:
+    async def services_like_machines_toggle(db: AsyncSession, u_id: int, m_id: int) -> dict:
+        # 1. 운동기구 존재 여부 확인
+        db_data = await db.get(Machine, m_id)
+        if not db_data:
+            raise HTTPException(status_code=404, detail="운동기구를 찾을 수 없습니다.")
+
         try:
+            # 2. CRUD 토글 로직 호출
+            result = await Like_Machine_Crud.crud_like_machines_toggle(db, u_id, m_id)
 
-            query = select(Like_Machine).where(
-                Like_Machine.u_id==u_id, 
-                Like_Machine.m_id==m_id)
-            
-            check= await db.scalar(query)
-
-            if check:
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                    detail="이미 좋아요한 운동기구입니다.")
-
-            db_data = Like_Machine_Create(u_id=u_id, m_id=m_id)
-
-            new_db=await Like_Machine_Crud.crud_like_machines_create(db, db_data)
-            
+            # 모든 작업이 성공하면 커밋
             await db.commit()
-            await db.refresh(new_db)
-            
-            return new_db
-        
-        except HTTPException:
-            raise
-        except Exception as e:
+            return result
+
+        except IntegrityError:
+            # 중복된 좋아요 요청이 들어왔을 경우 (Race Condition)
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"운동기구 좋아요 실패 :{e}")
-
-
-    # 운동기구 좋아요 해제
-    @staticmethod
-    async def services_like_machines_delete(db: AsyncSession, l_m_id: int) -> dict:
-        try: 
-            db_data = await Like_Machine_Crud.crud_like_machines_delete(db, l_m_id)
-        
-            if not db_data:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-                                    detail='해제할 좋아요가 없습니다')
-
-            await db.commit()
-            return {'message':'운동기구 좋아요 해제'}
-        
-        except HTTPException:
-            raise
-
+            raise HTTPException(
+                status_code=400, 
+                detail="이미 처리 중이거나 변경된 요청입니다. 잠시 후 다시 시도해주세요."
+            )
         except Exception as e:
+            # 기타 예상치 못한 에러 처리
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"운동기구 좋아요 해제 실패 :{e}")
+            raise e
     
     
     # 운동기구 좋아요 개수

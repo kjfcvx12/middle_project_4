@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 
 from app.db.models.favorite_gyms import Favorite_Gym
 from app.db.models.favorite_machines import Favorite_Machine
@@ -16,168 +17,98 @@ from app.db.crud.favorite_machines import Favorite_Machine_Crud
 from app.db.crud.favorite_routines import Favorite_Routine_Crud
 
 
+from app.db.models.gyms import Gym
+from app.db.models.machines import Machine
+from app.db.models.routines import Routine
+
+
 class Favorite_Service:
 
-    # 헬스장 즐겨찾기 추가
+    # 헬스장 즐겨찾기 토글
     @staticmethod
-    async def services_favorite_gym_create(db:AsyncSession, u_id:int, g_id:int) -> Favorite_Gym_Read:
+    async def services_favorite_gym_toggle(db: AsyncSession, u_id: int, g_id: int) -> dict:
+        # 1. 헬스장 존재 여부 확인
+        db_data = await db.get(Gym, g_id)
+        if not db_data:
+            raise HTTPException(status_code=404, detail="헬스장를 찾을 수 없습니다.")
+
         try:
+            # 2. CRUD 토글 로직 호출
+            result = await Favorite_Gym_Crud.crud_favorite_gyms_toggle(db, u_id, g_id)
 
-            query = select(Favorite_Gym).where(
-                Favorite_Gym.u_id==u_id, 
-                Favorite_Gym.g_id==g_id)
-            
-            check= await db.scalar(query)
-
-            if check:
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                    detail="이미 즐겨찾기에 등록된 헬스장입니다.")
-
-            db_data = Favorite_Gym_Create(u_id=u_id, g_id=g_id)
-
-            new_db=await Favorite_Gym_Crud.crud_favorite_gyms_create(db, db_data)
-            
+            # 모든 작업이 성공하면 커밋
             await db.commit()
-            await db.refresh(new_db)
-            
-            return new_db
-        
-        except HTTPException:
-            raise
-        except Exception as e:
+            return result
+
+        except IntegrityError:
+            # 중복된 좋아요 요청이 들어왔을 경우 (Race Condition)
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"헬스장 즐겨찾기 실패 :{e}")
-
-
-    # 헬스장 즐겨찾기 해제
-    @staticmethod
-    async def services_favorite_gym_delete(db: AsyncSession, f_g_id: int) -> dict:
-        try: 
-            db_data = await Favorite_Gym_Crud.crud_favorite_gyms_delete(db, f_g_id)
-        
-            if not db_data:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-                                    detail='해제할 즐겨찾기가 없습니다')
-
-            await db.commit()
-            return {'message':'헬스장 즐겨찾기 해제'}
-        
-        except HTTPException:
-            raise
-
+            raise HTTPException(
+                status_code=400, 
+                detail="이미 처리 중이거나 변경된 요청입니다. 잠시 후 다시 시도해주세요."
+            )
         except Exception as e:
+            # 기타 예상치 못한 에러 처리
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"헬스장 즐겨찾기 해제 실패 :{e}")
+            raise e
     
 
-    # 운동기구 즐겨찾기 추가
+    # 운동기구 즐겨찾기 토글
     @staticmethod
-    async def services_favorite_machines_create(db:AsyncSession, u_id:int, m_id:int) -> Favorite_Machine_Read:
+    async def services_favorite_machines_toggle(db: AsyncSession, u_id: int, m_id: int) -> dict:
+        # 1. 운동기구 존재 여부 확인
+        db_data = await db.get(Machine, m_id)
+        if not db_data:
+            raise HTTPException(status_code=404, detail="운동기구를 찾을 수 없습니다.")
+
         try:
+            # 2. CRUD 토글 로직 호출
+            result = await Favorite_Machine_Crud.crud_favorite_machines_toggle(db, u_id, m_id)
 
-            query = select(Favorite_Machine).where(
-                Favorite_Machine.u_id==u_id, 
-                Favorite_Machine.m_id==m_id)
-            
-            check= await db.scalar(query)
-
-            if check:
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                    detail="이미 즐겨찾기에 등록된 운동기구입니다.")
-
-            db_data = Favorite_Machine_Create(u_id=u_id, m_id=m_id)
-
-            new_db=await Favorite_Machine_Crud.crud_favorite_machines_create(db, db_data)
-            
+            # 모든 작업이 성공하면 커밋
             await db.commit()
-            await db.refresh(new_db)
-            
-            return new_db
-        
-        except HTTPException:
-            raise
-        except Exception as e:
+            return result
+
+        except IntegrityError:
+            # 중복된 좋아요 요청이 들어왔을 경우 (Race Condition)
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"운동기구 즐겨찾기 실패 :{e}")
-
-
-    # 운동기구 즐겨찾기 해제
-    @staticmethod
-    async def services_favorite_machines_delete(db: AsyncSession, f_m_id: int) -> dict:
-        try: 
-            db_data = await Favorite_Machine_Crud.crud_favorite_machines_delete(db, f_m_id)
-        
-            if not db_data:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-                                    detail='해제할 즐겨찾기가 없습니다')
-
-            await db.commit()
-            return {'message':'운동기구 즐겨찾기 해제'}
-        
-        except HTTPException:
-            raise
-
+            raise HTTPException(
+                status_code=400, 
+                detail="이미 처리 중이거나 변경된 요청입니다. 잠시 후 다시 시도해주세요."
+            )
         except Exception as e:
+            # 기타 예상치 못한 에러 처리
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"운동기구 즐겨찾기 해제 실패 :{e}")
+            raise e
         
 
-    # 루틴 즐겨찾기 추가
+    # 루틴 즐겨찾기 토글
     @staticmethod
-    async def services_favorite_routines_create(db:AsyncSession, u_id:int, r_id:int) -> Favorite_Routine_Read:
+    async def services_favorite_routines_toggle(db: AsyncSession, u_id: int, r_id: int) -> dict:
+        # 1. 루틴 존재 여부 확인
+        db_data = await db.get(Routine, r_id)
+        if not db_data:
+            raise HTTPException(status_code=404, detail="루틴을 찾을 수 없습니다.")
+
         try:
+            # 2. CRUD 토글 로직 호출
+            result = await Favorite_Routine_Crud.crud_favorite_routines_toggle(db, u_id, r_id)
 
-            query = select(Favorite_Routine).where(
-                Favorite_Routine.u_id==u_id, 
-                Favorite_Routine.r_id==r_id)
-            
-            check= await db.scalar(query)
-
-            if check:
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                    detail="이미 즐겨찾기에 등록된 루틴입니다.")
-
-            db_data = Favorite_Routine_Create(u_id=u_id, r_id=r_id)
-
-            new_db=await Favorite_Routine_Crud.crud_favorite_routines_create(db, db_data)
-            
+            # 모든 작업이 성공하면 커밋
             await db.commit()
-            await db.refresh(new_db)
-            
-            return new_db
-        
-        except HTTPException:
-            raise
-        except Exception as e:
+            return result
+
+        except IntegrityError:
+            # 중복된 좋아요 요청이 들어왔을 경우 (Race Condition)
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"루틴 즐겨찾기 실패 :{e}")
-
-
-    # 루틴 즐겨찾기 해제
-    @staticmethod
-    async def services_favorite_routines_delete(db: AsyncSession, f_r_id: int) -> dict:
-        try: 
-            db_data = await Favorite_Routine_Crud.crud_favorite_routines_delete(db, f_r_id)
-        
-            if not db_data:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-                                    detail='해제할 즐겨찾기가 없습니다')
-
-            await db.commit()
-            return {'message':'루틴 즐겨찾기 해제'}
-        
-        except HTTPException:
-            raise
-
+            raise HTTPException(
+                status_code=400, 
+                detail="이미 처리 중이거나 변경된 요청입니다. 잠시 후 다시 시도해주세요."
+            )
         except Exception as e:
+            # 기타 예상치 못한 에러 처리
             await db.rollback()
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                detail=f"루틴 즐겨찾기 해제 실패 :{e}")
+            raise e
         
 
     

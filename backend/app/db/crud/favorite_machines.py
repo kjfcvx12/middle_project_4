@@ -6,24 +6,24 @@ from app.db.scheme.favorite_machines import Favorite_Machine_Create, Favorite_Ma
 
 
 class Favorite_Machine_Crud:
-    # 운동기구 즐겨찾기 등록
+    # 운동기구 즐겨찾기 토글
     @staticmethod
-    async def crud_favorite_machines_create(db:AsyncSession, fm: Favorite_Machine_Create) -> str:          
-        db_data=Favorite_Machine(**fm.model_dump())
-        db.add(db_data)
-        await db.flush()
-        return '운동기구 즐겨찾기 등록'
-    
+    async def crud_favorite_machines_toggle(db: AsyncSession, u_id: int, m_id: int) -> dict:
+        # 기존 즐겨찾기 확인
+        query = select(Favorite_Machine).where(Favorite_Machine.u_id == u_id, Favorite_Machine.m_id == m_id)
+        existing_fav = await db.scalar(query)
 
-    # 운동기구 즐겨찾기 취소
-    @staticmethod
-    async def crud_favorite_machines_delete(db:AsyncSession , f_m_id:int)->Favorite_Machine|None:
-        db_data = await db.get(Favorite_Machine, f_m_id)
-        if db_data:
-            await db.delete(db_data)
-            await db.flush()
-            return db_data
-        return None
+        if existing_fav:
+            await db.delete(existing_fav)
+            status = "unfavorite"
+        else:
+            new_fav = Favorite_Machine(u_id=u_id, m_id=m_id)
+            db.add(new_fav)
+            status = "favorited"
+
+        await db.flush()
+        
+        return {"status": status}
     
 
     # 유저 운동기구 즐겨찾기 목록 조회
