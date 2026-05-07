@@ -30,6 +30,23 @@ const Profile = () => {
 
   const [exCount, setExCount]= useState(0);
 
+
+  useEffect(() => {
+  const loadUser = async () => {
+    try {
+      const res = await user_me();
+      const pro=await user_profile(res)
+      setCurrentUser(pro.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  loadUser();
+}, []);
+
+
   // 현재 사용자 업데이트
   useEffect(() => {
     if (userData) {

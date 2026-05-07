@@ -1,31 +1,167 @@
+/* GymForm.css */
+
+* {
+    box-sizing: border-box;
+}
+
 .gym-form-page {
+    min-height: 100vh;
     display: flex;
     justify-content: center;
-    padding: 40px;
+    align-items: center;
+    padding: 24px;
+    background: #05060d;
 }
 
 .gym-form-card {
-    width: 420px;
-    background: white;
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    padding: 28px 24px 24px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
     display: flex;
     flex-direction: column;
     gap: 12px;
+    position: relative;
 }
 
-.gym-form-card input {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+.gym-form-card h2 {
+    margin: 0 0 10px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #111;
+    text-align: center;
 }
 
-.gym-form-card button {
+.gym-form-card input[type="text"],
+.gym-form-card input:not([type="checkbox"]) {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+.gym-form-card input:focus {
+    border-color: #111;
+}
+
+.gym-form-card label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #111;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+}
+
+.gym-form-card input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    flex-shrink: 0;
+    accent-color: #111;
+}
+
+.gym-form-card button:last-child {
     margin-top: 10px;
-    padding: 10px;
+    padding: 12px;
     background: #111;
     color: white;
-    border-radius: 6px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.gym-form-card button:last-child:hover {
+    background: #222;
+}
+
+/* 닫기 버튼 */
+.gym-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.06);
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.gym-close-btn:hover {
+    background: rgba(0, 0, 0, 0.12);
+    transform: scale(1.05);
+}
+
+.gym-close-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* 모바일 */
+@media (max-width: 480px) {
+    .gym-form-page {
+        padding: 16px;
+        align-items: flex-start;
+    }
+
+    .gym-form-card {
+        max-width: 100%;
+        padding: 24px 18px 20px;
+        border-radius: 14px;
+        gap: 10px;
+        margin-top: 24px;
+    }
+
+    .gym-form-card h2 {
+        font-size: 20px;
+    }
+
+    .gym-form-card input:not([type="checkbox"]) {
+        padding: 11px 12px;
+        font-size: 14px;
+    }
+
+    .gym-form-card label {
+        font-size: 14px;
+        gap: 8px;
+    }
+
+    .gym-form-card input[type="checkbox"] {
+        width: 17px;
+        height: 17px;
+    }
+
+    .gym-form-card button:last-child {
+        padding: 11px;
+        font-size: 14px;
+    }
+
+    .gym-close-btn {
+        width: 28px;
+        height: 28px;
+        top: 10px;
+        right: 10px;
+    }
+
+    .gym-close-btn svg {
+        width: 14px;
+        height: 14px;
+    }
 }

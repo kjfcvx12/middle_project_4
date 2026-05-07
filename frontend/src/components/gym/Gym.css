@@ -1,3 +1,5 @@
+/* Gym.css */
+
 /* 전체 페이지 */
 body {
     margin: 0;
@@ -10,302 +12,461 @@ body {
     min-height: 100vh;
     background: #05060d;
     color: #fff;
-    padding-bottom: 110px;
+    padding-bottom: 100px;
 }
 
 .gym-wrap {
     width: 100%;
-    max-width: 1600px;
+    max-width: 760px;
     margin: 0 auto;
-    padding: 22px;
+    padding: 28px 20px 80px;
     box-sizing: border-box;
+}
+
+/* 헤더 */
+.gym-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 18px;
 }
 
 /* 제목 */
 .gym-title {
-    font-size: 72px;
+    margin: 0;
+    font-size: 44px;
     font-weight: 800;
-    margin: 0 0 28px;
-    color: #ffffff;
-    letter-spacing: -2px;
+    letter-spacing: -1.8px;
+    color: #fff;
+    line-height: 1.15;
 }
 
 /* 검색창 */
 .gym-search {
     width: 100%;
-    height: 86px;
-    border-radius: 28px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: linear-gradient(90deg, #11131d, #10111a);
+    height: 56px;
+
+    border-radius: 16px;
+    background: linear-gradient(90deg, #121522, #10131d);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 0 26px;
-    margin-bottom: 18px;
+    gap: 12px;
+
+    padding: 0 16px;
     box-sizing: border-box;
+
+    margin-bottom: 12px;
 }
 
 .gym-search svg {
-    color: #8d91a6;
+    width: 18px;
+    height: 18px;
+
+    color: #70758d;
     flex-shrink: 0;
 }
 
 .gym-search input {
     width: 100%;
+
     border: none;
     outline: none;
     background: transparent;
+
     color: white;
-    font-size: 42px;
+    font-size: 17px;
     font-weight: 500;
 }
 
 .gym-search input::placeholder {
-    color: #7d8195;
+    color: #6e7389;
+}
+
+/* 검색 아래 영역 */
+.gym-top-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 18px;
+}
+
+/* 정렬 */
+.gym-sort-row {
+    display: flex;
+    align-items: center;
 }
 
 /* 드롭다운 */
-.gym-sort-row {
-    display: flex;
-    gap: 18px;
-    margin-bottom: 34px;
-}
-
 .gym-sort-row select {
-    min-width: 132px;
-    height: 62px;
-    border-radius: 22px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: #0f1220;
-    color: white;
-    font-size: 32px;
-    font-weight: 600;
-    padding: 0 22px;
+    min-width: 92px;
+    height: 38px;
+
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+
+    background: #10131d;
+    color: #fff;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    padding: 0 12px;
+
     outline: none;
     cursor: pointer;
+}
+
+/* 버튼 공통 */
+.detail-btn {
+    border: none;
+    background: transparent;
+
+    color: #ff6b2c;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    padding: 0;
+
+    transition: 0.2s;
+}
+
+.detail-btn:hover {
+    opacity: 0.85;
+}
+
+/* 등록 버튼 */
+.gym-create-btn {
+    margin-left: auto;
+
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    color: #ff6b2c;
+
+    font-size: 14px;
+    font-weight: 700;
 }
 
 /* 카드 */
 .gym-card {
     width: 100%;
-    border-radius: 30px;
-    background: linear-gradient(90deg, #11131d, #0d0f19);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    margin-bottom: 26px;
+
+    background: linear-gradient(90deg, #11131d, #0e1019);
+
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 18px;
+
     overflow: hidden;
+    margin-bottom: 14px;
+
+    transition: 0.2s;
+}
+
+.gym-card:hover {
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 /* 카드 상단 */
 .gym-card-top {
-    padding: 30px 30px 26px;
+    position: relative;
+    padding: 22px 22px 18px;
+}
+
+/* 우측 상단 아이콘 */
+.card-icons {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
+    gap: 10px;
 }
 
 .gym-left {
-    flex: 1;
+    padding-right: 58px;
 }
 
+/* 헬스장 이름 */
 .gym-left h2 {
-    margin: 0 0 16px;
-    font-size: 56px;
+    margin: 0 0 10px 0;
+    padding: 0;
+
+    font-size: 26px;
     font-weight: 800;
-    color: #ffffff;
-    letter-spacing: -1px;
+    letter-spacing: -0.8px;
+    line-height: 1.3;
+
+    color: #fff;
+
+    text-align: left;
 }
 
 /* 주소 */
 .gym-address {
     margin: 0;
+
     display: flex;
     align-items: center;
-    gap: 10px;
-    color: #8e93aa;
-    font-size: 28px;
+    gap: 6px;
+
+    color: #8b90a6;
+
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .gym-address svg {
-    color: #8e93aa;
-    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
 }
 
-/* 별점/좋아요/거리 */
+/* 좋아요/즐겨찾기 */
 .gym-meta {
     display: flex;
     align-items: center;
-    gap: 26px;
-    margin-top: 22px;
-    font-size: 30px;
-    font-weight: 700;
-}
+    gap: 16px;
 
-.rating {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: white;
-}
-
-.rating svg {
-    color: #ffc938;
+    margin-top: 14px;
 }
 
 .likes {
     display: flex;
     align-items: center;
-    gap: 8px;
-    color: #8e93aa;
+    gap: 5px;
+
+    color: #d5d8e6;
+
+    font-size: 15px;
+    font-weight: 700;
 }
 
 .likes svg {
-    color: #8e93aa;
+    width: 14px;
+    height: 14px;
 }
 
-.distance {
-    color: #ff6b2c;
+/* 상세보기 버튼 */
+.gym-left .detail-btn {
+    margin-top: 14px;
 }
 
-/* 상세보기 */
-.detail-btn {
-    margin-top: 26px;
-    border: none;
-    background: transparent;
-    color: #ff6b2c;
-    font-size: 30px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+/* 좋아요 / 즐겨찾기 */
+.card-heart,
+.card-star {
+    width: 20px;
+    height: 20px;
+
     cursor: pointer;
-    padding: 0;
+
+    transition: 0.18s ease;
+
+    stroke-width: 2.3;
+    fill: transparent;
 }
 
-/* 우측 하트 */
 .card-heart {
-    color: #8e93aa;
-    flex-shrink: 0;
-    margin-left: 16px;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.card-star {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.card-heart:hover,
+.card-star:hover {
+    transform: scale(1.12);
+}
+
+/* 활성화 */
+.card-heart.active {
+    color: #ff4d6d;
+    fill: #ff4d6d;
+
+    filter: drop-shadow(0 0 6px rgba(255, 77, 109, 0.6));
+}
+
+.card-star.active {
+    color: #ffd43b;
+    fill: #ffd43b;
+
+    filter: drop-shadow(0 0 6px rgba(255, 212, 59, 0.65));
 }
 
 /* 상세 영역 */
 .gym-detail {
-    border-top: 1px solid rgba(255, 255, 255, 0.07);
-    padding: 28px 30px 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 18px 22px 20px;
 }
 
+/* 전화 / 운영시간 */
 .detail-row {
     display: flex;
     align-items: center;
-    gap: 16px;
-    color: white;
-    font-size: 34px;
-    margin-bottom: 24px;
+    gap: 10px;
+
+    margin-bottom: 10px;
+
+    color: #f3f5ff;
+
+    font-size: 15px;
+    font-weight: 500;
 }
 
 .detail-row svg {
+    width: 15px;
+    height: 15px;
+
     color: #ff6b2c;
 }
 
-/* 시설 제목 */
+/* 시설 제목 숨김 */
 .gym-detail h3 {
-    margin: 10px 0 18px;
-    font-size: 38px;
-    color: white;
+    display: none;
 }
 
-/* 시설 태그 */
+/* 시설 */
 .facility-wrap {
     display: flex;
     flex-wrap: wrap;
-    gap: 14px;
+    gap: 8px;
+
+    margin-top: 16px;
 }
 
 .facility-chip {
-    background: rgba(255, 107, 44, 0.2);
-    color: #ff6b2c;
-    padding: 12px 22px;
+    padding: 8px 12px;
+
     border-radius: 999px;
-    font-size: 28px;
+
+    background: rgba(255, 107, 44, 0.15);
+    color: #ff7b3d;
+
+    font-size: 12px;
     font-weight: 700;
 }
 
 .facility-none {
-    color: #8e93aa;
-    font-size: 28px;
+    color: #858ba2;
+    font-size: 13px;
 }
 
-/* 하단 텍스트 */
-.detail-bottom {
-    margin-top: 28px;
-    color: #8e93aa;
-    font-size: 30px;
+/* 수정 삭제 버튼 */
+.gym-actions-bottom {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+
+    margin-top: 18px;
+}
+
+/* 아이콘 버튼 */
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.08);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #fff;
+}
+
+.icon-btn svg {
+    stroke: #fff;
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.icon-btn.danger:hover {
+    background: rgba(255, 77, 109, 0.16);
+    color: #ff4d6d;
 }
 
 /* 로딩 */
 .gym-loading {
     text-align: center;
-    color: #8e93aa;
-    font-size: 30px;
+
     padding: 60px 0;
+
+    color: #81869d;
+    font-size: 15px;
 }
 
-/* 반응형 */
+/* 모바일 */
 @media (max-width: 768px) {
+
     .gym-wrap {
-        padding: 16px;
+        padding: 22px 14px 70px;
     }
 
     .gym-title {
-        font-size: 42px;
+        font-size: 36px;
     }
 
     .gym-search {
-        height: 62px;
-        border-radius: 18px;
+        height: 50px;
+        border-radius: 14px;
     }
 
     .gym-search input {
-        font-size: 18px;
+        font-size: 15px;
     }
 
-    .gym-sort-row select {
-        height: 46px;
-        font-size: 16px;
-        min-width: 100px;
+    .gym-card-top {
+        padding: 18px;
+    }
+
+    .gym-detail {
+        padding: 16px 18px 18px;
     }
 
     .gym-left h2 {
-        font-size: 30px;
-    }
-
-    .gym-address {
-        font-size: 16px;
-    }
-
-    .gym-meta {
-        font-size: 18px;
-        gap: 16px;
-    }
-
-    .detail-btn {
-        font-size: 18px;
-    }
-
-    .detail-row {
-        font-size: 18px;
-    }
-
-    .gym-detail h3 {
         font-size: 22px;
     }
 
-    .facility-chip {
-        font-size: 15px;
-        padding: 8px 14px;
+    .gym-address {
+        font-size: 13px;
     }
 
-    .detail-bottom {
-        font-size: 16px;
+    .gym-meta {
+        margin-top: 12px;
+    }
+
+    .likes {
+        font-size: 14px;
+    }
+
+    .detail-row {
+        font-size: 14px;
+    }
+
+    .facility-chip {
+        font-size: 11px;
+    }
+
+    .gym-sort-row select {
+        height: 36px;
+        font-size: 13px;
+    }
+
+    .detail-btn {
+        font-size: 13px;
     }
 }

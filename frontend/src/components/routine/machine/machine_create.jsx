@@ -62,7 +62,9 @@ const machine_create = () => {
     }
 
     //수정 권한
-    if (isEdit && userData?.role !== "manager") {
+    if (isEdit &&
+    userData?.role !== "admin" &&
+    userData?.role !== "manager") {
         return <div className='machine-no-auth'>수정 권한 없습니다</div>
     }
 

@@ -1,3 +1,4 @@
+// Gym.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import {
     Search,
@@ -109,8 +110,17 @@ export default function Gym() {
     };
 
     const handleDelete = async (id) => {
-        await gyms_delete(id);
-        fetchGyms();
+        const ok = window.confirm("정말로 삭제하시겠습니까?");
+
+        if (!ok) return;
+
+        try {
+            await gyms_delete(id);
+            alert("삭제 완료");
+            fetchGyms();
+        } catch {
+            alert("삭제 실패");
+        }
     };
 
     const handleLike = async (gym) => {
@@ -198,9 +208,9 @@ export default function Gym() {
                         onKeyDown={(e) => {
                             if (e.key === "Enter") fetchGyms();
                         }}
-                        
+
                     />
-                    <div onClick={()=>{fetchGyms()}}><Search size={50} /></div>
+                    <div onClick={() => { fetchGyms() }}><Search size={50} /></div>
                 </div>
 
                 <div className="gym-sort-row">
@@ -328,7 +338,7 @@ export default function Gym() {
                                                     className="icon-btn"
                                                     onClick={() => navigate(`/gym/edit/${gym.g_id}`)}
                                                 >
-                                                    <Pencil size={16} />
+                                                    <Pencil size={24} color="#fff" />
                                                 </button>
                                             )}
 
@@ -337,14 +347,14 @@ export default function Gym() {
                                                     className="icon-btn danger"
                                                     onClick={() => handleDelete(gym.g_id)}
                                                 >
-                                                    <Trash2 size={16} />
+                                                    <Trash2 size={24} color="#fff" />
                                                 </button>
                                             )}
                                         </div>
 
-                                            <button onClick={()=>navigate(`/gym_machines/${gym.g_id}`)}>
-                                                운동기구 목록 보기
-                                            </button>
+                                        <button onClick={() => navigate(`/gym_machines/${gym.g_id}`)}>
+                                            운동기구 목록 보기
+                                        </button>
                                     </div>
                                 )}
                             </div>

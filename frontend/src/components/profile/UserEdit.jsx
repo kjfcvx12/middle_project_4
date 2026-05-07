@@ -7,18 +7,25 @@ import "./UserEdit.css"
 const UserEdit = () => {
     const { user } = useAuth(); 
 
-    const [editData, setEditData]=useState({pw: '', u_name: '', phone:'', info:'' })
+    const [editData, setEditData]=useState({})
     const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
 
      useEffect(() => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+
         const EditUserData = async () => {
             if (!user) return; 
 
             try {
                 const profile= await user_profile(user);
-                setEditData({pw: '', u_name: profile.u_name, phone: profile.phone, info:profile.info });
+                const u_data=profile.data
+
+                setEditData({u_id:u_data.u_id, pw: '', u_name: u_data.u_name, phone: u_data.phone, info:u_data.info });
             } catch (error) {
                 console.error("사용자 정보를 불러오는데 실패했습니다.", error);
             } finally {
@@ -27,7 +34,7 @@ const UserEdit = () => {
         };
     
         EditUserData();
-      }, []);
+      }, [user, navigate]);
 
 
     
@@ -35,27 +42,39 @@ const UserEdit = () => {
     const handleChange = (e) => {
         const { name, value} = e.target;
 
-        setEditData({ ...editData, [name]: value });
+        setEditData(i => ({ ...i, [name]: value }));
 
     };
 
 
     // 로그인 처리
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (confirm("정말 수정하시겠습니까?")) {
-            const result = await user_edit(editData);
+    e.preventDefault();
+    
+    if (window.confirm("정말 수정하시겠습니까?")) {
+        const dataToSend = { ...editData };
 
-            if (result.status==200) {
+        if (!dataToSend.pw || dataToSend.pw.trim() === "") {
+            delete dataToSend.pw;
+        }
+
+        try {
+            const result = await user_edit(dataToSend);
+
+            if (result.status === 200) {
                 alert('정보가 수정되었습니다.');
-                setEditData({pw: '', u_name: '', phone:'', info:'' });
                 navigate('/profile');
             } else {
                 alert("정보 수정에 실패했습니다.");
             }
+        } catch (error) {
+            console.error("수정 중 오류 발생:", error);
+            alert("서버와 통신 중 오류가 발생했습니다.");
         }
-    };
+    }
+};
 
+    if (loading) return <div className="loading">로딩 중...</div>;
 
 
     return (
@@ -71,7 +90,6 @@ const UserEdit = () => {
                         placeholder="비밀번호"
                         value={editData.pw || ''}
                         onChange={handleChange}
-                        required
                     />
                     <input
                         name="u_name"
@@ -79,7 +97,6 @@ const UserEdit = () => {
                         placeholder="이름"
                         value={editData.u_name || ''}
                         onChange={handleChange}
-                        required
                     />
                     <input
                         name="phone"
@@ -87,7 +104,6 @@ const UserEdit = () => {
                         placeholder="전화번호"
                         value={editData.phone || ''}
                         onChange={handleChange}
-                        required
                     />
                     <textarea
                         name="info"
@@ -95,7 +111,6 @@ const UserEdit = () => {
                         value={editData.info || ''}
                         onChange={handleChange}
                         rows={5}
-                        required
                     />
                     <button type="submit">정보수정</button>
                     <Link to={"/profile"} className="cancel-link">
