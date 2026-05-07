@@ -1,5 +1,8 @@
 {
   "appId": "com.middleproject.app",
   "appName": "4jo middle_project",
-  "webDir": "dist"
+  "webDir": "dist",
+  "server": {
+    "cleartext": true
+  }
 }

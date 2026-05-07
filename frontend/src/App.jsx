@@ -26,9 +26,28 @@ import { useEffect } from "react";
 const ProtectedRoute = ({ isLoggedIn }) => {
   return isLoggedIn ? <Outlet /> : <Navigate to="/login" replace />;
 };
-const API = "http://192.168.0.21:8081";
+const API = "https://viewless-tutor-commuting.ngrok-free.dev";
 const App = () => {
   const { isLoggedIn } = useAuth();
+
+
+
+  useEffect(() => {
+  alert("🔥 useEffect 실행");
+
+  fetch("https://viewless-tutor-commuting.ngrok-free.dev")
+  .then(res => {
+    alert("📡 응답 도착");
+    return res.json();
+  })
+  .then(data => {
+    alert(JSON.stringify(data));
+  })
+  .catch(err => {
+    alert("❌ " + err);
+  });
+}, []);
+
 
   const navStyle = {
     position: 'fixed',
