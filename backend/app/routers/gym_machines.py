@@ -60,3 +60,12 @@ async def routers_gym_machine_delete(
         data.g_id,
         data.m_id
     )
+
+
+#목록 (추가)
+@router.get("/{g_id}")
+async def routers_gym_machine_get(
+    g_id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    return await service.services_gym_machine_get(db, g_id)

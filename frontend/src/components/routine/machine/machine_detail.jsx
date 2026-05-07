@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const machine_detail = () => {
 
-  const { m_id } = useParams()
+  const { g_id, m_id } = useParams()
   const { userData } = useAuth()
 
   const nav = useNavigate();
@@ -44,8 +44,12 @@ const machine_detail = () => {
 
       <p>운동기구 설명: {machine.dsc}</p>
 
+      <button onClick={()=>nav(`/gyms/${g_id}/machines`)}>
+        기구 목록으로
+      </button>
+
       {(userData?.role === "manager") && (
-        <button onClick={() => nav(`/machines/edit/${machine.m_id}`)}>
+        <button onClick={() => nav(`/gyms/${g_id}/machines/edit/${machine.m_id}`)}>
           수정
         </button>
       )}
