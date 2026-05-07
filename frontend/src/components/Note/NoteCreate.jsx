@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { user_email_get_id, user_profile } from '../../api/user';
 import { note_create } from '../../api/notes';
+import "./NoteCreate.css";
 
 const NoteCreate = () => {
     const [searchParams] = useSearchParams();
@@ -92,46 +93,58 @@ const NoteCreate = () => {
     
 
     return (
-        <div>
-            <div>
+        <div className="note-container">
+            <div className="note-card">
                 <h2>{locData?.replyTo ? '답장 쓰기' : (locData?.title || '쪽지 작성')}</h2>
-            </div>
+            
+
             <form onSubmit={handleSubmit}>
                 {!(locData.replyTo || locData.type) && (
-                <div>
+                <div className="form-group">
                     <label htmlFor="email">받는 사람:</label>
                     <input type="email" 
                             id="email" 
                             name="email"
+                            className="note-input"
                             value={noteData.email} 
                             onChange={handleChange} 
                             required placeholder="Email을 입력하세요"/>
                 </div>)}
-                <label htmlFor="title">제목:</label>
-                <input type="text" 
-                       id="title" 
-                       name="title"
-                       value={noteData.title || ""} 
-                       onChange={handleChange} 
-                       required placeholder="제목을 입력하세요"/>
-
-                <label htmlFor="content">내용:</label>
-                <textarea id="content" 
-                          name="content"
-                          value={noteData.content} 
-                          rows="10" 
-                          onChange={handleChange} 
-                          required placeholder="내용을 입력하세요">
-                        
-                </textarea>
-
-                <button type="submit" disabled={loading}>
-                    {loading ? "전송 중..." : "전송"}
-                </button>
-                <button type="button" onClick={() => navigate(-1)}>취소</button>
+                <div className="form-group">
+                    <label htmlFor="title">제목:</label>
+                    <input type="text" 
+                        id="title" 
+                        name="title"
+                        className="note-input"
+                        value={noteData.title || ""} 
+                        onChange={handleChange} 
+                        required placeholder="제목을 입력하세요"/>
+                </div>
+                
+                <div className="form-group">
+                    <label htmlFor="content">내용:</label>
+                    <textarea id="content" 
+                            name="content"
+                            className="note-textarea"
+                            value={noteData.content} 
+                            rows="10" 
+                            onChange={handleChange} 
+                            required placeholder="내용을 입력하세요">
+                    </textarea>
+                </div>
+                <div className="button-group">
+                    <button type="submit" className="submit-btn" disabled={loading}>
+                        {loading ? "전송 중..." : "전송"}
+                    </button>
+                    <button type="button" 
+                            className="cancel-btn" 
+                            onClick={() => navigate(-1)}>
+                            취소
+                    </button>
+                </div>
             </form>
             
-            
+            </div>
         </div>
     );
 };

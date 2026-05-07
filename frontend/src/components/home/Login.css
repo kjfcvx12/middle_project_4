@@ -1,0 +1,116 @@
+/* 1. 기본 배경 및 레이아웃 */
+.login-container {
+    background-color: #121212; /* 전체 어두운 배경 */
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    font-family: 'Pretendard', -apple-system, sans-serif;
+}
+
+.login-card {
+    background-color: #1e1e1e; /* 이미지의 프로필 카드 배경색 */
+    padding: 40px;
+    border-radius: 24px; /* 피그마 스타일의 둥근 모서리 */
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+/* 2. 타이틀 (FitChick) */
+.logo-text {
+    color: black;
+    font-size: 40px;
+    font-weight: bold;
+    -webkit-text-stroke: 1px #ffeb3b; /* 노란색 테두리 */
+    margin-bottom: 20px;
+}
+
+.logo-img {
+    max-width: 40%;
+    height: auto;
+    display: block;
+    margin: 0 auto 30px;
+}
+
+h2 {
+    font-size: 24px;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+/* 3. 폼 및 입력 필드 */
+.form-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* 입력창 간격 */
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+    background-color: #2c2c2c; /* 입력창 배경 */
+    border: 1px solid #3d3d3d;
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: #ffffff;
+    font-size: 15px;
+    transition: border 0.2s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: #ff4d4d; /* 이미지 포인트 컬러 (레드) */
+}
+
+/* 4. 체크박스 영역 */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0;
+    font-size: 14px;
+    color: #aaaaaa;
+    cursor: pointer;
+}
+
+/* 5. 버튼 스타일 */
+.submit-btn {
+    background-color: #ff4d4d; /* 이미지 하단 로그아웃 버튼의 레드 */
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: transform 0.1s ease, background-color 0.2s;
+}
+
+.submit-btn:active {
+    transform: scale(0.98);
+}
+
+.switch-btn {
+    background: none;
+    border: none;
+    color: #888888;
+    font-size: 14px;
+    text-decoration: underline;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.find-text {
+    background: none;
+    border: none;
+    color: #888888;
+    font-size: 14px;
+    text-decoration: underline;
+    margin-top: 20px;
+    cursor: pointer;
+}

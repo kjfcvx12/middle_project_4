@@ -1,0 +1,168 @@
+/* 전체 컨테이너 */
+.profile-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #000000; /* 다크 배경 */
+  min-height: 100vh;
+  font-family: 'Pretendard', -apple-system, sans-serif;
+}
+
+/* 헤더 */
+.profile-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #ffffff; /* 흰색 글자 */
+}
+
+.user-card {
+  display: flex;
+  align-items: center; /* 아이콘과 텍스트 묶음을 세로 중앙 정렬 */
+  justify-content: flex-start; /* 왼쪽부터 차례대로 배치 */
+  background: #C14B2E; 
+  padding: 25px 30px; /* 안쪽 여백을 늘려 더 여유 있게 만듦 */
+  border-radius: 15px;
+  box-shadow: none;
+  margin-bottom: 20px;
+}
+
+/* 왼쪽 프로필 아이콘 */
+.profile-icon {
+  width: 65px;
+  height: 65px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 25px; /* 아이콘과 텍스트 사이 간격을 확실히 벌림 */
+  flex-shrink: 0; /* 아이콘 크기 고정 */
+}
+
+/* 오른쪽 텍스트 그룹 */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left; /* 텍스트 왼쪽 정렬 */
+}
+
+/* 이름 스타일 */
+.user-info p:first-child {
+  margin: 0 0 4px 0; /* 아래 정보와의 간격 살짝 추가 */
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+/* 이메일 및 가입일 스타일 */
+.user-info p:not(:first-child) {
+  margin: 0; /* 기본 마진 제거 */
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.5; /* 줄 간격을 넓혀 가독성 향상 */
+}
+
+/* 통계 카드 */
+.stats-container {
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: #1C1C1E; /* 어두운 카드색 */
+  color: #ffffff;
+  padding: 15px 20px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #8E8E93;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* 메뉴 리스트 */
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu-item, .menu-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1C1C1E;
+  padding: 15px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+}
+
+.menu-item:hover, .menu-title:hover {
+  background: #2C2C2E;
+}
+
+.menu-title {
+  font-weight: 500;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 하위 메뉴 버튼 섹션 */
+.menu-list div button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: none;
+  background: #2C2C2E;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.menu-list div button:hover {
+  background: #3A3A3C;
+  color: #ffffff;
+}
+
+/* 로그아웃 & 탈퇴 버튼 */
+button[onClick*="logout"] {
+  background-color: #E03131 !important; /* 디자인의 레드 */
+  color: #ffffff !important;
+  border: none !important;
+  margin-top: 20px !important;
+  font-weight: 600;
+}
+
+button[onClick*="userDelClick"] {
+  color: #555555;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  background: none !important;
+  border: none !important;
+  margin-top: 10px;
+}
+
+/* 즐겨찾기 섹션 */
+.favorite-section {
+  background: #1C1C1E;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #ffffff;
+}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { user_find_email } from './../../api/user';
+import "./Login.css"
 
 const Find = () => {
     const [isFindEmailOpen, setIsFindEmailOpen] = useState(false);
@@ -22,7 +23,7 @@ const Find = () => {
 
     return (
         <>
-            <button onClick={() => setIsFindEmailOpen(true)}>아이디 찾기</button>
+            <button className="switch-btn" onClick={() => setIsFindEmailOpen(true)}>아이디 찾기</button>
 
             {isFindEmailOpen && (
 
@@ -40,7 +41,7 @@ const Find = () => {
             }}>
 
                 <div style={{
-                    backgroundColor: 'white',
+                    backgroundColor: 'gray',
                     padding: '20px',
                     borderRadius: '8px'
                 }}>
@@ -61,8 +62,8 @@ const Find = () => {
                                 required 
                             />
                             <div>
-                                <button type="submit">확인</button>
-                                <button type="button" onClick={() => setIsFindEmailOpen(false)}>취소</button>
+                                <button type="submit" className="submit-btn">확인</button>
+                                <button type="button" className="submit-btn" onClick={() => setIsFindEmailOpen(false)}>취소</button>
                             </div>
                         </form>
                     </div>
