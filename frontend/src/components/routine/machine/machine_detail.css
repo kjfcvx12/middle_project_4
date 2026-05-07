@@ -1,0 +1,125 @@
+.machine-detail-container {
+  min-height: 100vh;
+  background: #fff7f0;
+  padding: 40px 20px;
+}
+
+.machine-detail-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 25px;
+  padding: 40px;
+  box-shadow: 0 8px 30px rgba(255, 122, 0, 0.12);
+}
+
+.machine-detail-title {
+  text-align: center;
+  font-size: 40px;
+  font-weight: bold;
+  color: #ff7a00;
+  margin-bottom: 30px;
+}
+
+.machine-detail-image-box {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 35px;
+}
+
+.machine-detail-image {
+  width: 100%;
+  max-width: 500px;
+  height: 320px;
+  object-fit: cover;
+  border-radius: 20px;
+  border: 4px solid #ffd2a6;
+  box-shadow: 0 6px 18px rgba(255, 122, 0, 0.15);
+}
+
+.machine-detail-content {
+  background: #fff3e8;
+  border-radius: 18px;
+  padding: 25px;
+  margin-bottom: 30px;
+}
+
+.machine-detail-label {
+  font-size: 22px;
+  font-weight: bold;
+  color: #ff7a00;
+  margin-bottom: 12px;
+}
+
+.machine-detail-description {
+  font-size: 18px;
+  line-height: 1.7;
+  color: #444;
+}
+
+.machine-detail-btn-group {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.machine-back-btn,
+.machine-edit-btn {
+  border: none;
+  padding: 14px 24px;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.machine-back-btn {
+  background: #ffb067;
+  color: white;
+}
+
+.machine-back-btn:hover {
+  background: #ff9800;
+}
+
+.machine-edit-btn {
+  background: linear-gradient(135deg, #ff7a00, #ff9f43);
+  color: white;
+}
+
+.machine-edit-btn:hover {
+  opacity: 0.92;
+  transform: translateY(-2px);
+}
+
+.machine-detail-loading {
+  text-align: center;
+  margin-top: 100px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff7a00;
+}
+
+@media (max-width: 768px) {
+  .machine-detail-wrapper {
+    padding: 25px;
+  }
+
+  .machine-detail-title {
+    font-size: 30px;
+  }
+
+  .machine-detail-image {
+    height: 240px;
+  }
+
+  .machine-detail-btn-group {
+    flex-direction: column;
+  }
+
+  .machine-back-btn,
+  .machine-edit-btn {
+    width: 100%;
+  }
+}

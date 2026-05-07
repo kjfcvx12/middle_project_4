@@ -3,6 +3,7 @@ import { machines_read_detail } from '../../../api/api_machine';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../AuthContext';
 import { useNavigate } from 'react-router-dom';
+import './machine_detail.css'
 
 const machine_detail = () => {
 
@@ -36,24 +37,64 @@ const machine_detail = () => {
     }
   }
 
-  if(loading) return <div>로딩중...</div>
+if (loading) {
   return (
-    <div>
-      <h1>{machine.m_name}</h1>
-      <img src={machine.m_url} alt={machine.m_name} width="200" />
+    <div className='machine-detail-loading'>
+      로딩중...
+    </div>
+  );
+}
 
-      <p>운동기구 설명: {machine.dsc}</p>
+  return (
+    <div className='machine-detail-container'>
 
-      <button onClick={()=>nav(`/gyms/${g_id}/machines`)}>
-        기구 목록으로
-      </button>
+      <div className='machine-detail-wrapper'>
 
-      {(userData?.role === "manager") && (
-        <button onClick={() => nav(`/gyms/${g_id}/machines/edit/${machine.m_id}`)}>
-          수정
-        </button>
-      )}
+        <h1 className='machine-detail-title'>
+          {machine.m_name}
+        </h1>
 
+        <div className='machine-detail-image-box'>
+          <img
+            className='machine-detail-image'
+            src={machine.m_url}
+            alt={machine.m_name}
+          />
+        </div>
+
+        <div className='machine-detail-content'>
+          <div className='machine-detail-label'>
+            운동기구 설명
+          </div>
+
+          <p className='machine-detail-description'>
+            {machine.dsc}
+          </p>
+        </div>
+
+        <div className='machine-detail-btn-group'>
+
+          <button
+            className='machine-back-btn'
+            onClick={() => nav(`/gyms/${g_id}/machines`)}
+          >
+            기구 목록으로
+          </button>
+
+          {userData?.role === "manager" && (
+            <button
+              className='machine-edit-btn'
+              onClick={() =>
+                nav(`/gyms/${g_id}/machines/edit/${machine.m_id}`)
+              }
+            >
+              수정
+            </button>
+          )}
+
+        </div>
+
+      </div>
 
     </div>
   );

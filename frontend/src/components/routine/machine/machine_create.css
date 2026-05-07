@@ -1,0 +1,158 @@
+.machine-create-container {
+  min-height: 100vh;
+  background: #fff7f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.machine-create-wrapper {
+  width: 100%;
+  max-width: 650px;
+  background: white;
+  border-radius: 28px;
+  padding: 45px;
+  box-shadow: 0 8px 30px rgba(255, 122, 0, 0.15);
+}
+
+.machine-create-title {
+  text-align: center;
+  font-size: 38px;
+  font-weight: bold;
+  color: #ff7a00;
+  margin-bottom: 35px;
+}
+
+.machine-create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.machine-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.machine-input-label {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff7a00;
+}
+
+.machine-input,
+.machine-textarea {
+  width: 100%;
+  border: 2px solid #ffd2a6;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 16px;
+  outline: none;
+  transition: 0.2s ease;
+  background: #fffdfa;
+}
+
+.machine-input:focus,
+.machine-textarea:focus {
+  border-color: #ff7a00;
+  box-shadow: 0 0 10px rgba(255, 122, 0, 0.2);
+}
+
+.machine-textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+.machine-preview-box {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.machine-preview-image {
+  width: 100%;
+  max-width: 350px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 18px;
+  border: 3px solid #ffd2a6;
+  box-shadow: 0 4px 16px rgba(255, 122, 0, 0.12);
+}
+
+.machine-btn-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.machine-submit-btn,
+.machine-cancel-btn,
+.machine-list-btn {
+  flex: 1;
+  border: none;
+  padding: 15px;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.machine-submit-btn {
+  background: linear-gradient(135deg, #ff7a00, #ff9f43);
+  color: white;
+}
+
+.machine-submit-btn:hover {
+  opacity: 0.95;
+  transform: translateY(-2px);
+}
+
+.machine-cancel-btn {
+  background: #ffb067;
+  color: white;
+}
+
+.machine-cancel-btn:hover {
+  background: #ff9800;
+}
+
+.machine-list-btn {
+  background: #fff3e8;
+  color: #ff7a00;
+  border: 2px solid #ffb067;
+}
+
+.machine-list-btn:hover {
+  background: #ffe0c2;
+}
+
+.machine-loading,
+.machine-no-auth {
+  text-align: center;
+  margin-top: 100px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff7a00;
+}
+
+@media (max-width: 768px) {
+  .machine-create-wrapper {
+    padding: 28px;
+  }
+
+  .machine-create-title {
+    font-size: 30px;
+  }
+
+  .machine-btn-group {
+    flex-direction: column;
+  }
+
+  .machine-submit-btn,
+  .machine-cancel-btn,
+  .machine-list-btn {
+    width: 100%;
+  }
+}
