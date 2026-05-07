@@ -1,4 +1,5 @@
 import { useSearchParams } from "react-router-dom";
+import "./Board.css";
 import BoardDetail from "./BoardDetail";
 import BoardList from "./BoardList";
 import BoardProfile from "./BoardProfile";
@@ -7,17 +8,17 @@ const Board = () => {
   const [searchParams] = useSearchParams();
   const mode = searchParams.get("mode");
 
-  if (mode === "detail") {
-    return <BoardDetail />;
-  }
-
-  if (mode === "profile") {
-    return <BoardProfile />;
-  }
-
   return (
-    <div>
-      <BoardList />
+    <div className="board-page">
+      <div className="board-inner">
+        {mode === "detail" ? (
+          <BoardDetail />
+        ) : mode === "profile" ? (
+          <BoardProfile />
+        ) : (
+          <BoardList />
+        )}
+      </div>
     </div>
   );
 };

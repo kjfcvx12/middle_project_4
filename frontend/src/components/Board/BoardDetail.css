@@ -1,0 +1,67 @@
+.board-detail-title {
+  font-size: 32px;
+  font-weight: 900;
+  margin-bottom: 20px;
+}
+
+.board-detail-card {
+  background: var(--board-card);
+  border: 1px solid var(--board-line);
+  border-radius: 20px;
+  padding: 22px;
+  margin-bottom: 20px;
+}
+
+.board-detail-writer {
+  font-weight: 900;
+  color: var(--board-orange);
+  margin-bottom: 12px;
+}
+.board-detail-writer-button {
+  border: none;
+  background: none;
+  color: var(--board-text);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 4px;
+  display: inline;
+}
+
+.board-detail-content {
+  font-size: 17px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.board-detail-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.board-detail-buttons button {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: var(--board-card-2);
+  color: var(--board-text);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.board-detail-buttons button:hover {
+  background: var(--board-orange);
+}
+
+.board-detail-buttons .danger {
+  background: #b83220;
+}
+
+.board-detail-buttons .danger:hover {
+  background: #d9482f;
+}
+.board-detail-back-button {
+  margin-left: auto;
+}

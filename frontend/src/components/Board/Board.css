@@ -1,0 +1,29 @@
+:root {
+  --board-bg: #0b0b0f;
+  --board-card: #17171f;
+  --board-card-2: #20202a;
+  --board-line: #30303a;
+  --board-text: #f5f5f7;
+  --board-sub: #a0a0ad;
+  --board-orange: #ff5a1f;
+  --board-orange-dark: #d94712;
+}
+
+.board-page {
+  min-height: 100vh;
+  background: var(--board-bg);
+  color: var(--board-text);
+  padding: 24px 14px 90px;
+  box-sizing: border-box;
+}
+
+.board-inner {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
+}
