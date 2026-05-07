@@ -38,12 +38,10 @@ export default function Gym() {
 
     const [gyms, setGyms] = useState([]);
     const [query, setQuery] = useState("");
-    const [sortKey, setSortKey] = useState("g_name");
-    const [sortOption, setSortOption] = useState("like_count,desc");
+    const [sort, setSort] = useState("g_name,asc");
     const [openId, setOpenId] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState(undefined); // ⭐ 중요: undefined로 시작
-
+    const [user, setUser] = useState(undefined);
     // =====================
     // USER LOAD
     // =====================
@@ -68,17 +66,13 @@ export default function Gym() {
         try {
             setLoading(true);
 
-            let sortValue = "g_name,asc";
-            if (sortKey === "g_id") sortValue = "g_id,desc";
-            if (sortOption === "like_count,desc") sortValue = "like_count,desc";
-            if (sortOption === "favorite_count,desc") sortValue = "favorite_count,desc";
-
             const res = await gyms_list({
                 page: 1,
                 size: 100,
-                sort: sortValue,
+                sort: sort,
                 name: query || undefined
             });
+
 
             let data = [];
             if (Array.isArray(res?.data?.data)) data = res.data.data;
@@ -93,13 +87,11 @@ export default function Gym() {
         }
     };
 
-    // ⭐ 핵심 FIX
-    // user 로딩 완료 후 fetchGyms 실행
     useEffect(() => {
         if (user !== undefined) {
             fetchGyms();
         }
-    }, [user, sortKey, sortOption]);
+    }, [user, sort]);
 
     // =====================
     const role = (
@@ -211,12 +203,9 @@ export default function Gym() {
                 </div>
 
                 <div className="gym-sort-row">
-                    <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
-                        <option value="g_name">이름순</option>
-                        <option value="g_id">등록순</option>
-                    </select>
-
-                    <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
+                    <select value={sort} onChange={(e) => setSort(e.target.value)}>
+                        <option value="g_name,asc">이름순</option>
+                        <option value="g_id,desc">등록순</option>
                         <option value="like_count,desc">좋아요순</option>
                         <option value="favorite_count,desc">즐겨찾기순</option>
                     </select>
