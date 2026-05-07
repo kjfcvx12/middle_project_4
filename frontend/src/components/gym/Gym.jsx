@@ -343,7 +343,7 @@ export default function Gym() {
                         );
                     })
                 )}
-                <button onClick={()=>navigate("/machines")}>
+                {/* <button onClick={()=>navigate("/machines")}> */}
                 {/* <button onClick={()=>nav(`/machines?g_id=${gym.g_id}`)}>
                     운동기구 목록 보기
                 </button> */}

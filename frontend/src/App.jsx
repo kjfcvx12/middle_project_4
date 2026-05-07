@@ -21,7 +21,6 @@ import UserEdit from './components/profile/UserEdit';
 import GymCreate from './Components/gym/GymCreate'
 import GymEdit from './Components/gym/GymEdit'
 import Routine from './Components/routine/routines_page'
-import UserEdit from './components/profile/UserEdit'
 import PartCreate from './components/Part/PartCreate'
 
 
