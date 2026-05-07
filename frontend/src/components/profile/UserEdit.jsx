@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { user_edit, user_profile } from './../../api/user';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
-import "./UserE.css"
+import "./UserEdit.css"
 
 const UserEdit = () => {
     const { user } = useAuth(); 

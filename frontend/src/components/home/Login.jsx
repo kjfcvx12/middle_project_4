@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
 import fitChickLogo from '../../image/FitChick.png';
 import Find from './Find';
+import "./Login.css"
 
 const Login = () => {
   const { login, logout, signup } = useAuth();
@@ -74,29 +75,17 @@ const Login = () => {
 
 
   return (
-    <div style={{ padding: "50px", textAlign: "center" }}>
-      {isOpen && (
-        <div>
+    <div className="login-container">
+      <div className="login-card">
+        {isOpen ? (
           <div>
-            <p style={{
-                  color: 'black',
-                  fontSize: '40px',
-                  fontWeight: 'bold',
-                  WebkitTextStroke: '1px yellow',
-                  textAlign: "center"
-              }}>
-                  FitChick
-            </p>
-            <img src={fitChickLogo} style={{ 
-              maxWidth: "40%", 
-              height: "auto", 
-              display: "block", 
-              margin: "0 auto" 
-            }}></img>
+            <p className="logo-text">FitChick</p>
+            <img src={fitChickLogo} className="logo-img" alt="logo" />
             <h2>로그인</h2>
-            <form onSubmit={handleSubmit} style={formStyle}>
+            <form onSubmit={handleSubmit} className="form-wrapper">
               <input
                 name="email"
+                type="email"
                 placeholder="email"
                 value={loginData.email}
                 onChange={handleChange}
@@ -110,29 +99,27 @@ const Login = () => {
                 onChange={handleChange}
                 required
               />
-              <input
-                type="checkbox"
-                id="autologin"
-                name="autologin"
-                checked={loginData.autologin}
-                onChange={handleChange}
-              />
-              <label htmlFor="autologin">로그인 상태 유지</label>
+              <div className="checkbox-group">
+                <input
+                  type="checkbox"
+                  id="autologin"
+                  name="autologin"
+                  checked={loginData.autologin}
+                  onChange={handleChange}
+                />
+                <label htmlFor="autologin">로그인 상태 유지</label>
+              </div>
 
-              <button type="submit">로그인</button>
+              <button type="submit" className="submit-btn">로그인</button>
             </form>
             <Find>아이디 찾기</Find>
             {/* <button>비밀번호 찾기</button> */}
-            <button onClick={() => setIsOpen(false)}>회원가입</button>
+            <button className="switch-btn" onClick={() => setIsOpen(false)}>회원가입</button>
           </div>
-        </div>
-      )}
-
-      {!isOpen && (
+      ) : (
         <div>
-          <div>
             <h2>회원가입</h2>
-            <form onSubmit={handleSubmit} style={formStyle}>
+            <form onSubmit={handleSubmit} className="form-wrapper">
               <input
                 name="email"
                 type="email"
@@ -173,16 +160,14 @@ const Login = () => {
                 onChange={handleChange}
                 required
               />
-              <button type="submit">회원가입</button>
+              <button type="submit" className="submit-btn">회원가입</button>
             </form>
-            <button onClick={() => setIsOpen(true)}>로그인</button>
+            <button className="switch-btn" onClick={() => setIsOpen(true)}>로그인</button>
           </div>
-        </div>
       )}
+      </div>
     </div>
   );
 };
-
-const formStyle = { display: "flex", flexDirection: "column", gap: "10px" };
 
 export default Login;
