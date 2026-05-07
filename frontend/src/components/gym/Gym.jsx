@@ -1,5 +1,3 @@
-// Gym.jsx
-
 import React, { useEffect, useMemo, useState } from "react";
 import {
     Search,
@@ -25,6 +23,16 @@ import api from "../../api/api";
 import { user_me } from "../../api/user.jsx";
 import { useNavigate } from "react-router-dom";
 
+const toBoolStrict = (v) => v === true || v === 1 || v === "1";
+
+const normalizeGym = (gym) => ({
+    ...gym,
+    like_yn: toBoolStrict(gym.like_yn),
+    favorite_yn: toBoolStrict(gym.favorite_yn),
+    like_count: Number(gym.like_count ?? 0),
+    favorite_count: Number(gym.favorite_count ?? 0),
+});
+
 export default function Gym() {
     const navigate = useNavigate();
 
@@ -34,48 +42,33 @@ export default function Gym() {
     const [sortOption, setSortOption] = useState("like_count,desc");
     const [openId, setOpenId] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(undefined); // ⭐ 중요: undefined로 시작
 
-    useEffect(() => {
-        loadMe();
-    }, []);
-
-    useEffect(() => {
-        fetchGyms();
-    }, [sortKey, sortOption]);
-
+    // =====================
+    // USER LOAD
+    // =====================
     const loadMe = async () => {
         try {
             await user_me();
             const profileRes = await api.get("/users/profile");
             setUser(profileRes.data);
-        } catch (err) {
+        } catch {
             setUser(null);
         }
     };
 
-    const role = (
-        user?.role ||
-        user?.u_role ||
-        user?.user_role ||
-        ""
-    ).toString().trim().toLowerCase();
+    useEffect(() => {
+        loadMe();
+    }, []);
 
-    const isAdmin = role === "admin";
-
-    const isStaff = [
-        "admin",
-        "staff",
-        "manager",
-        "trainer"
-    ].includes(role);
-
+    // =====================
+    // FETCH GYMS
+    // =====================
     const fetchGyms = async () => {
         try {
             setLoading(true);
 
             let sortValue = "g_name,asc";
-
             if (sortKey === "g_id") sortValue = "g_id,desc";
             if (sortOption === "like_count,desc") sortValue = "like_count,desc";
             if (sortOption === "favorite_count,desc") sortValue = "favorite_count,desc";
@@ -88,17 +81,36 @@ export default function Gym() {
             });
 
             let data = [];
-
             if (Array.isArray(res?.data?.data)) data = res.data.data;
             else if (Array.isArray(res?.data)) data = res.data;
 
-            setGyms(data);
+            setGyms(data.map(normalizeGym));
+
+        } catch (err) {
+            console.error(err);
         } finally {
             setLoading(false);
         }
     };
 
-    const filtered = useMemo(() => gyms, [gyms]);
+    // ⭐ 핵심 FIX
+    // user 로딩 완료 후 fetchGyms 실행
+    useEffect(() => {
+        if (user !== undefined) {
+            fetchGyms();
+        }
+    }, [user, sortKey, sortOption]);
+
+    // =====================
+    const role = (
+        user?.role ||
+        user?.u_role ||
+        user?.user_role ||
+        ""
+    ).toString().trim().toLowerCase();
+
+    const isAdmin = role === "admin";
+    const isStaff = ["admin", "staff", "manager", "trainer"].includes(role);
 
     const toggleOpen = (id) => {
         setOpenId(openId === id ? null : id);
@@ -110,36 +122,42 @@ export default function Gym() {
     };
 
     const handleLike = async (gym) => {
-        await gyms_toggle_like(gym.g_id);
+        try {
+            const res = await gyms_toggle_like(gym.g_id);
+            const liked = res.data.liked;
 
-        setGyms((prev) =>
-            prev.map((g) =>
-                g.g_id === gym.g_id
-                    ? {
-                        ...g,
-                        like_yn: !g.like_yn,
-                        like_count: g.like_yn
-                            ? Math.max((g.like_count ?? 1) - 1, 0)
-                            : (g.like_count ?? 0) + 1
-                    }
-                    : g
-            )
-        );
+            setGyms(prev =>
+                prev.map(g =>
+                    g.g_id === gym.g_id
+                        ? {
+                            ...g,
+                            like_yn: liked,
+                            like_count: liked
+                                ? g.like_count + 1
+                                : g.like_count - 1
+                        }
+                        : g
+                )
+            );
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     const handleFavorite = async (gym) => {
         try {
-            await gyms_toggle_favorite(gym.g_id);
+            const res = await gyms_toggle_favorite(gym.g_id);
+            const fav = res.data.favorited;
 
-            setGyms((prev) =>
-                prev.map((g) =>
+            setGyms(prev =>
+                prev.map(g =>
                     g.g_id === gym.g_id
                         ? {
                             ...g,
-                            favorite_yn: !g.favorite_yn,
-                            favorite_count: g.favorite_yn
-                                ? Math.max((g.favorite_count ?? 1) - 1, 0)
-                                : (g.favorite_count ?? 0) + 1
+                            favorite_yn: fav,
+                            favorite_count: fav
+                                ? g.favorite_count + 1
+                                : g.favorite_count - 1
                         }
                         : g
                 )
@@ -160,9 +178,12 @@ export default function Gym() {
         return list;
     };
 
+    const filtered = useMemo(() => gyms, [gyms]);
+
     return (
         <div className="gym-page">
             <div className="gym-wrap">
+
                 <div className="gym-header">
                     <h1 className="gym-title">헬스장 찾기</h1>
 
@@ -180,8 +201,8 @@ export default function Gym() {
                 <div className="gym-search">
                     <Search size={20} />
                     <input
-                        placeholder="헬스장 이름 검색"
                         value={query}
+                        placeholder="헬스장 이름 검색"
                         onChange={(e) => setQuery(e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === "Enter") fetchGyms();
@@ -190,18 +211,12 @@ export default function Gym() {
                 </div>
 
                 <div className="gym-sort-row">
-                    <select
-                        value={sortKey}
-                        onChange={(e) => setSortKey(e.target.value)}
-                    >
+                    <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
                         <option value="g_name">이름순</option>
                         <option value="g_id">등록순</option>
                     </select>
 
-                    <select
-                        value={sortOption}
-                        onChange={(e) => setSortOption(e.target.value)}
-                    >
+                    <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
                         <option value="like_count,desc">좋아요순</option>
                         <option value="favorite_count,desc">즐겨찾기순</option>
                     </select>
@@ -214,11 +229,16 @@ export default function Gym() {
                 ) : (
                     filtered.map((gym) => {
                         const opened = openId === gym.g_id;
+
+                        const liked = gym.like_yn;
+                        const fav = gym.favorite_yn;
+
                         const facilities = getFacilities(gym);
 
                         return (
                             <div className="gym-card" key={gym.g_id}>
                                 <div className="gym-card-top">
+
                                     <div className="gym-left">
                                         <h2>{gym.g_name}</h2>
 
@@ -231,19 +251,19 @@ export default function Gym() {
                                             <span className="likes">
                                                 <Heart
                                                     size={15}
-                                                    fill={gym.like_yn ? "#ff4d6d" : "none"}
-                                                    color={gym.like_yn ? "#ff4d6d" : "#8e93aa"}
+                                                    fill={liked ? "#ff4d6d" : "none"}
+                                                    color={liked ? "#ff4d6d" : "#8e93aa"}
                                                 />
-                                                {gym.like_count ?? 0}
+                                                {gym.like_count}
                                             </span>
 
                                             <span className="likes">
                                                 <Star
                                                     size={15}
-                                                    fill={gym.favorite_yn ? "#ffd43b" : "none"}
+                                                    fill={fav ? "#ffd43b" : "none"}
                                                     color="#ffd43b"
                                                 />
-                                                {gym.favorite_count ?? 0}
+                                                {gym.favorite_count}
                                             </span>
                                         </div>
 
@@ -255,34 +275,12 @@ export default function Gym() {
                                         </button>
                                     </div>
 
-                                    <div className="gym-actions">
-                                        {isStaff && (
-                                            <button
-                                                className="icon-btn"
-                                                onClick={() =>
-                                                    navigate(`/gym/edit/${gym.g_id}`)
-                                                }
-                                            >
-                                                <Pencil size={16} />
-                                            </button>
-                                        )}
-
-                                        {isAdmin && (
-                                            <button
-                                                className="icon-btn danger"
-                                                onClick={() =>
-                                                    handleDelete(gym.g_id)
-                                                }
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        )}
-                                    </div>
-
                                     <div className="card-icons">
                                         <Heart
                                             size={32}
-                                            className={`card-heart ${gym.like_yn ? "liked" : ""}`}
+                                            className={`card-heart ${liked ? "active" : ""}`}
+                                            fill={liked ? "#ff4d6d" : "none"}
+                                            color={liked ? "#ff4d6d" : "#8e93aa"}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleLike(gym);
@@ -291,13 +289,16 @@ export default function Gym() {
 
                                         <Star
                                             size={30}
-                                            className={`card-star ${gym.favorite_yn ? "favorited" : ""}`}
+                                            className={`card-star ${fav ? "active" : ""}`}
+                                            fill={fav ? "#ffd43b" : "none"}
+                                            color={fav ? "#ffd43b" : "#8e93aa"}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleFavorite(gym);
                                             }}
                                         />
                                     </div>
+
                                 </div>
 
                                 {opened && (
@@ -315,27 +316,43 @@ export default function Gym() {
                                         <h3>시설</h3>
 
                                         <div className="facility-wrap">
-                                            {facilities.length > 0 ? (
-                                                facilities.map((item, idx) => (
-                                                    <span
-                                                        key={idx}
-                                                        className="facility-chip"
-                                                    >
+                                            {facilities.length > 0
+                                                ? facilities.map((item, idx) => (
+                                                    <span key={idx} className="facility-chip">
                                                         {item}
                                                     </span>
                                                 ))
-                                            ) : (
-                                                <span className="facility-none">
-                                                    시설 정보 없음
-                                                </span>
+                                                : <span className="facility-none">시설 정보 없음</span>
+                                            }
+                                        </div>
+
+                                        <div className="gym-actions-bottom">
+                                            {isStaff && (
+                                                <button
+                                                    className="icon-btn"
+                                                    onClick={() => navigate(`/gym/edit/${gym.g_id}`)}
+                                                >
+                                                    <Pencil size={16} />
+                                                </button>
+                                            )}
+
+                                            {isAdmin && (
+                                                <button
+                                                    className="icon-btn danger"
+                                                    onClick={() => handleDelete(gym.g_id)}
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
                                             )}
                                         </div>
+
                                     </div>
                                 )}
                             </div>
                         );
                     })
                 )}
+
             </div>
         </div>
     );
