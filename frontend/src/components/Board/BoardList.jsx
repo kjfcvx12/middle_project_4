@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { createBoard, getBoards } from "../../api/board";
+import { like_boards_count, like_boards_toggle } from "../../api/likes";
 import { user_profile } from "../../api/user";
 import BoardDetail from "./BoardDetail";
-import { like_boards_count, like_boards_toggle } from "../../api/likes";
 
 const BoardList = () => {
   const [searchParams] = useSearchParams();
@@ -21,13 +21,18 @@ const BoardList = () => {
   const [keyword, set_keyword] = useState("");
   const [search_keyword, set_search_keyword] = useState("");
 
-   useEffect(() => {
+  useEffect(() => {
     if (mode === "create") return;
 
     const fetch_boards = async () => {
       try {
-        const result = await getBoards(page, size, search_keyword);
-        
+        const result = await getBoards(
+          page,
+          size,
+          search_keyword,
+          "created_at,desc",
+        );
+
         const boards_with_info = await Promise.all(
           (result.data || []).map(async (board) => {
             const writer_id = board.u_id || board.user_id || board.user?.u_id;
@@ -35,7 +40,7 @@ const BoardList = () => {
             try {
               const [userResult, likeCount] = await Promise.all([
                 user_profile(writer_id),
-                like_boards_count(board.b_id)
+                like_boards_count(board.b_id),
               ]);
 
               return {
@@ -46,7 +51,12 @@ const BoardList = () => {
               };
             } catch (error) {
               console.error("추가 정보 조회 실패:", error);
-              return { ...board, u_id: writer_id, u_name: "알 수 없음", like_count: 0 };
+              return {
+                ...board,
+                u_id: writer_id,
+                u_name: "알 수 없음",
+                like_count: 0,
+              };
             }
           }),
         );
@@ -61,7 +71,6 @@ const BoardList = () => {
 
     fetch_boards();
   }, [page, size, mode, search_keyword]);
-
 
   const handle_submit = async (e) => {
     e.preventDefault();
@@ -112,18 +121,19 @@ const BoardList = () => {
   const handle_like_toggle = async (b_id) => {
     try {
       const result = await like_boards_toggle(b_id);
-      
+
       set_boards((prev) =>
         prev.map((board) =>
           board.b_id === b_id
             ? {
                 ...board,
-                like_count: result.status === "liked" 
-                  ? board.like_count + 1 
-                  : board.like_count - 1,
+                like_count:
+                  result.status === "liked"
+                    ? board.like_count + 1
+                    : board.like_count - 1,
               }
-            : board
-        )
+            : board,
+        ),
       );
     } catch (error) {
       console.error("좋아요 토글 실패:", error);
@@ -234,7 +244,6 @@ const styles = {
     cursor: "pointer",
     padding: 0,
   },
-  
 };
 
 export default BoardList;
