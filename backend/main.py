@@ -16,7 +16,7 @@ from app.routers import logs
 from app.routers import favorites, likes
 
 
-load_dotenv(dotenv_path="../../.env")
+load_dotenv(dotenv_path=".env")
 
 
 @asynccontextmanager
