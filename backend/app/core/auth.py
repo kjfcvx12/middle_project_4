@@ -20,8 +20,8 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str, 
         value=access_token,
         max_age=access_max_age,
         httponly=True,
-        secure=False,
-        samesite="Lax"
+        secure=True,
+        samesite="none"
     )
 
     refresh_max_age = int(settings.refresh_token_expire.total_seconds()) if autologin else None
@@ -31,8 +31,8 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str, 
         value=refresh_token,
         max_age=refresh_max_age,
         httponly=True,
-        secure=False,
-        samesite="Lax"
+        secure=True,
+        samesite="none"
     )
 
 
@@ -63,8 +63,8 @@ async def auth_get_u_id(request: Request, response: Response) -> int:
             value=new_access,
             max_age=int(settings.access_token_expire.total_seconds()),
             httponly=True,
-            secure=False,
-            samesite="Lax"
+            secure=True,
+            samesite="none"
         )
 
         return u_id

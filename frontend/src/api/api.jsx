@@ -2,9 +2,9 @@ import axios from 'axios';
 
 // 1. Axios 인스턴스 생성
 const api = axios.create({
-  baseURL: 'https://gotten-fioricet-limousines-aged.trycloudflare.com',
+  baseURL: 'https://workstation-sys-spoke-newport.trycloudflare.com',
   headers: { 'Content-Type': 'application/json' },
-  withCredentials: false // 그대로 유지 (다른 API 영향 가능)
+  withCredentials: true // 그대로 유지 (다른 API 영향 가능)
 });
 
 
