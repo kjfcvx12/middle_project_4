@@ -3,6 +3,7 @@ import {
     Search,
     MapPin,
     Heart,
+    Star,
     Phone,
     Clock,
     Pencil,
@@ -14,43 +15,85 @@ import "./Gym.css";
 import {
     gyms_list,
     gyms_delete,
-    gyms_toggle_like
+    gyms_toggle_like,
+    gyms_toggle_favorite
 } from "../../api/gyms.jsx";
 
 import api from "../../api/api";
 import { user_me } from "../../api/user.jsx";
 import { useNavigate } from "react-router-dom";
 
+const toBoolStrict = (v) => v === true || v === 1 || v === "1";
+
+const normalizeGym = (gym) => ({
+    ...gym,
+    like_yn: toBoolStrict(gym.like_yn),
+    favorite_yn: toBoolStrict(gym.favorite_yn),
+    like_count: Number(gym.like_count ?? 0),
+    favorite_count: Number(gym.favorite_count ?? 0),
+});
+
 export default function Gym() {
     const navigate = useNavigate();
 
     const [gyms, setGyms] = useState([]);
     const [query, setQuery] = useState("");
-    const [sortKey, setSortKey] = useState("g_name");
-    const [sortOption, setSortOption] = useState("like_count,desc");
+    const [sort, setSort] = useState("g_name,asc");
     const [openId, setOpenId] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        loadMe();
-    }, []);
-
-    useEffect(() => {
-        fetchGyms();
-    }, [sortKey, sortOption]);
-
+    const [user, setUser] = useState(undefined);
+    // =====================
+    // USER LOAD
+    // =====================
     const loadMe = async () => {
         try {
             await user_me();
             const profileRes = await api.get("/users/profile");
             setUser(profileRes.data);
-        } catch (err) {
-            console.error(err);
+        } catch {
             setUser(null);
         }
     };
 
+    useEffect(() => {
+        loadMe();
+    }, []);
+
+    // =====================
+    // FETCH GYMS
+    // =====================
+    const fetchGyms = async () => {
+        try {
+            setLoading(true);
+
+            const res = await gyms_list({
+                page: 1,
+                size: 100,
+                sort: sort,
+                name: query || undefined
+            });
+
+
+            let data = [];
+            if (Array.isArray(res?.data?.data)) data = res.data.data;
+            else if (Array.isArray(res?.data)) data = res.data;
+
+            setGyms(data.map(normalizeGym));
+
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (user !== undefined) {
+            fetchGyms();
+        }
+    }, [user, sort]);
+
+    // =====================
     const role = (
         user?.role ||
         user?.u_role ||
@@ -59,73 +102,54 @@ export default function Gym() {
     ).toString().trim().toLowerCase();
 
     const isAdmin = role === "admin";
-
-    const isStaff = [
-        "admin",
-        "staff",
-        "manager",
-        "trainer"
-    ].includes(role);
-
-    const fetchGyms = async () => {
-        try {
-            setLoading(true);
-
-            let sortValue = "g_name,asc";
-
-            if (sortKey === "g_id") sortValue = "g_id,desc";
-            if (sortOption === "like_count,desc") sortValue = "like_count,desc";
-            if (sortOption === "favorite_count,desc") sortValue = "favorite_count,desc";
-
-            const res = await gyms_list({
-                page: 1,
-                size: 100,
-                sort: sortValue,
-                name: query || undefined
-            });
-
-            let data = [];
-
-            if (Array.isArray(res?.data?.data)) data = res.data.data;
-            else if (Array.isArray(res?.data)) data = res.data;
-
-            setGyms(data);
-        } catch (err) {
-            console.error(err);
-            setGyms([]);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const filtered = useMemo(() => gyms, [gyms]);
+    const isStaff = ["admin", "staff", "manager", "trainer"].includes(role);
 
     const toggleOpen = (id) => {
         setOpenId(openId === id ? null : id);
     };
 
     const handleDelete = async (id) => {
+        await gyms_delete(id);
+        fetchGyms();
+    };
+
+    const handleLike = async (gym) => {
         try {
-            await gyms_delete(id);
-            fetchGyms();
+            const res = await gyms_toggle_like(gym.g_id);
+            const liked = res.data.liked;
+
+            setGyms(prev =>
+                prev.map(g =>
+                    g.g_id === gym.g_id
+                        ? {
+                            ...g,
+                            like_yn: liked,
+                            like_count: liked
+                                ? g.like_count + 1
+                                : g.like_count - 1
+                        }
+                        : g
+                )
+            );
         } catch (err) {
             console.error(err);
         }
     };
 
-    const handleLike = async (gym) => {
+    const handleFavorite = async (gym) => {
         try {
-            await gyms_toggle_like(gym.g_id);
+            const res = await gyms_toggle_favorite(gym.g_id);
+            const fav = res.data.favorited;
 
-            setGyms((prev) =>
-                prev.map((g) =>
+            setGyms(prev =>
+                prev.map(g =>
                     g.g_id === gym.g_id
                         ? {
                             ...g,
-                            like_yn: !g.like_yn,
-                            like_count: g.like_yn
-                                ? Math.max((g.like_count ?? 1) - 1, 0)
-                                : (g.like_count ?? 0) + 1
+                            favorite_yn: fav,
+                            favorite_count: fav
+                                ? g.favorite_count + 1
+                                : g.favorite_count - 1
                         }
                         : g
                 )
@@ -146,16 +170,13 @@ export default function Gym() {
         return list;
     };
 
+    const filtered = useMemo(() => gyms, [gyms]);
+
     return (
         <div className="gym-page">
             <div className="gym-wrap">
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center"
-                    }}
-                >
+
+                <div className="gym-header">
                     <h1 className="gym-title">헬스장 찾기</h1>
 
                     {isStaff && (
@@ -170,40 +191,30 @@ export default function Gym() {
                 </div>
 
                 <div className="gym-search">
-                    <Search size={20} />
                     <input
-                        placeholder="헬스장 이름 검색"
                         value={query}
+                        placeholder="헬스장 이름 검색"
                         onChange={(e) => setQuery(e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === "Enter") fetchGyms();
                         }}
+                        
                     />
+                    <div onClick={()=>{fetchGyms()}}><Search size={50} /></div>
                 </div>
 
                 <div className="gym-sort-row">
-                    <select
-                        value={sortKey}
-                        onChange={(e) => setSortKey(e.target.value)}
-                    >
-                        <option value="g_name">이름순</option>
-                        <option value="g_id">등록순</option>
-                    </select>
-
-                    <select
-                        value={sortOption}
-                        onChange={(e) => setSortOption(e.target.value)}
-                    >
+                    <select value={sort} onChange={(e) => setSort(e.target.value)}>
+                        <option value="g_name,asc">이름순</option>
+                        <option value="g_id,desc">등록순</option>
                         <option value="like_count,desc">좋아요순</option>
-                        <option value="favorite_count,desc">
-                            즐겨찾기순
-                        </option>
+                        <option value="favorite_count,desc">즐겨찾기순</option>
                     </select>
                 </div>
 
-                {!isStaff && (
+                {isStaff && (
                     <div style={{ marginBottom: "12px", color: "#999" }}>
-                        현재 권한: 일반회원
+                        현재 권한: {role}
                     </div>
                 )}
 
@@ -214,11 +225,16 @@ export default function Gym() {
                 ) : (
                     filtered.map((gym) => {
                         const opened = openId === gym.g_id;
+
+                        const liked = gym.like_yn;
+                        const fav = gym.favorite_yn;
+
                         const facilities = getFacilities(gym);
 
                         return (
                             <div className="gym-card" key={gym.g_id}>
                                 <div className="gym-card-top">
+
                                     <div className="gym-left">
                                         <h2>{gym.g_name}</h2>
 
@@ -231,76 +247,54 @@ export default function Gym() {
                                             <span className="likes">
                                                 <Heart
                                                     size={15}
-                                                    fill={
-                                                        gym.like_yn
-                                                            ? "#ff4d6d"
-                                                            : "none"
-                                                    }
-                                                    color={
-                                                        gym.like_yn
-                                                            ? "#ff4d6d"
-                                                            : "#8e93aa"
-                                                    }
+                                                    fill={liked ? "#ff4d6d" : "none"}
+                                                    color={liked ? "#ff4d6d" : "#8e93aa"}
                                                 />
-                                                {gym.like_count ?? 0}
+                                                {gym.like_count}
                                             </span>
 
                                             <span className="likes">
-                                                ⭐ {gym.favorite_count ?? 0}
+                                                <Star
+                                                    size={15}
+                                                    fill={fav ? "#ffd43b" : "none"}
+                                                    color="#ffd43b"
+                                                />
+                                                {gym.favorite_count}
                                             </span>
                                         </div>
 
                                         <button
                                             className="detail-btn"
-                                            onClick={() =>
-                                                toggleOpen(gym.g_id)
-                                            }
+                                            onClick={() => toggleOpen(gym.g_id)}
                                         >
                                             {opened ? "접기" : "상세보기"}
                                         </button>
                                     </div>
 
-                                    <div className="gym-actions">
-                                        {isStaff && (
-                                            <button
-                                                className="icon-btn"
-                                                onClick={() =>
-                                                    navigate(`/gym/edit/${gym.g_id}`)
-                                                }
-                                            >
-                                                <Pencil size={16} />
-                                            </button>
-                                        )}
+                                    <div className="card-icons">
+                                        <Heart
+                                            size={32}
+                                            className={`card-heart ${liked ? "active" : ""}`}
+                                            fill={liked ? "#ff4d6d" : "none"}
+                                            color={liked ? "#ff4d6d" : "#8e93aa"}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleLike(gym);
+                                            }}
+                                        />
 
-                                        {isAdmin && (
-                                            <button
-                                                className="icon-btn danger"
-                                                onClick={() =>
-                                                    handleDelete(gym.g_id)
-                                                }
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        )}
+                                        <Star
+                                            size={30}
+                                            className={`card-star ${fav ? "active" : ""}`}
+                                            fill={fav ? "#ffd43b" : "none"}
+                                            color={fav ? "#ffd43b" : "#8e93aa"}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleFavorite(gym);
+                                            }}
+                                        />
                                     </div>
 
-                                    <Heart
-                                        size={34}
-                                        className={`card-heart ${gym.like_yn ? "liked" : ""
-                                            }`}
-                                        fill={
-                                            gym.like_yn
-                                                ? "#ff4d6d"
-                                                : "rgba(0,0,0,0.15)"
-                                        }
-                                        color={
-                                            gym.like_yn
-                                                ? "#ff4d6d"
-                                                : "#ffffff"
-                                        }
-                                        strokeWidth={2.3}
-                                        onClick={() => handleLike(gym)}
-                                    />
                                 </div>
 
                                 {opened && (
@@ -318,30 +312,50 @@ export default function Gym() {
                                         <h3>시설</h3>
 
                                         <div className="facility-wrap">
-                                            {facilities.length > 0 ? (
-                                                facilities.map((item, idx) => (
-                                                    <span
-                                                        key={idx}
-                                                        className="facility-chip"
-                                                    >
+                                            {facilities.length > 0
+                                                ? facilities.map((item, idx) => (
+                                                    <span key={idx} className="facility-chip">
                                                         {item}
                                                     </span>
                                                 ))
-                                            ) : (
-                                                <span className="facility-none">
-                                                    시설 정보 없음
-                                                </span>
+                                                : <span className="facility-none">시설 정보 없음</span>
+                                            }
+                                        </div>
+
+                                        <div className="gym-actions-bottom">
+                                            {isStaff && (
+                                                <button
+                                                    className="icon-btn"
+                                                    onClick={() => navigate(`/gym/edit/${gym.g_id}`)}
+                                                >
+                                                    <Pencil size={16} />
+                                                </button>
+                                            )}
+
+                                            {isAdmin && (
+                                                <button
+                                                    className="icon-btn danger"
+                                                    onClick={() => handleDelete(gym.g_id)}
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
                                             )}
                                         </div>
+
+                                            <button onClick={()=>navigate(`/gym_machines/${gym.g_id}`)}>
+                                                운동기구 목록 보기
+                                            </button>
                                     </div>
                                 )}
                             </div>
                         );
                     })
                 )}
-                <button onClick={()=>navigate("/machines")}>
+
+                {/* <button onClick={()=>navigate("/machines")}>전체 운동기구 목록</button> */}
+                {/* <button onClick={()=>nav(`/machines?g_id=${gym.g_id}`)}>
                     운동기구 목록 보기
-                </button>
+                </button> */}
             </div>
         </div>
     );

@@ -5,8 +5,6 @@ import Home from './components/home/Home';
 import Login from './components/home/Login';
 import Gym from './components/gym/Gym';
 import Routines_page from './components/routine/routines_page';
-import GymCreate from "./components/gym/GymCreate";
-import GymEdit from "./components/gym/GymEdit";
 import Log from './components/log/Log';
 import Board from './components/board/Board';
 import Profile from './components/profile/Profile';
@@ -19,7 +17,11 @@ import routines_page from './components/routine/routines_page';
 import NoteCreate from './components/Note/NoteCreate';
 import NoteDetail from './components/Note/NoteDetail';
 import NoteBox from './components/Note/NoteBox';
-import UserEdit from './components/profile/UserEdit'
+import UserEdit from './components/profile/UserEdit';
+import GymCreate from './Components/gym/GymCreate'
+import GymEdit from './Components/gym/GymEdit'
+import Routine from './Components/routine/routines_page'
+import PartCreate from './components/Part/PartCreate'
 
 import { useEffect } from "react";
 const API = "https://gotten-fioricet-limousines-aged.trycloudflare.com";
@@ -71,14 +73,18 @@ const App = () => {
               <Route path="/board" element={<Board />} />
               <Route path="/profile" element={<Profile />} />
               {/* 머신 추가 */}
-              <Route path="/machines" element={<MachineList />} />
-              <Route path="/machines/:m_id" element={<MachineDetail />} />
-              <Route path="/machines/create" element={<MachineCreate />} />
-              <Route path="/machines/edit/:m_id" element={<MachineCreate />} />
+              <Route path="/gyms/:g_id/machines" element={<MachineList />} />
+              <Route path="/gyms/:g_id/machines/create" element={<MachineCreate />} />
+              <Route path="/gyms/:g_id/machines/:m_id" element={<MachineDetail />} />
+              <Route path="/gyms/:g_id/machines/edit/:m_id" element={<MachineCreate />} />
+
+              <Route path='/gym_machines/:g_id' element={<MachineList />} />
               <Route path="/profile/edit" element={<UserEdit />} />
               <Route path="/note/create" element={<NoteCreate />} />
               <Route path="/note/:n_id" element={<NoteDetail />} />
               <Route path="/note" element={<NoteBox />} />
+
+              <Route path="/parts/create" element={<PartCreate/>}/>
               
               
             </Route>

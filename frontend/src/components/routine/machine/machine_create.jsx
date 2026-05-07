@@ -3,10 +3,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { machines_read_detail } from '../../../api/api_machine';
 import { machines_create, machines_update } from '../../../api/api_machine';
 import { useAuth } from '../../AuthContext';
+import { useSearchParams } from "react-router-dom";
+import api from '../../../api/api';
+
 
 const machine_create = () => {
 
-    const {m_id}=useParams()
+    const {g_id, m_id}=useParams()
+
     const nav=useNavigate()
     const { userData, loading: authLoading }=useAuth()
 
@@ -17,37 +21,51 @@ const machine_create = () => {
         dsc:'',
         m_url:'',
     })
+    console.log("보내는 form:", form)
+    console.log("g_id:", g_id)
+    console.log("userData:", userData)
+    console.log("authLoading:", authLoading)
+    console.log("isEdit:", isEdit)
 
 
-    const [loading, setLoading]=useState(isEdit)
+    const [loading, setLoading]=useState(false)
 
-    if (authLoading) return <div>로딩중...</div>
+
+    useEffect(()=>{
+        if(!isEdit){
+            setLoading(false)
+            return
+        }
+
+        setLoading(true)
+
+        const fetch_machine = async () => {
+            try{
+                const res = await machines_read_detail(m_id)
+                setForm(res.data.data || res.data)
+            }catch(e){
+                console.error(e)
+            }finally{
+                setLoading(false)
+            }
+        }
+
+        fetch_machine()
+    },[m_id])    
+
+    if (authLoading || !userData) {return <div>로딩중...</div>}
+    if (loading) return <div>로딩중...</div>
 
     //생성 권한(관리자)
-    if (!isEdit && userData?.role !== "admin"){
+    if (!isEdit && userData.role !== "admin"){
         return <div>생성 권한이 없습니다</div>
     }
 
     //수정 권한
     if (isEdit && userData?.role !== "manager") {
-        return <div>수정 권한 없음</div>
+        return <div>수정 권한 없습니다</div>
     }
 
-    useEffect(()=>{
-        if(!isEdit) return
-
-        const fetch_machine=async()=>{
-            try{
-                const res=await machines_read_detail(m_id)
-                setForm(res.data.data || res.data)
-            }catch(error1){
-                console.error(error1)
-            }finally{
-                setLoading(false)
-            }
-        }
-        fetch_machine()
-    },[m_id])
 
 
   const handleChange=(e)=>{
@@ -55,28 +73,35 @@ const machine_create = () => {
     setForm({ ...form, [name]:value})
   }
 
-  const handleSubmit=async(e)=>{
+    const handleSubmit = async (e) => {
     e.preventDefault()
-  
 
-  try{
-    if(isEdit){
+
+    try {
+        if (isEdit) {
         await machines_update(m_id, form)
         alert("수정 완료했습니다")
-        nav(`/machines/${m_id}`)
-    }else{
-        await machines_create(form)
+        nav(`/gyms/${g_id}/machines/${m_id}`)
+        } else {
+        const res = await machines_create(form)
+        
+        await api.post("/gym_machines", {
+            g_id: Number(g_id),
+            m_id: res.data.m_id,
+            qty: 1
+        })
+        console.log("생성된 m_id:", res.data.m_id)
+
         alert("생성 완료했습니다")
-        nav("/machines")
+        nav(`/gyms/${g_id}/machines`)
+        }
+
+
+    } catch (error) {
+        console.log(error)
+        alert("에러 발생했습니다")
     }
-  }catch(error2){
-    console.log(error2.response.data)
-    alert('에러 발생했습니다')
-  }
-}
-
-
-
+    }
 
 
     return (
@@ -105,9 +130,12 @@ const machine_create = () => {
                 onChange={handleChange}/>
 
                 <button type="submit">{isEdit ? "수정":"생성"}</button>
+
                 <button type='button' onClick={()=>nav(-1)}>취소</button>
 
-
+                <button type="button" onClick={()=>nav(`/gyms/${g_id}/machines`)}>
+                    기구 목록으로
+                </button>
             </form>
 
         </div>

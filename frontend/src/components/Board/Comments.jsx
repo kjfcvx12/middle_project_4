@@ -6,6 +6,7 @@ import {
   updateComment,
 } from "../../api/board";
 import { useAuth } from "../AuthContext";
+import { like_comments_count, like_comments_toggle } from "../../api/likes";
 
 const Comments = ({ b_id }) => {
   const { user } = useAuth();
@@ -16,13 +17,26 @@ const Comments = ({ b_id }) => {
   const [edit_content, set_edit_content] = useState("");
 
   const fetch_comments = async () => {
-    try {
-      const result = await getComments(b_id);
-      set_comments(Array.isArray(result) ? result : result.data || []);
-    } catch (error) {
-      console.error("댓글 조회 실패:", error);
-    }
-  };
+  try {
+    const result = await getComments(b_id);
+    const commentsData = Array.isArray(result) ? result : (result.data || []);
+
+    const commentsWithLikes = await Promise.all(
+      commentsData.map(async (comment) => {
+        try {
+          const countResponse = await like_comments_count(comment.c_id);
+          return { ...comment, like_count: countResponse.data || 0 };
+        } catch {
+          return { ...comment, like_count: 0 };
+        }
+      })
+    );
+
+    set_comments(commentsWithLikes);
+  } catch (error) {
+    console.error("댓글 조회 실패:", error);
+  }
+};
 
   useEffect(() => {
     if (b_id) {
@@ -96,6 +110,30 @@ const Comments = ({ b_id }) => {
       ? user
       : user?.u_id || user?.data?.u_id || user?.user?.u_id;
 
+
+
+  const handle_like_toggle = async (c_id) => {
+    try {
+      const result = await like_comments_toggle(c_id);
+        
+      set_comments((prev) =>
+        prev.map((comment) =>
+          comment.c_id === c_id
+            ? {
+                ...comment,
+                like_count: result.status === "liked" 
+                  ? comment.like_count + 1 
+                  : comment.like_count - 1,
+              }
+            : comment
+        )
+      );
+    } catch (error) {
+      console.error("좋아요 토글 실패:", error);
+      alert("로그인이 필요하거나 요청이 중복되었습니다.");
+    }
+  };
+
   return (
     <div>
       <h2>댓글</h2>
@@ -134,6 +172,10 @@ const Comments = ({ b_id }) => {
                 <div>
                   <p>{comment.c_content}</p>
                   <small>작성자 ID: {comment.u_id}</small>
+
+                  <button onClick={() => handle_like_toggle(comment.c_id)}>
+                    ❤️ {comment.like_count || 0}
+                  </button>
 
                   {is_writer && (
                     <>

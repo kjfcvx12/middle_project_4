@@ -46,7 +46,7 @@ class BoardCrud:
     # 정렬
         if sort:
             sort_field, sort_order = sort.split(",")
-            sort_column = getattr(Board, sort_field)
+            sort_column = getattr(Board, sort_field, Board.created_at)
 
             stmt = stmt.order_by(
                 sort_column.desc() if sort_order == "desc" else sort_column.asc(),

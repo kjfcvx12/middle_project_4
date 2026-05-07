@@ -48,3 +48,8 @@ export const gyms_get_machines = async (g_id) => {
 export const gyms_toggle_like = async (g_id) => {
     return await api.post(`/gyms/${g_id}/like`);
 };
+
+// FAVORITE TOGGLE
+export const gyms_toggle_favorite = async (g_id) => {
+    return await api.post(`/gyms/${g_id}/favorite`);
+};

@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
 import fitChickLogo from '../../image/FitChick.png';
+import Find from './Find';
 
 const Login = () => {
   const { login, logout, signup } = useAuth();
@@ -19,6 +20,21 @@ const Login = () => {
     info: "",
   });
 
+  useEffect(()=>{
+    setSignupData({
+    email: "",
+    pw: "",
+    u_name: "",
+    phone: "",
+    info: "",
+    });
+
+    setLoginData({email: "",
+    pw: "",
+    autologin: false,
+    });
+  }, [isOpen])
+
   // 입력값 변경 핸들러
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -26,7 +42,7 @@ const Login = () => {
     const finalValue = type === "checkbox" ? checked : value;
 
     if (isOpen) {
-      setLoginData({ ...loginData, [name]: value });
+      setLoginData({ ...loginData, [name]: finalValue });
     } else {
       setSignupData({ ...signupData, [name]: value });
     }
@@ -55,6 +71,7 @@ const Login = () => {
       }
     }
   };
+
 
   return (
     <div style={{ padding: "50px", textAlign: "center" }}>
@@ -102,11 +119,10 @@ const Login = () => {
               />
               <label htmlFor="autologin">로그인 상태 유지</label>
 
-              {/* Silent Refresh 사용법 */}
               <button type="submit">로그인</button>
             </form>
-            <button>아이디 찾기</button>
-            <button>비밀번호 찾기</button>
+            <Find>아이디 찾기</Find>
+            {/* <button>비밀번호 찾기</button> */}
             <button onClick={() => setIsOpen(false)}>회원가입</button>
           </div>
         </div>

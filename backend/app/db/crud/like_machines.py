@@ -7,31 +7,36 @@ from app.db.scheme.like_machines import Like_Machine_Create
 
 
 class Like_Machine_Crud:
-    # 운동기구 좋아요
+    # 운동기구 좋아요 토글
     @staticmethod
-    async def crud_like_machines_create(db:AsyncSession, lm: Like_Machine_Create) -> str:          
-        db_data=Like_Machine(**lm.model_dump())
-        db.add(db_data)
-        await db.flush()
-        return '운동기구 좋아요'
-    
+    async def crud_like_machines_toggle(db: AsyncSession, u_id: int, m_id: int) -> dict:
+        # 기존 좋아요 확인
+        query = select(Like_Machine).where(Like_Machine.u_id == u_id, Like_Machine.m_id == m_id)
+        existing_like = await db.scalar(query)
 
-    # 운동기구 좋아요 취소
-    @staticmethod
-    async def crud_like_machines_delete(db:AsyncSession , l_m_id:int)->str|None:
-        db_data = await db.get(Like_Machine, l_m_id)
-        if db_data:
-            await db.delete(db_data)
-            await db.flush()
-            return '운동기구 좋아요 취소'
-        return None
+        if existing_like:
+            await db.delete(existing_like)
+            status = "unliked"
+        else:
+            new_like = Like_Machine(u_id=u_id, m_id=m_id)
+            db.add(new_like)
+            status = "liked"
+
+        await db.flush()
+        
+        return {"status": status}
     
 
     # 운동기구 좋아요 개수
     @staticmethod
     async def crud_like_machines_count(db:AsyncSession, m_id:int)->int|None:
-        db_data=await db.execute(select(func.count(Like_Machine)).
-                                 filter(Like_Machine.m_id==m_id))
+        query = (
+        select(func.count())
+        .select_from(Like_Machine)
+        .filter(Like_Machine.m_id == m_id)
+        )   
+
+        db_data = await db.execute(query)
         
         return db_data.scalar() or 0
 

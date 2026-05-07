@@ -1,12 +1,18 @@
 import api from "./api";
 
 // 게시글 목록
-export const getBoards = async (page = 1, size = 10, keyword = "") => {
+export const getBoards = async (
+  page = 1,
+  size = 10,
+  keyword = "",
+  sort = "created_at, desc",
+) => {
   const response = await api.get("/boards", {
     params: {
       page,
       size,
       keyword: keyword || undefined,
+      sort,
     },
   });
 

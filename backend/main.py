@@ -13,6 +13,7 @@ from app.routers import gyms, gym_staffs,gym_machines
 from app.routers import machines, parts
 from app.routers import routines,routine_details
 from app.routers import logs
+from app.routers import favorites, likes
 
 
 load_dotenv(dotenv_path="../../.env")
@@ -63,6 +64,9 @@ app.include_router(routines.router)
 app.include_router(routine_details.router)
 
 app.include_router(logs.router)
+
+app.include_router(favorites.router)
+app.include_router(likes.router)
 
 
 
