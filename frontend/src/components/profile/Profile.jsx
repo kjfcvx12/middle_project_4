@@ -203,15 +203,17 @@ const Profile = () => {
           </Link>
 
 
-          <div>
-              <div onClick={()=>profileEdit()} className="menu-item-div">정보수정</div>
+          
+          <div onClick={()=>profileEdit()} className="menu-title">
+            <div className="menu-title">⚙️ 정보수정 <span>&gt;</span></div>
+          </div>
               {openEdit&&(
                 <div>
                   <div><Link to="/profile/edit"><button>내 정보 수정하기</button></Link></div>
                   <div><button onClick={()=>userDelClick()}>탈퇴하기</button></div>
                 </div>
               )}
-          </div>
+          
       </div>
       <div>
         {userData.u_id!==1&&(
