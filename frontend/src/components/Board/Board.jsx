@@ -1,5 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import "./Board.css";
+import BoardCreate from "./BoardCreate";
 import BoardDetail from "./BoardDetail";
 import BoardList from "./BoardList";
 import BoardProfile from "./BoardProfile";
@@ -11,7 +12,9 @@ const Board = () => {
   return (
     <div className="board-page">
       <div className="board-inner">
-        {mode === "detail" ? (
+        {mode === "create" ? (
+          <BoardCreate />
+        ) : mode === "detail" ? (
           <BoardDetail />
         ) : mode === "profile" ? (
           <BoardProfile />

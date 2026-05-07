@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { createBoard, getBoards } from "../../api/board";
+import { getBoards } from "../../api/board";
 import { like_boards_count, like_boards_toggle } from "../../api/likes";
 import { user_profile } from "../../api/user";
 import BoardDetail from "./BoardDetail";
@@ -15,7 +15,6 @@ const BoardList = () => {
   const [page, set_page] = useState(1);
   const [size] = useState(10);
   const [total_count, set_total_count] = useState(0);
-  const [b_content, set_b_content] = useState("");
 
   const total_pages = Math.ceil(total_count / size);
 
@@ -72,48 +71,6 @@ const BoardList = () => {
 
     fetch_boards();
   }, [page, size, mode, search_keyword]);
-
-  const handle_submit = async (e) => {
-    e.preventDefault();
-
-    if (!b_content.trim()) {
-      alert("내용을 입력해주세요.");
-      return;
-    }
-
-    try {
-      await createBoard({
-        b_content,
-      });
-
-      alert("게시글 작성 완료");
-      set_b_content("");
-      navigate("/board");
-    } catch (error) {
-      console.error("게시글 작성 실패:", error.response?.data || error.message);
-      alert("게시글 작성 실패");
-    }
-  };
-
-  if (mode === "create") {
-    return (
-      <div style={{ paddingBottom: "80px" }}>
-        <h1>글쓰기</h1>
-
-        <form onSubmit={handle_submit}>
-          <textarea
-            value={b_content}
-            onChange={(e) => set_b_content(e.target.value)}
-            placeholder="내용을 입력하세요"
-            rows={10}
-            style={{ width: "100%" }}
-          />
-
-          <button type="submit">등록</button>
-        </form>
-      </div>
-    );
-  }
 
   if (mode === "detail") {
     return <BoardDetail />;
@@ -199,8 +156,6 @@ const BoardList = () => {
               >
                 {board.u_name || "알 수 없음"}
               </button>
-
-              <div className="board-time">게시글 번호 {board.b_id}</div>
             </div>
           </div>
 

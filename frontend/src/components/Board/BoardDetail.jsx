@@ -81,7 +81,13 @@ const BoardDetail = () => {
 
       alert("게시글 수정 완료");
 
-      set_board(result.data);
+      set_board((prev) => ({
+        ...prev,
+        ...result.data,
+        u_id: prev.u_id,
+        u_name: prev.u_name,
+      }));
+
       set_is_edit(false);
     } catch (error) {
       console.error("게시글 수정 실패:", error.response?.data || error.message);
@@ -114,8 +120,6 @@ const BoardDetail = () => {
       <h1 className="board-detail-title">게시글 상세</h1>
 
       <div className="board-detail-card">
-        <p className="board-time">게시글 번호: {board.b_id}</p>
-
         <p className="board-detail-writer">
           작성자:{" "}
           <button
