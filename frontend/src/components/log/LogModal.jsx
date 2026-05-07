@@ -3,6 +3,7 @@ import { createLog } from "../../api/logApi";
 import { machines_read } from "../../api/machines";
 import { routines_read } from "../../api/routines";
 import { routine_detail_read_all } from "../../api/routine_details";
+import "./Log.css"
 
 const LogModal = ({ isOpen, onClose, onSuccess }) => {
     const [mode, setMode] = useState("");
@@ -125,14 +126,15 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
     };
 
     return (
-        <div style={overlay}>
-            <div style={modal}>
-                <button onClick={onClose} style={{ float: 'right' }}>X</button>
-                <h3>운동 기록</h3>
+        <div className="modal-overlay">
+            <div className="modal-content">
+                <button className="close-x"
+                onClick={onClose} style={{ float: 'right' }}>X</button>
+                <h3 style={{ textAlign: 'center', marginBottom: 20 }}>운동 기록</h3>
                 
                 {/* 모드 선택 */}
                 {!mode && (
-                    <div style={modeBox}>
+                    <div className="mode-box">
                         <button onClick={() => setMode("routine")}>
                             루틴 선택하기
                         </button>
@@ -158,7 +160,7 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
                 {/* 루틴 모드 */}
                 {mode === "routine" && (
                     <>
-                        <select onChange={(e) => handleRoutineChange(e.target.value)}>
+                        <select className="routine-select" onChange={(e) => handleRoutineChange(e.target.value)}>
                             <option>루틴 선택</option>
                             {routines.map(r => (
                             <option key={r.r_id} value={r.r_id}>
@@ -171,7 +173,7 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
 
                 {/* detail 입력 */}
                 {mode && details.map((d, i) => (
-                    <div key={i} style={box}>
+                    <div key={i} className="record-card">
                         <select
                             value={d.m_id}
                             onChange={(e) =>
@@ -184,23 +186,24 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
                                 </option>
                             ))}
                         </select>
+                        <div className="input-row">
+                            <input type="number" value={d.sets}
+                                onChange={(e) => updateDetail(i, "sets", Number(e.target.value))}
+                            />
+                            <input type="number" value={d.reps}
+                                onChange={(e) => updateDetail(i, "reps", Number(e.target.value))}
+                            />
 
-                        <input type="number" value={d.sets}
-                            onChange={(e) => updateDetail(i, "sets", Number(e.target.value))}
-                        />
-                        <input type="number" value={d.reps}
-                            onChange={(e) => updateDetail(i, "reps", Number(e.target.value))}
-                        />
+                            <input type="number" placeholder="무게"
+                                value={d.weight}
+                                onChange={(e) => updateDetail(i, "weight", Number(e.target.value))}
+                            />
 
-                        <input type="number" placeholder="무게"
-                            value={d.weight}
-                            onChange={(e) => updateDetail(i, "weight", Number(e.target.value))}
-                        />
-
-                        <input type="number" placeholder="시간(초)"
-                            value={d.duration}
-                            onChange={(e) => updateDetail(i, "duration", Number(e.target.value))}
-                        />
+                            <input type="number" placeholder="시간(초)"
+                                value={d.duration}
+                                onChange={(e) => updateDetail(i, "duration", Number(e.target.value))}
+                            />
+                        </div>
 
                         <input placeholder="실패 메모"
                             value={d.fail_memo}
@@ -215,15 +218,15 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
                 ))}
 
                 {mode && (
-                    <>
-                        <button onClick={addDetail}>+ 추가</button>
+                    <div className="footer-buttons">
+                        <button className="btn-add" onClick={addDetail}>+ 추가</button>
 
-                        <div style={{ marginTop: 10 }}>
-                            <button onClick={() => setMode("")}>뒤로</button>
-                            <button onClick={onClose}>취소</button>
-                            <button onClick={handleSave}>저장</button>
+                        <div className="btn-group">
+                            <button className="btn-back" onClick={() => setMode("")}>뒤로</button>
+                            <button className="btn-cancel" onClick={onClose}>취소</button>
+                            <button className="btn-save" onClick={handleSave}>저장</button>
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
         </div>
@@ -231,31 +234,3 @@ const LogModal = ({ isOpen, onClose, onSuccess }) => {
 };
 
 export default LogModal;
-
-// 스타일
-const overlay = {
-    position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-    background: "rgba(0,0,0,0.5)",
-    display: "flex", justifyContent: "center", alignItems: "center",
-};
-
-const modal = {
-    background: "white",
-    padding: "20px",
-    width: "90%",
-    maxWidth: "420px",
-    borderRadius: "10px",
-};
-
-const box = {
-    marginTop: "10px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "5px",
-};
-
-const modeBox = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px",
-};
