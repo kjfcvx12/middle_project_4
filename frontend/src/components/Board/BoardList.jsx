@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { createBoard, getBoards } from "../../api/board";
+import { getBoards } from "../../api/board";
 import { like_boards_count, like_boards_toggle } from "../../api/likes";
 import { user_profile } from "../../api/user";
 import BoardDetail from "./BoardDetail";
+import "./BoardList.css";
 
 const BoardList = () => {
   const [searchParams] = useSearchParams();
@@ -14,7 +15,6 @@ const BoardList = () => {
   const [page, set_page] = useState(1);
   const [size] = useState(10);
   const [total_count, set_total_count] = useState(0);
-  const [b_content, set_b_content] = useState("");
 
   const total_pages = Math.ceil(total_count / size);
 
@@ -72,48 +72,6 @@ const BoardList = () => {
     fetch_boards();
   }, [page, size, mode, search_keyword]);
 
-  const handle_submit = async (e) => {
-    e.preventDefault();
-
-    if (!b_content.trim()) {
-      alert("내용을 입력해주세요.");
-      return;
-    }
-
-    try {
-      await createBoard({
-        b_content,
-      });
-
-      alert("게시글 작성 완료");
-      set_b_content("");
-      navigate("/board");
-    } catch (error) {
-      console.error("게시글 작성 실패:", error.response?.data || error.message);
-      alert("게시글 작성 실패");
-    }
-  };
-
-  if (mode === "create") {
-    return (
-      <div style={{ paddingBottom: "80px" }}>
-        <h1>글쓰기</h1>
-
-        <form onSubmit={handle_submit}>
-          <textarea
-            value={b_content}
-            onChange={(e) => set_b_content(e.target.value)}
-            placeholder="내용을 입력하세요"
-            rows={10}
-            style={{ width: "100%" }}
-          />
-
-          <button type="submit">등록</button>
-        </form>
-      </div>
-    );
-  }
-
   if (mode === "detail") {
     return <BoardDetail />;
   }
@@ -143,11 +101,12 @@ const BoardList = () => {
 
   return (
     <div style={{ paddingBottom: "80px" }}>
-      <h1>게시판</h1>
-
-      <Link to="/board?mode=create">글쓰기</Link>
+      <Link className="board-write-button" to="/board?mode=create">
+        글쓰기
+      </Link>
 
       <form
+        className="board-search-form"
         onSubmit={(e) => {
           e.preventDefault();
           set_page(1);
@@ -155,50 +114,71 @@ const BoardList = () => {
         }}
       >
         <input
+          className="board-search-input"
           value={keyword}
           onChange={(e) => set_keyword(e.target.value)}
           placeholder="게시글 검색"
         />
-        <button type="submit">검색</button>
-        <button
-          type="button"
-          onClick={() => {
-            set_keyword("");
-            set_search_keyword("");
-            set_page(1);
-          }}
-        >
-          초기화
-        </button>
+
+        <div className="board-search-buttons">
+          <button className="board-search-button" type="submit">
+            검색
+          </button>
+
+          <button
+            className="board-reset-button"
+            type="button"
+            onClick={() => {
+              set_keyword("");
+              set_search_keyword("");
+              set_page(1);
+            }}
+          >
+            초기화
+          </button>
+        </div>
       </form>
 
       {boards.map((board) => (
-        <div key={board.b_id}>
-          <Link to={`/board?mode=detail&id=${board.b_id}`}>
-            게시글 번호 {board.b_id}
+        <div className="board-card" key={board.b_id}>
+          <div className="board-card-header">
+            <div className="board-avatar">
+              {(board.u_name || "?").slice(0, 1)}
+            </div>
+
+            <div className="board-writer-box">
+              <button
+                type="button"
+                onClick={() =>
+                  navigate(`/board?mode=profile&u_id=${board.u_id}`)
+                }
+                className="board-writer-button"
+              >
+                {board.u_name || "알 수 없음"}
+              </button>
+            </div>
+          </div>
+
+          <Link
+            className="board-content"
+            to={`/board?mode=detail&id=${board.b_id}`}
+          >
+            {board.b_content}
           </Link>
 
-          <p>{board.b_content}</p>
-
-          <button onClick={() => handle_like_toggle(board.b_id)}>
-            ❤️ {board.like_count || 0}
-          </button>
-
-          <p>
-            작성자:{" "}
+          <div className="board-actions">
             <button
-              type="button"
-              onClick={() => navigate(`/board?mode=profile&u_id=${board.u_id}`)}
-              style={styles.userButton}
+              className="board-like-button"
+              onClick={() => handle_like_toggle(board.b_id)}
             >
-              {board.u_name || "알 수 없음"}
+              ❤️ {board.like_count || 0}
             </button>
-          </p>
+          </div>
         </div>
       ))}
 
       {total_pages > 0 && (
-        <div style={styles.pagination}>
+        <div className="board-pagination">
           <button disabled={page === 1} onClick={() => set_page(page - 1)}>
             {"<"}
           </button>
@@ -207,7 +187,7 @@ const BoardList = () => {
             <button
               key={p}
               onClick={() => set_page(p)}
-              style={p === page ? styles.activePage : {}}
+              className={p === page ? "active" : ""}
             >
               {p}
             </button>
@@ -223,27 +203,6 @@ const BoardList = () => {
       )}
     </div>
   );
-};
-const styles = {
-  pagination: {
-    marginTop: "20px",
-    display: "flex",
-    gap: "8px",
-    justifyContent: "center",
-  },
-
-  activePage: {
-    backgroundColor: "#ddd",
-    fontWeight: "bold",
-  },
-
-  userButton: {
-    border: "none",
-    background: "none",
-    color: "blue",
-    cursor: "pointer",
-    padding: 0,
-  },
 };
 
 export default BoardList;

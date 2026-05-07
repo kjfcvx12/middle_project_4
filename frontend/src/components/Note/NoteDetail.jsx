@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { note_detail, note_rece_del, note_send_del } from '../../api/notes';
 import { useAuth } from '../AuthContext';
 import { user_profile } from '../../api/user';
+import "./NoteDetail.css"
 
 const NoteDetail = () => {
     const { n_id } = useParams();
@@ -64,21 +65,35 @@ const NoteDetail = () => {
     const isReceiver = userData && userData.u_id === note.rece_id;
 
     return (
-        <div>
+        <div className="note-detail-container">
             <h2>쪽지 상세 보기</h2>
-            <div>
-                <p>보낸 사람: {(note.send_id === 1 ? '관리자' : note.send_email)}</p> 
-                <p>받는 사람: {(note.rece_id === 1 ? '관리자' : note.rece_email)}</p>
-                <p>날짜: {new Date(note.n_date).toLocaleString()}</p>
-                <h3>{note.title}</h3>
-                <div>{note.content}</div>
+            <div className="note-info">
+                <p><strong>보낸 사람: </strong>{(note.send_id === 1 ? '관리자' : note.send_email)}</p>
+                <p><strong>받는 사람: </strong>{(note.rece_id === 1 ? '관리자' : note.rece_email)}</p>
             </div>
+            <div className="note-info">
+                <p><strong>날짜: </strong>{new Date(note.n_date).toLocaleString()}</p>
+            </div>
+            <div className="note-info">
+                <h3>제목: {note.title}</h3>
+            </div>
+            <div className="note-info">
+                <div className="note-content-box">
+                    <div className="note-text">{note.content}</div>
+                </div>
+            </div>
+          
 
-            <div>
-                <button onClick={() => navigate('/note', { state: { activeTab: location.state?.fromTab } })}>목록</button>
+            <div className="button-group">
+                <button className="btn-list" 
+                        onClick={() => navigate('/note', 
+                        { state: { activeTab: location.state?.fromTab } })}>
+                        목록
+                </button>
                 
                 {isReceiver && (
-                    <button onClick={() => navigate('/note/create', 
+                    <button className="btn-reply" 
+                    onClick={() => navigate('/note/create', 
                     { state: { replyTo: note.send_id,
                     defaultTitle: note.send_id === 1 
                     ? `[재문의] ${note.title}` 
@@ -88,7 +103,8 @@ const NoteDetail = () => {
                     </button>
                 )}
                 
-                <button onClick={handleDelete} style={{ color: 'red' }}>
+                <button className="btn-delete" 
+                        onClick={handleDelete} style={{ color: 'red' }}>
                     삭제하기
                 </button>
             </div>

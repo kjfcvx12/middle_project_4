@@ -5,7 +5,7 @@ import { machines_create, machines_update } from '../../../api/api_machine';
 import { useAuth } from '../../AuthContext';
 import { useSearchParams } from "react-router-dom";
 import api from '../../../api/api';
-
+import './machine_create.css'
 
 const machine_create = () => {
 
@@ -58,12 +58,12 @@ const machine_create = () => {
 
     //생성 권한(관리자)
     if (!isEdit && userData.role !== "admin"){
-        return <div>생성 권한이 없습니다</div>
+        return <div className='machine-no-auth'>생성 권한이 없습니다</div>
     }
 
     //수정 권한
     if (isEdit && userData?.role !== "manager") {
-        return <div>수정 권한 없습니다</div>
+        return <div className='machine-no-auth'>수정 권한 없습니다</div>
     }
 
 
@@ -105,40 +105,103 @@ const machine_create = () => {
 
 
     return (
-        <div>
-            <h1>{isEdit? "운동기구 수정":"운동기구 생성"}</h1>
+    <div className='machine-create-container'>
 
-            <form onSubmit={handleSubmit}>
+        <div className='machine-create-wrapper'>
 
-                <input
+        <h1 className='machine-create-title'>
+            {isEdit ? "운동기구 수정" : "운동기구 생성"}
+        </h1>
+
+        <form
+            className='machine-create-form'
+            onSubmit={handleSubmit}
+        >
+
+            <div className='machine-input-group'>
+            <label className='machine-input-label'>
+                기구 이름
+            </label>
+
+            <input
+                className='machine-input'
                 name='m_name'
-                placeholder='기구 이름'
+                placeholder='기구 이름 입력'
                 value={form.m_name}
-                onChange={handleChange}/>
+                onChange={handleChange}
+            />
+            </div>
 
-                <input
+            <div className='machine-input-group'>
+            <label className='machine-input-label'>
+                운동기구 설명
+            </label>
+
+            <textarea
+                className='machine-textarea'
                 name='dsc'
-                placeholder='설명'
+                placeholder='운동기구 설명 입력'
                 value={form.dsc}
-                onChange={handleChange}/>
+                onChange={handleChange}
+            />
+            </div>
 
+            <div className='machine-input-group'>
+            <label className='machine-input-label'>
+                이미지 URL
+            </label>
 
-                <input
-                name="m_url"
-                placeholder='이미지 URL'
+            <input
+                className='machine-input'
+                name='m_url'
+                placeholder='이미지 URL 입력'
                 value={form.m_url}
-                onChange={handleChange}/>
+                onChange={handleChange}
+            />
+            </div>
 
-                <button type="submit">{isEdit ? "수정":"생성"}</button>
+            {form.m_url && (
+            <div className='machine-preview-box'>
+                <img
+                className='machine-preview-image'
+                src={form.m_url}
+                alt='preview'
+                />
+            </div>
+            )}
 
-                <button type='button' onClick={()=>nav(-1)}>취소</button>
+            <div className='machine-btn-group'>
 
-                <button type="button" onClick={()=>nav(`/gyms/${g_id}/machines`)}>
-                    기구 목록으로
-                </button>
-            </form>
+            <button
+                type="submit"
+                className='machine-submit-btn'
+            >
+                {isEdit ? "수정" : "생성"}
+            </button>
+
+            <button
+                type='button'
+                className='machine-cancel-btn'
+                onClick={() => nav(-1)}
+            >
+                취소
+            </button>
+
+            <button
+                type="button"
+                className='machine-list-btn'
+                onClick={() => nav(`/gyms/${g_id}/machines`)}
+            >
+                기구 목록
+            </button>
+
+            </div>
+
+        </form>
 
         </div>
+
+    </div>
     );
 };
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createParts, deleteParts, getParts } from '../../api/parts';
+import "./part.css"
 
 const PartCreate = () => {
     const [partName, setPartName] = useState({p_name:''});
@@ -58,33 +59,37 @@ const PartCreate = () => {
     };
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
+        <div className="part-container">
+            <form className="part-form" onSubmit={handleSubmit}>
             <input type='text' 
             id='p_name'
             name='p_name' 
+            className="part-input"
             value={partName.p_name}
             onChange={handleChange}
             required placeholder="부위를 입력하세요" />
 
-            <button type='submit'>등록</button>
+            <button type='submit' className="submit-btn">등록</button>
             </form>
 
             <hr />
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+            <div className="table-wrapper">
                 <table>
                     <thead>
                         <tr>
                             <th>부위 명칭</th>
-                            <th>관리</th>
+                            <th style={{ textAlign: 'right' }}>관리</th>
                         </tr>
                     </thead>
                     <tbody>
                         {partData.map((part) => (
                             <tr key={part.p_id}>
                                 <td>{part.p_name}</td>
-                                <td>
-                                    <button onClick={() => handleDelete(part.p_id)}>삭제</button>
+                                <td style={{ textAlign: 'right' }}>
+                                    <button className="delete-btn"
+                                            onClick={() => handleDelete(part.p_id)}>
+                                        삭제
+                                    </button>
                                 </td>
                             </tr>
                         ))}

@@ -1,0 +1,63 @@
+.board-create-card {
+  background: var(--board-card);
+  border: 1px solid var(--board-line);
+  border-radius: 20px;
+  padding: 24px;
+}
+
+.board-create-title {
+  font-size: 32px;
+  font-weight: 900;
+  margin-bottom: 20px;
+  color: var(--board-text);
+}
+
+.board-create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.board-create-textarea {
+  width: 100%;
+  min-height: 240px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--board-line);
+  background: var(--board-card-2);
+  color: var(--board-text);
+  outline: none;
+  resize: vertical;
+  box-sizing: border-box;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.board-create-textarea:focus {
+  border-color: var(--board-orange);
+}
+
+.board-create-textarea::placeholder {
+  color: var(--board-sub);
+}
+
+.board-create-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.board-create-buttons button {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  background: var(--board-orange);
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.board-create-buttons button:hover {
+  background: var(--board-orange-dark);
+}

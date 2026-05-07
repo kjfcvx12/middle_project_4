@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { deleteBoard, getBoardDetail, updateBoard } from "../../api/board";
 import { user_profile } from "../../api/user";
 import { useAuth } from "../AuthContext";
+import "./BoardDetail.css";
 import Comment from "./Comments";
 
 const BoardDetail = () => {
@@ -80,7 +81,13 @@ const BoardDetail = () => {
 
       alert("게시글 수정 완료");
 
-      set_board(result.data);
+      set_board((prev) => ({
+        ...prev,
+        ...result.data,
+        u_id: prev.u_id,
+        u_name: prev.u_name,
+      }));
+
       set_is_edit(false);
     } catch (error) {
       console.error("게시글 수정 실패:", error.response?.data || error.message);
@@ -109,38 +116,46 @@ const BoardDetail = () => {
   const is_writer = Number(board.u_id) === Number(login_user_id);
 
   return (
-    <div style={{ paddingBottom: "80px" }}>
-      <h1>게시글 상세</h1>
+    <div>
+      <h1 className="board-detail-title">게시글 상세</h1>
 
-      <p>게시글 번호: {board.b_id}</p>
-      <p>
-        작성자:{" "}
-        <button
-          type="button"
-          onClick={() => navigate(`/board?mode=profile&u_id=${board.u_id}`)}
-          style={styles.userButton}
-        >
-          {board.u_name?.trim() ? board.u_name : "알 수 없음"}
-        </button>
-      </p>
+      <div className="board-detail-card">
+        <p className="board-detail-writer">
+          작성자:{" "}
+          <button
+            type="button"
+            onClick={() => navigate(`/board?mode=profile&u_id=${board.u_id}`)}
+            className="board-detail-writer-button"
+          >
+            {board.u_name?.trim() ? board.u_name : "알 수 없음"}
+          </button>
+        </p>
 
-      {is_edit ? (
-        <div>
-          <textarea
-            value={edit_content}
-            onChange={(e) => set_edit_content(e.target.value)}
-            rows={10}
-            style={{ width: "100%" }}
-          />
+        {is_edit ? (
+          <div>
+            <textarea
+              className="board-detail-edit-textarea"
+              value={edit_content}
+              onChange={(e) => set_edit_content(e.target.value)}
+              rows={10}
+            />
 
-          <button onClick={handle_update}>수정 완료</button>
-          <button onClick={handle_cancel_edit}>취소</button>
-        </div>
-      ) : (
-        <div>
-          <p>내용: {board.b_content}</p>
+            <div className="board-detail-buttons">
+              <button onClick={handle_update}>수정 완료</button>
+              <button onClick={handle_cancel_edit}>취소</button>
+            </div>
+          </div>
+        ) : (
+          <p className="board-detail-content">{board.b_content}</p>
+        )}
 
-          {is_writer && (
+        <p className="board-time">작성일: {board.created_at}</p>
+        <p className="board-time">수정일: {board.updated_at}</p>
+      </div>
+
+      <div className="board-detail-buttons">
+        {is_writer && (
+          <>
             <button
               onClick={() => {
                 set_edit_content(board.b_content);
@@ -149,31 +164,24 @@ const BoardDetail = () => {
             >
               수정
             </button>
-          )}
-        </div>
-      )}
 
-      <p>작성일: {board.created_at}</p>
-      <p>수정일: {board.updated_at}</p>
+            <button className="danger" onClick={handle_delete}>
+              삭제
+            </button>
+          </>
+        )}
 
-      <hr />
+        <button
+          className="board-detail-back-button"
+          onClick={() => navigate("/board")}
+        >
+          목록으로
+        </button>
+      </div>
 
       <Comment b_id={id} />
-
-      {is_writer && <button onClick={handle_delete}>삭제</button>}
-      <button onClick={() => navigate("/board")}>목록으로</button>
     </div>
   );
-};
-
-const styles = {
-  userButton: {
-    border: "none",
-    background: "none",
-    color: "blue",
-    cursor: "pointer",
-    padding: 0,
-  },
 };
 
 export default BoardDetail;

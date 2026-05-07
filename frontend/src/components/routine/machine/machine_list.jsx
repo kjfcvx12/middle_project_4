@@ -8,6 +8,7 @@ import { useSearchParams } from "react-router-dom";
 import { gym_machines_get } from '../../../api/gym_machines';
 import { gyms_get_machines } from '../../../api/gyms';
 import api from "../../../api/api";
+import './machine_list.css'
 
 const machine_list = () => {
 
@@ -78,15 +79,17 @@ const machine_list = () => {
 
 
     return (
-        <div>
-            <h1>운동기구 목록</h1>
+        <div className='machine-list-container'>
+
+          <div className='machine-list-wrapper'>
+            <h1 className='machine-list-title'>운동기구 목록</h1>
             
             {list.map((m)=>(
-                <div key={m.m_id} onClick={()=>nav(`/gyms/${g_id}/machines/${m.m_id}`)}>
-                    <span>{m.m_name}</span>
+                <div className='machine-card' key={m.m_id} onClick={()=>nav(`/gyms/${g_id}/machines/${m.m_id}`)}>
+                    <span className='machine-name'>{m.m_name}</span>
                       {/* 삭제 버튼 */}
                     {userData?.role==="admin" && (
-                      <button onClick={(e)=>{e.stopPropagation()
+                      <button className='machine-btn-group' onClick={(e)=>{e.stopPropagation()
                         handleDelete(m.m_id)
                       }}>삭제</button>
                     )}
@@ -94,12 +97,13 @@ const machine_list = () => {
             ))}   
               {/* 생성 버튼 */}
             {userData?.role === "admin" && (
-              <button onClick={() => nav(`/gyms/${g_id}/machines/create`)}>
+              <button className='machine-create-btn' onClick={() => nav(`/gyms/${g_id}/machines/create`)}>
                 운동기구 생성
               </button>
             )}
 
-            
+          </div>
+
         </div>
     );
 };

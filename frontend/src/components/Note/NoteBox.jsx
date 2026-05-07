@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { note_inbox, note_outbox } from '../../api/notes';
+import './NoteBox.css';
 
 const NoteBox = () => {
     const navigate = useNavigate();
@@ -37,26 +38,35 @@ const NoteBox = () => {
     };
 
     return (
-        <div>
-            <div>
+        <div className="note-container">
+            <div className="note-header">
                 <h2>{tab === 'inbox' ? '받은 쪽지함' : '보낸 쪽지함'}</h2>
-                <button onClick={() => navigate('/note/create')}>쪽지 쓰기</button>
+                
             </div>
 
 
-            <div>
-                <button onClick={() => setTab('inbox')}>
-                    받은 쪽지
+            <div className="tab-group">
+                <button className={`tab-btn ${tab === 'inbox' ? 'active' : ''}`}  
+                        onClick={() => setTab('inbox')}>
+                        받은 쪽지
                 </button>
-                <button onClick={() => setTab('outbox')}>
-                    보낸 쪽지
+                <button className={`tab-btn ${tab === 'outbox' ? 'active' : ''}`}
+                        onClick={() => setTab('outbox')}>
+                        보낸 쪽지
                 </button>
+
+                <button className="btn-create" 
+                        onClick={() => navigate('/note/create')}>
+                    쪽지 쓰기
+                </button>  
             </div>
+
+            
 
             {loading ? (
-                <div>로딩 중...</div>
+                <div className="loading">로딩 중...</div>
             ) : (
-                <table>
+                <table className="note-table">
                     <thead>
                         <tr>
                             <th>{tab === 'inbox' ? ' 보낸 사람' : '받는 사람'}</th>
@@ -69,22 +79,21 @@ const NoteBox = () => {
                             notes.map((note) => (
                                 <tr key={note.n_id} 
                                     onClick={() => navigate(`/note/${note.n_id}`, { state: { fromTab: tab } })} >
-                                    <td>
+                                    <td style={{ width: '30%', textAlign: 'left', paddingLeft: '20px' }}>
                                         {tab === 'inbox' 
                                         ? (note.send_id === 1 ? '관리자' : note.send_email) 
                                         : (note.rece_id === 1 ? '관리자' : note.rece_email) }
                                     </td>
-                                    <td>
+                                    <td style={{ width: '50%', textAlign: 'left' }}>
                                         {note.title}
                                     </td>
-                                    <td>
+                                    <td style={{ width: '20%', textAlign: 'center', color: '#888' }}>
                                         {new Date(note.n_date).toLocaleDateString()}
                                     </td>
-                                </tr>
-                            ))
+                                </tr>))
                         ) : (
                             <tr>
-                                <td>
+                                <td colSpan="3" className="no-data">
                                     쪽지가 없습니다.
                                 </td>
                             </tr>

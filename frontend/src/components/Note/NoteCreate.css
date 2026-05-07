@@ -1,0 +1,121 @@
+/* 기본 배경 및 컨테이너 */
+.note-container {
+    min-height: 100vh;
+    background-color: #000000; /* 전체 배경 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    font-family: 'Pretendard', sans-serif;
+}
+
+/* 카드 스타일 (Figma의 다크한 카드 느낌) */
+.note-card {
+    width: 100%;
+    max-width: 600px;
+    background-color: #1a1a1a; /* 카드 배경 */
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* 헤더 제목 */
+.note-card h2 {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 15px;
+}
+
+/* 폼 그룹 간격 */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+/* 라벨 스타일 */
+.form-group label {
+    color: #a1a1aa;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-left: 4px;
+}
+
+/* 입력창 공통 스타일 (Input & Textarea) */
+.note-input, .note-textarea {
+    width: 100%;
+    background-color: #262626;
+    border: 1px solid #3f3f46;
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: #ffffff;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    box-sizing: border-box; /* 패딩 포함 크기 조절 */
+}
+
+.note-input:focus, .note-textarea:focus {
+    outline: none;
+    border-color: #ff4d00; /* Figma 포인트 컬러 느낌 */
+    background-color: #2d2d2d;
+}
+
+/* 텍스트 영역 높이 및 크기 조절 방지 */
+.note-textarea {
+    resize: none;
+    line-height: 1.5;
+}
+
+/* 버튼 그룹 */
+.button-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+/* 전송 버튼 (강조) */
+.submit-btn {
+    flex: 1;
+    background-color: #ff4d00 !important;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.submit-btn:hover {
+    background-color: #e64500;
+}
+
+.submit-btn:disabled {
+    background-color: #404040;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* 취소 버튼 */
+.cancel-btn {
+    flex: 1;
+    background-color: #333333;
+    color: #cccccc;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.cancel-btn:hover {
+    background-color: #444444;
+    color: #ffffff;
+}

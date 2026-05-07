@@ -1,0 +1,198 @@
+.board-list-title {
+  font-size: 42px;
+  font-weight: 900;
+  margin: 0 0 26px;
+  letter-spacing: -2px;
+}
+
+.board-search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.board-search-input {
+  width: 100%;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid var(--board-line);
+  background: var(--board-card);
+  color: var(--board-text);
+  outline: none;
+  box-sizing: border-box;
+}
+.board-search-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.board-search-input::placeholder {
+  color: var(--board-sub);
+}
+
+.board-search-input:focus {
+  border-color: var(--board-orange);
+}
+
+.board-search-button,
+.board-reset-button,
+.board-writer-button {
+  border: none;
+  background: none;
+  color: var(--board-text);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 0;
+
+  display: block;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.board-search-button:hover,
+.board-reset-button:hover,
+.board-write-button:hover {
+  background: var(--board-orange-dark);
+}
+
+.board-write-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  padding: 16px 18px;
+  margin-bottom: 18px;
+
+  border-radius: 18px;
+  background: var(--board-orange);
+
+  color: white;
+  font-size: 16px;
+  font-weight: 900;
+  text-decoration: none;
+
+  box-sizing: border-box;
+  transition: 0.2s;
+}
+
+.board-card {
+  background: var(--board-card);
+  border: 1px solid var(--board-line);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.board-card:hover {
+  border-color: var(--board-orange);
+}
+
+.board-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.board-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--board-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+}
+
+.board-writer-button {
+  border: none;
+  background: none;
+  color: var(--board-text);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 0;
+}
+
+.board-writer-button:hover {
+  color: var(--board-orange);
+}
+
+.board-time {
+  font-size: 13px;
+  color: var(--board-sub);
+  margin-top: 0;
+  line-height: 1.1;
+}
+
+.board-content {
+  display: block;
+  color: var(--board-text);
+  text-decoration: none;
+  margin-top: 18px;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.board-more {
+  margin-top: 12px;
+  color: var(--board-orange);
+  font-weight: 900;
+}
+
+.board-actions {
+  display: flex;
+  gap: 18px;
+  margin-top: 20px;
+  color: var(--board-sub);
+}
+
+.board-like-button {
+  border: none;
+  background: transparent;
+  color: var(--board-text);
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.board-like-button:hover {
+  color: var(--board-orange);
+}
+
+.board-pagination {
+  margin-top: 24px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.board-pagination button {
+  min-width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid var(--board-line);
+  background: var(--board-card);
+  color: var(--board-text);
+  cursor: pointer;
+}
+
+.board-pagination button:hover {
+  border-color: var(--board-orange);
+}
+
+.board-pagination button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.board-pagination .active {
+  background: var(--board-orange);
+  border-color: var(--board-orange);
+  font-weight: 900;
+}

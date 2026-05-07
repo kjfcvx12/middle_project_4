@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { user_edit, user_profile } from './../../api/user';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
+import "./UserEdit.css"
 
 const UserEdit = () => {
     const { user } = useAuth(); 
@@ -58,12 +59,12 @@ const UserEdit = () => {
 
 
     return (
-        <div>
+        <div className="user-edit-container">
             <h1>내 정보 수정</h1>
 
             <div>
                 
-                <form onSubmit={handleSubmit} style={formStyle}>
+                <form onSubmit={handleSubmit} className="user-edit-form">
                     <input
                         name="pw"
                         type="password"
@@ -88,22 +89,23 @@ const UserEdit = () => {
                         onChange={handleChange}
                         required
                     />
-                    <input
+                    <textarea
                         name="info"
-                        type="text"
                         placeholder="자기소개"
                         value={editData.info || ''}
                         onChange={handleChange}
+                        rows={5}
                         required
                     />
                     <button type="submit">정보수정</button>
-                    <Link to={"/profile"}><button>취소</button></Link>
+                    <Link to={"/profile"} className="cancel-link">
+                        <button type="button" className="cancel-button">취소</button>
+                    </Link>
                 </form>
             </div>
         </div>
     );
 };
 
-const formStyle = { display: 'flex', flexDirection: 'column', gap: '10px' };
 
 export default UserEdit;
