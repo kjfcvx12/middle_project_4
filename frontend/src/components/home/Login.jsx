@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../AuthContext";
 import fitChickLogo from '../../image/FitChick.png';
+import Find from './Find';
 
 const Login = () => {
   const { login, logout, signup } = useAuth();
@@ -56,6 +57,7 @@ const Login = () => {
     }
   };
 
+
   return (
     <div style={{ padding: "50px", textAlign: "center" }}>
       {isOpen && (
@@ -102,10 +104,9 @@ const Login = () => {
               />
               <label htmlFor="autologin">로그인 상태 유지</label>
 
-              {/* Silent Refresh 사용법 */}
               <button type="submit">로그인</button>
             </form>
-            <button>아이디 찾기</button>
+            <Find>아이디 찾기</Find>
             <button>비밀번호 찾기</button>
             <button onClick={() => setIsOpen(false)}>회원가입</button>
           </div>

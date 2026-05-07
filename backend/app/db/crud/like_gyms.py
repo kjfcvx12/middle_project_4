@@ -6,35 +6,40 @@ from app.db.models.like_gyms import Like_Gym
 from app.db.scheme.like_gyms import Like_Gym_Create
 
 
-class Like_Gym_Crud:
-    # 헬스장 좋아요
+class Like_Gym_Crud:  
+    # 체육관 좋아요 토글
     @staticmethod
-    async def crud_like_gyms_create(db:AsyncSession, lg: Like_Gym_Create) -> str:          
-        db_data=Like_Gym(**lg.model_dump())
-        db.add(db_data)
-        await db.flush()
-        return '헬스장 좋아요'
-    
+    async def crud_like_gyms_toggle(db: AsyncSession, u_id: int, g_id: int) -> dict:
+        # 기존 좋아요 확인
+        query = select(Like_Gym).where(Like_Gym.u_id == u_id, Like_Gym.g_id == g_id)
+        existing_like = await db.scalar(query)
 
-    # 헬스장 좋아요 취소
-    @staticmethod
-    async def crud_like_gyms_delete(db:AsyncSession , l_g_id:int)->str|None:
-        db_data = await db.get(Like_Gym, l_g_id)
-        if db_data:
-            await db.delete(db_data)
-            await db.flush()
-            return '헬스장 좋아요 취소'
-        return None
+        if existing_like:
+            await db.delete(existing_like)
+            status = "unliked"
+        else:
+            new_like = Like_Gym(u_id=u_id, g_id=g_id)
+            db.add(new_like)
+            status = "liked"
+
+        await db.flush()
+        
+        return {"status": status}
+
     
 
     # 헬스장 좋아요 개수
     @staticmethod
     async def crud_like_gyms_count(db: AsyncSession, g_id: int) -> int:
-        result = await db.execute(
-            select(func.count(Like_Gym.l_g_id))
-            .where(Like_Gym.g_id == g_id)
-        )
-        return result.scalar() or 0
+        query = (
+        select(func.count())
+        .select_from(Like_Gym)
+        .filter(Like_Gym.g_id == g_id)
+        )   
+
+        db_data = await db.execute(query)
+        
+        return db_data.scalar() or 0
     
 
     # 유저 좋아요 헬스장 page 조회

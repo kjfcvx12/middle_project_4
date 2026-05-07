@@ -7,24 +7,24 @@ from app.db.scheme.favorite_gyms import Favorite_Gym_Create, Favorite_Gym_Read
 
 
 class Favorite_Gym_Crud:
-    # 헬스장 즐겨찾기 등록
+    # 헬스장 즐겨찾기 토글
     @staticmethod
-    async def crud_favorite_gyms_create(db:AsyncSession, fg: Favorite_Gym_Create) -> Favorite_Gym_Read:          
-        db_data=Favorite_Gym(**fg.model_dump())
-        db.add(db_data)
-        await db.flush()
-        return db_data
-    
+    async def crud_favorite_gyms_toggle(db: AsyncSession, u_id: int, g_id: int) -> dict:
+        # 기존 즐겨찾기 확인
+        query = select(Favorite_Gym).where(Favorite_Gym.u_id == u_id, Favorite_Gym.g_id == g_id)
+        existing_fav = await db.scalar(query)
 
-    # 헬스장 즐겨찾기 취소
-    @staticmethod
-    async def crud_favorite_gyms_delete(db:AsyncSession , f_g_id:int)->Favorite_Gym|None:
-        db_data = await db.get(Favorite_Gym, f_g_id)
-        if db_data:
-            await db.delete(db_data)
-            await db.flush()
-            return db_data
-        return None
+        if existing_fav:
+            await db.delete(existing_fav)
+            status = "unfavorite"
+        else:
+            new_fav = Favorite_Gym(u_id=u_id, g_id=g_id)
+            db.add(new_fav)
+            status = "favorited"
+
+        await db.flush()
+        
+        return {"status": status}
     
 
     # 유저 헬스장 즐겨찾기 목록 조회

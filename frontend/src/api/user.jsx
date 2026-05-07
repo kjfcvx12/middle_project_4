@@ -45,7 +45,7 @@ export const user_email_get_id = async (email) =>{
 // GET 잊은 email 조회
 export const user_find_email = async ({u_name, phone}) => {
   const response = await api.get('/users/find_email', {params: {u_name, phone}});
-  return response.data;
+  return response;
 };
 
 

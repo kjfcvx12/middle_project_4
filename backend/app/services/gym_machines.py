@@ -3,6 +3,8 @@ from fastapi import HTTPException
 
 from app.db.models.gym_machines import Gym_Machine
 from app.db.crud import gym_machines as gym_machine_crud
+from sqlalchemy import select
+from app.db.models.machines import Machine
 
 
 # CREATE
@@ -75,15 +77,23 @@ async def services_gym_machine_delete(db: AsyncSession, g_id: int, m_id: int):
 # LIST
 async def services_gym_machine_get(db: AsyncSession, g_id: int):
     try:
-        machines = await gym_machine_crud.crud_gym_machines_get_id(db, g_id)
+        result = await db.execute(
+            select(Gym_Machine, Machine)
+            .join(Machine, Gym_Machine.m_id == Machine.m_id)
+            .where(Gym_Machine.g_id == g_id)
+        )
+        rows = result.all()
 
         return [
             {
-                "g_id": m.g_id,
-                "m_id": m.m_id,
-                "qty": m.qty
+                "g_id": gm.g_id,
+                "m_id": gm.m_id,
+                "qty": gm.qty,
+                "m_name": m.m_name,
+                "m_url": m.m_url,
+                "dsc": m.dsc
             }
-            for m in machines
+            for gm, m in rows
         ]
 
     except Exception as e:
