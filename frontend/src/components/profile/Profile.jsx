@@ -6,7 +6,7 @@ import { user_get_favorite_gyms, user_get_favorite_machines, user_get_favorite_r
 import { note_create } from '../../api/notes';
 import { gyms_detail } from '../../api/gyms';
 import { getLogs } from '../../api/logApi';
-import "./pro.css"
+import "./Profile.css"
 
 const Profile = () => {
   const { logout, userData} = useAuth();
