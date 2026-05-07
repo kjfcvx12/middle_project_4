@@ -6,24 +6,24 @@ from app.db.scheme.favorite_routines import Favorite_Routine_Create, Favorite_Ro
 
 
 class Favorite_Routine_Crud:
-    # 루틴 즐겨찾기 등록
+    # 루틴 즐겨찾기 토글
     @staticmethod
-    async def crud_favorite_routines_create(db:AsyncSession, fm: Favorite_Routine_Create) -> str:          
-        db_data=Favorite_Routine(**fm.model_dump())
-        db.add(db_data)
-        await db.flush()
-        return '루틴 즐겨찾기 등록'
-    
+    async def crud_favorite_routines_toggle(db: AsyncSession, u_id: int, r_id: int) -> dict:
+        # 기존 즐겨찾기 확인
+        query = select(Favorite_Routine).where(Favorite_Routine.u_id == u_id, Favorite_Routine.r_id == r_id)
+        existing_fav = await db.scalar(query)
 
-    # 루틴 즐겨찾기 취소
-    @staticmethod
-    async def crud_favorite_routines_delete(db:AsyncSession , f_m_id:int)->str|None:
-        db_data = await db.get(Favorite_Routine, f_m_id)
-        if db_data:
-            await db.delete(db_data)
-            await db.flush()
-            return '루틴 즐겨찾기 취소'
-        return None
+        if existing_fav:
+            await db.delete(existing_fav)
+            status = "unfavorite"
+        else:
+            new_fav = Favorite_Routine(u_id=u_id, r_id=r_id)
+            db.add(new_fav)
+            status = "favorited"
+
+        await db.flush()
+        
+        return {"status": status}
     
 
     # 유저 루틴 즐겨찾기 목록 조회

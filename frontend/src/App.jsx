@@ -20,6 +20,7 @@ import NoteCreate from './components/Note/NoteCreate';
 import NoteDetail from './components/Note/NoteDetail';
 import NoteBox from './components/Note/NoteBox';
 import UserEdit from './components/profile/UserEdit'
+import PartCreate from './components/Part/PartCreate'
 
 
 const ProtectedRoute = ({ isLoggedIn }) => {
@@ -70,6 +71,8 @@ const App = () => {
               <Route path="/note/create" element={<NoteCreate />} />
               <Route path="/note/:n_id" element={<NoteDetail />} />
               <Route path="/note" element={<NoteBox />} />
+
+              <Route path="/parts/create" element={<PartCreate/>}/>
               
               
             </Route>

@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { note_inbox, note_outbox } from '../../api/notes';
 
 const NoteBox = () => {
     const navigate = useNavigate();
     const { userData } = useAuth();
+    const location=useLocation();
     
-    const [tab, setTab] = useState('inbox');
+    const [tab, setTab] = useState(location.state?.activeTab || 'inbox');
     const [notes, setNotes] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    
 
 
     useEffect(() => {
@@ -65,7 +68,7 @@ const NoteBox = () => {
                         {notes.length > 0 ? (
                             notes.map((note) => (
                                 <tr key={note.n_id} 
-                                    onClick={() => navigate(`/note/${note.n_id}`)}>
+                                    onClick={() => navigate(`/note/${note.n_id}`, { state: { fromTab: tab } })} >
                                     <td>
                                         {tab === 'inbox' 
                                         ? (note.send_id === 1 ? '관리자' : note.send_email) 
