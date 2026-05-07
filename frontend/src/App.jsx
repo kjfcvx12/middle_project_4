@@ -22,30 +22,18 @@ import NoteBox from './components/Note/NoteBox';
 import UserEdit from './components/profile/UserEdit'
 
 import { useEffect } from "react";
-
+const API = "https://gotten-fioricet-limousines-aged.trycloudflare.com";
 const ProtectedRoute = ({ isLoggedIn }) => {
   return isLoggedIn ? <Outlet /> : <Navigate to="/login" replace />;
 };
-const API = "https://viewless-tutor-commuting.ngrok-free.dev";
+
 const App = () => {
   const { isLoggedIn } = useAuth();
 
 
 
   useEffect(() => {
-  alert("🔥 useEffect 실행");
-
-  fetch("https://viewless-tutor-commuting.ngrok-free.dev")
-  .then(res => {
-    alert("📡 응답 도착");
-    return res.json();
-  })
-  .then(data => {
-    alert(JSON.stringify(data));
-  })
-  .catch(err => {
-    alert("❌ " + err);
-  });
+  console.log("앱 시작");
 }, []);
 
 
@@ -63,12 +51,7 @@ const App = () => {
     zIndex: 1000
   };
 
-  useEffect(() => {
-  console.log("🔥 useEffect 실행됨");
-  fetch(API)
-    .then(res => res.json())
-    .then(data => console.log(data));
-}, []);
+ 
   return (
     <Router>
       <div style={{ paddingBottom: '60px' }}>

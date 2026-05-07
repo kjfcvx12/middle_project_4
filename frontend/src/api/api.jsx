@@ -2,9 +2,9 @@ import axios from 'axios';
 
 // 1. Axios 인스턴스 생성
 const api = axios.create({
-  baseURL: 'http://localhost:8081',
+  baseURL: 'https://gotten-fioricet-limousines-aged.trycloudflare.com',
   headers: { 'Content-Type': 'application/json' },
-  withCredentials: true // 그대로 유지 (다른 API 영향 가능)
+  withCredentials: false // 그대로 유지 (다른 API 영향 가능)
 });
 
 
@@ -12,7 +12,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("access_token");
-
+    console.log("🔥 TOKEN:", token);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

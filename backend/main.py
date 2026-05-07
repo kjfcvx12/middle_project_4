@@ -35,7 +35,7 @@ app.add_middleware(
         # "http://localhost:5173", 
         # "http://127.0.0.1:5173"
     ],  # 프론트엔드 주소 (정확히 일치해야 함)
-    allow_credentials=True,               # 쿠키 허용을 위해 필수
+    allow_credentials=False,               # 쿠키 허용을 위해 필수
     allow_methods=["*"],
     allow_headers=["*"],
 )
