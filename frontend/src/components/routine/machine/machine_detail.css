@@ -1,13 +1,13 @@
 .machine-detail-container {
   min-height: 100vh;
-  background: #fff7f0;
+  background: #1a1a1a;
   padding: 40px 20px;
 }
 
 .machine-detail-wrapper {
   max-width: 900px;
   margin: 0 auto;
-  background: white;
+  background: #3d3d3d;
   border-radius: 25px;
   padding: 40px;
   box-shadow: 0 8px 30px rgba(255, 122, 0, 0.12);
@@ -38,7 +38,7 @@
 }
 
 .machine-detail-content {
-  background: #fff3e8;
+  background: #ff7a00;
   border-radius: 18px;
   padding: 25px;
   margin-bottom: 30px;
