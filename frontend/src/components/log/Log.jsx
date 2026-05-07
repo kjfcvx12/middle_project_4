@@ -42,6 +42,7 @@ const Log = () => {
             (sum, d) => sum + d.sets * d.reps * (d.weight || 0),
             0
         ) || 0;
+        
 
     // 시간
     const getTime = (log) =>
