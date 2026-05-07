@@ -62,9 +62,7 @@ const machine_create = () => {
     }
 
     //수정 권한
-    if (isEdit &&
-    userData?.role !== "admin" &&
-    userData?.role !== "manager") {
+    if (isEdit && userData?.role !== "manager") {
         return <div className='machine-no-auth'>수정 권한 없습니다</div>
     }
 
@@ -87,12 +85,14 @@ const machine_create = () => {
         } else {
         const res = await machines_create(form)
         
-        await api.post("/gym_machines", {
+        await api.post("/gym_machines/", {
             g_id: Number(g_id),
             m_id: res.data.m_id,
             qty: 1
         })
         console.log("생성된 m_id:", res.data.m_id)
+        console.log(res.data)
+        console.log(res.data.m_id)
 
         alert("생성 완료했습니다")
         nav(`/gyms/${g_id}/machines`)

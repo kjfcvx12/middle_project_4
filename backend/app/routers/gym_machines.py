@@ -19,7 +19,7 @@ router = APIRouter(
 
 
 # CREATE
-@router.post("")
+@router.post("/")
 async def routers_gym_machine_create(
     data: Gym_Machine_Create,
     db: AsyncSession = Depends(get_db),
@@ -34,7 +34,7 @@ async def routers_gym_machine_create(
 
 
 # UPDATE 
-@router.put("")
+@router.put("/")
 async def routers_gym_machine_update(
     data: Gym_Machine_Update,
     db: AsyncSession = Depends(get_db),
@@ -49,7 +49,7 @@ async def routers_gym_machine_update(
 
 
 # DELETE
-@router.delete("")
+@router.delete("/")
 async def routers_gym_machine_delete(
     data: Gym_Machine_Delete,
     db: AsyncSession = Depends(get_db),
