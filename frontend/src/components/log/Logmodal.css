@@ -1,0 +1,153 @@
+/* 배경 */
+.log-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background: rgba(0,0,0,0.6);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 999;
+}
+
+/* 모달 */
+.log-modal {
+  width: 90%;
+  max-width: 430px;
+
+  max-height: 90vh;
+  overflow-y: auto;
+
+  background: #1C1C1E;
+  border-radius: 16px;
+
+  padding: 20px;
+  color: white;
+}
+
+/* 헤더 */
+.log-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 20px;
+}
+
+.log-modal-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.close-btn {
+  border: none;
+  background: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* 모드 선택 */
+.mode-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mode-btn {
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+
+  background: #2C2C2E;
+  color: white;
+
+  cursor: pointer;
+}
+
+.mode-btn:hover {
+  background: #3A3A3C;
+}
+
+/* select/input */
+.log-modal select,
+.log-modal input {
+  width: 100%;
+  padding: 12px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #2C2C2E;
+  color: white;
+
+  margin-top: 8px;
+  box-sizing: border-box;
+}
+
+/* 운동 입력 박스 */
+.log-detail-box {
+  background: #2C2C2E;
+
+  padding: 14px;
+  border-radius: 12px;
+
+  margin-top: 15px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* 추가 버튼 */
+.add-btn {
+  width: 100%;
+  padding: 12px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #3A3A3C;
+  color: white;
+
+  margin-top: 15px;
+  cursor: pointer;
+}
+
+/* 하단 버튼 */
+.modal-actions {
+  display: flex;
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  flex: 1;
+
+  padding: 13px;
+
+  border: none;
+  border-radius: 10px;
+
+  cursor: pointer;
+}
+
+.back-btn {
+  background: #444;
+  color: white;
+}
+
+.cancel-btn {
+  background: #666;
+  color: white;
+}
+
+.save-btn {
+  background: #C14B2E;
+  color: white;
+}

@@ -13,24 +13,26 @@ class Log_Crud:
             attend=data.attend
         )
         db.add(log)
-        await db.flush()  # id 확보
+        await db.flush()
 
         return log
 
 
-    # 로그 목록 조회 (detail 없음)
+    # 로그 목록 조회 (detail 포함으로 수정)
     async def crud_get_logs(db: AsyncSession, u_id):
         result = await db.execute(
-            select(Log).where(Log.u_id == u_id)
+            select(Log)
+            .options(selectinload(Log.details))
+            .where(Log.u_id == u_id)
         )
         return result.scalars().all()
 
 
-    # 로그 상세 조회 (detail 포함)
+    # 로그 상세 조회
     async def crud_get_log_detail(db: AsyncSession, u_id, log_id):
         result = await db.execute(
             select(Log)
-            .options(selectinload(Log.details))  
+            .options(selectinload(Log.details))
             .where(
                 Log.u_id == u_id,
                 Log.log_id == log_id
@@ -47,10 +49,12 @@ class Log_Crud:
                 Log.log_id == log_id
             )
         )
+
         log = result.scalar_one_or_none()
 
         if log:
             await db.delete(log)
             await db.flush()
             return True
+
         return False
