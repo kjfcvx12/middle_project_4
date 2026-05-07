@@ -6,6 +6,7 @@ import { user_get_favorite_gyms, user_get_favorite_machines, user_get_favorite_r
 import { note_create } from '../../api/notes';
 import { gyms_detail } from '../../api/gyms';
 import { getLogs } from '../../api/logApi';
+import "./pro.css"
 
 const Profile = () => {
   const { logout, userData} = useAuth();
@@ -128,27 +129,30 @@ const Profile = () => {
 
 
   return (
-    <div>
-      <header>
+    <div className="profile-container">
+      <header className="profile-header">
           <h1>프로필</h1>
       </header>
 
-      <div>
-          <div>
-              <h3>{currentUser.u_name}</h3>
-              <div>{currentUser.email}</div>
-              <div>가입일: {currentUser.signup_date}</div>
+      <div className="user-card">
+        <div className="profile-icon">
+          <span style={{fontSize: '30px'}}>👤</span>
+        </div>
+        <div className="user-info">
+          <h3>{currentUser.u_name}님</h3>
+          <p>{currentUser.email}</p>
+          <p>가입일: {currentUser.signup_date?.split('T')[0]}</p>
+        </div>
+      </div>
+
+      <div className="stats-container">
+        <div className="stat-card">
+          <span className="stat-label">총 운동일</span>
+          <span className="stat-value">{exCount}일</span>
           </div>
       </div>
 
-      <div>
-          <div>
-              <div> 총 운동일</div>
-              <div>{exCount}일</div>
-          </div>
-      </div>
-
-      <div>
+      <div className="menu-list">
         <div>
           {/* <div onClick={()=>favoriteClick()}>즐겨찾기</div>
             {openFavorite&&(
@@ -193,13 +197,12 @@ const Profile = () => {
                 </div>
               )}
           </div> */}
-          <div>
-            <div>
-              <Link to={"/note"}>
-                <button>쪽지함</button>
-              </Link>
-            </div>
-          </div>
+          <Link to="/note" className="menu-item">
+            <div className="menu-title">✉️ 쪽지함</div>
+            <span>&gt;</span>
+          </Link>
+
+
           <div>
               <div onClick={()=>profileEdit()}>정보수정</div>
               {openEdit&&(

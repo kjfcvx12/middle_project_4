@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Warehouse, MapPin, Dumbbell, ClipboardList, MessageSquare, User } from "lucide-react";
-import "../css/NaviBar.css"
+import "./NaviBar.css"
 
 const NaviBar = () => {
   return (
