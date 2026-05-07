@@ -11,6 +11,7 @@ from app.services import gym_staffs as gym_staffs_service
 from app.services import gym_machines as gym_machines_service
 
 from app.db.models.like_gyms import Like_Gym
+from app.db.models.favorite_gyms import Favorite_Gym
 from app.core.auth import (
     auth_get_admin_id,
     auth_get_staff_role,
@@ -111,7 +112,7 @@ async def routers_gym_machines_get(
 
 
 # =========================
-# ⭐ LIKE TOGGLE (핵심 추가)
+# LIKE TOGGLE
 # =========================
 @router.post("/{g_id}/like")
 async def routers_gym_like_toggle(
@@ -140,3 +141,30 @@ async def routers_gym_like_toggle(
     await db.commit()
 
     return {"liked": True}
+
+# =========================
+# FAVORITE TOGGLE 
+# =========================
+@router.post("/{g_id}/favorite")
+async def routers_gym_favorite_toggle(
+    g_id: int,
+    db: AsyncSession = Depends(get_db),
+    u_id: int = Depends(auth_get_u_id)
+):
+    result = await db.execute(
+        select(Favorite_Gym).where(
+            Favorite_Gym.g_id == g_id,
+            Favorite_Gym.u_id == u_id
+        )
+    )
+    favorite = result.scalar_one_or_none()
+
+    if favorite:
+        await db.delete(favorite)
+        await db.commit()
+        return {"favorited": False}
+
+    db.add(Favorite_Gym(g_id=g_id, u_id=u_id))
+    await db.commit()
+
+    return {"favorited": True}
