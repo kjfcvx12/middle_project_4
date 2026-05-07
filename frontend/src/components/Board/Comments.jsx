@@ -25,8 +25,7 @@ const Comments = ({ b_id }) => {
       commentsData.map(async (comment) => {
         try {
           const countResponse = await like_comments_count(comment.c_id);
-          console.log(countResponse)
-          return { ...comment, like_count: countResponse || 0 };
+          return { ...comment, like_count: countResponse.data || 0 };
         } catch {
           return { ...comment, like_count: 0 };
         }
