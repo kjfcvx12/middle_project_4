@@ -109,8 +109,17 @@ export default function Gym() {
     };
 
     const handleDelete = async (id) => {
-        await gyms_delete(id);
-        fetchGyms();
+        const confirmed = window.confirm("정말로 삭제하시겠습니까?");
+
+        if (!confirmed) return;
+
+        try {
+            await gyms_delete(id);
+            fetchGyms();
+        } catch (err) {
+            console.error(err);
+            alert("삭제 중 오류가 발생했습니다.");
+        }
     };
 
     const handleLike = async (gym) => {
@@ -178,16 +187,6 @@ export default function Gym() {
 
                 <div className="gym-header">
                     <h1 className="gym-title">헬스장 찾기</h1>
-
-                    {isStaff && (
-                        <button
-                            className="detail-btn"
-                            onClick={() => navigate("/gym/create")}
-                        >
-                            <Plus size={16} />
-                            등록
-                        </button>
-                    )}
                 </div>
 
                 <div className="gym-search">
@@ -202,13 +201,27 @@ export default function Gym() {
                     />
                 </div>
 
-                <div className="gym-sort-row">
-                    <select value={sort} onChange={(e) => setSort(e.target.value)}>
-                        <option value="g_name,asc">이름순</option>
-                        <option value="g_id,desc">등록순</option>
-                        <option value="like_count,desc">좋아요순</option>
-                        <option value="favorite_count,desc">즐겨찾기순</option>
-                    </select>
+                <div className="gym-top-actions">
+
+                    <div className="gym-sort-row">
+                        <select value={sort} onChange={(e) => setSort(e.target.value)}>
+                            <option value="g_name,asc">이름순</option>
+                            <option value="g_id,desc">등록순</option>
+                            <option value="like_count,desc">좋아요순</option>
+                            <option value="favorite_count,desc">즐겨찾기순</option>
+                        </select>
+                    </div>
+
+                    {isStaff && (
+                        <button
+                            className="detail-btn gym-create-btn"
+                            onClick={() => navigate("/gym/create")}
+                        >
+                            <Plus size={16} />
+                            등록
+                        </button>
+                    )}
+
                 </div>
 
                 {loading ? (
